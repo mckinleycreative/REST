@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 
 <html>
-    <meta charset="utf-8" />
-		<link rel="shortcut icon" href="img/boliden.png" />
-    <link rel="stylesheet" href="css/boliden.css" />
-		<title>Fleet Monitor</title>
-		<script src="js/soa004.js"></script>
-		<script src="js/maximo.js"></script>
-        <script src="js/sorttable.js"></script>
-	<body">
+<meta charset="utf-8" />
+<link rel="shortcut icon" href="img/boliden.png" />
+<link rel="stylesheet" href="css/boliden.css" />
+<title>Fleet Monitor</title>
+<script src="js/soa004.js"></script>
+<script src="js/maximo.js"></script>
+<script src="js/sorttable.js"></script>
+<body ">
     <header>
-        <a href="http://bolsrv0406.boliden.internal/asset_monitor" id="logo"></a>
-		<h1 id="datetime">Fleet Live Status</h1>
+        <a href="http://bolsrv0406.boliden.internal/asset_monitor " id="logo "></a>
+		<h1 id="datetime ">Fleet Live Status</h1>
     </header>
-		<table id="control">
+		<table id="control ">
 			<tr><td>
 				Department <select id='department'>
-					<option value="All">All</option>
-                    <option value="Development">Development</option>
-                    <option value="Production">Production</option>
+					<option value="All ">All</option>
+                    <option value="Development ">Development</option>
+                    <option value="Production ">Production</option>
  					</select>
 				</td>
 				<td>
-				</select>Priority <select id='priority' onChange="update();">
+				</select>Priority <select id='priority' onChange="update(); ">
 					<option value=1>Priority 1</option>
 					<option value=2>Priority 2</option>
 					<option value=3>Priority 3</option>
@@ -30,47 +30,47 @@
 				</select>
 				</td>
 				<td>
-				</select>Running<select id='running' onChange="update();">
-					<option value="All">All</option>
-					<option value="Down">Down Only</option>
+				</select>Running<select id='running' onChange="update(); ">
+					<option value="All ">All</option>
+					<option value="Down ">Down Only</option>
 				</select>
 				</td>
-				<td>Last Update<br/><span id="lastupdated"></span></td>
+				<td>Last Update<br/><span id="lastupdated "></span></td>
 			<tr>
-			<td class="assetup">Up</td>
-			<td class="assetdown" >Down</td>
-			<td class="assetdown2" >Down in Progress</td>
-			<td class="assetservice">Servicing</td>
+			<td class="assetup ">Up</td>
+			<td class="assetdown " >Down</td>
+			<td class="assetdown2 " >Down in Progress</td>
+			<td class="assetservice ">Servicing</td>
 			</tr><tr>
-			<td class="assetup"><span id="assetupcount"></span></td>
-			<td class="assetdown" ><span id="assetdowncount"></span></td>
-			<td class="assetdown2" ><span id="assetbreakdowncount"></span></td>
-			<td class="assetservice"><span id="assetservice"></span></td>
+			<td class="assetup "><span id="assetupcount "></span></td>
+			<td class="assetdown " ><span id="assetdowncount "></span></td>
+			<td class="assetdown2 " ><span id="assetbreakdowncount "></span></td>
+			<td class="assetservice "><span id="assetservice "></span></td>
 			</tr><tr>
-			<td class="assetup"><span id="uppct"></span></td>
-			<td class="assetdown" ><span id="downpct"></span></td>
-			<td class="assetdown2" ><span id="breakpct"></span></td>
-			<td class="assetservice"><span id="servicepct"></span></td>
+			<td class="assetup "><span id="uppct "></span></td>
+			<td class="assetdown " ><span id="downpct "></span></td>
+			<td class="assetdown2 " ><span id="breakpct "></span></td>
+			<td class="assetservice "><span id="servicepct "></span></td>
 			</tr>
 		</table>
-        <table id="tgt">
+        <table id="tgt ">
             <thead></thead>
 			<tbody></tbody>
         </table>
 
-		<div id="output"></div>
+		<div id="output "></div>
 
 	<script>
         var interval = 600000;
 		var debug = false;
-//		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
-		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"=TAR"},{ASSETTYPE:"=FLEET"},{STATUS:"=OPERATING"},{LOCATION:"!~null~"},{CLASSSTRUCTUREID:"!~null~"},{PRIORITY:"1"}]};
-		var updatefilter = {maxrows: 10,offset: 2,fields: [{SITEID:"=TAR"}]};
+//		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR "},{ASSETTYPE:"FLEET "},{STATUS:"OPERATING "},{PRIORITY:1}]};
+		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"=TAR "},{ASSETTYPE:"=FLEET "},{STATUS:"=OPERATING "},{LOCATION:"!~null~ "},{CLASSSTRUCTUREID:"!~null~ "},{PRIORITY:"1 "}]};
+		var updatefilter = {maxrows: 10,offset: 2,fields: [{SITEID:"=TAR "}]};
     var filter = searchfilter;
 
 		var chosenpriority = 1;
-		var chosendept = "All";
-		var running = "All";
+		var chosendept = "All ";
+		var running = "All ";
 		var json = null;
 		var HeaderCells;
 
@@ -121,7 +121,7 @@
 			if ( debug ) {
 				for( i=start ; i < allrecords ; ++i ) {
 					curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-					console.log(text+"::"+compile(curr));
+					console.log(text+":: "+compile(curr));
 				};
 				console.log("===================");
 			}
@@ -131,8 +131,8 @@
 			for (var j = deptBox.options.length - 1; j >= 0; j--) {
 				deptBox.remove(j); // Clears all old values
 			}
-			currdept="All";
-			var opt = document.createElement("OPTION");
+			currdept=" All ";
+			var opt = document.createElement("OPTION ");
 			opt.value = currdept;
 			opt.text = currdept;
 			deptBox.add(opt);
@@ -140,7 +140,7 @@
 				var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
 				department = curr.LOCATIONS[0].DESCRIPTION;
 				if ( currdept != department ){
-					var opt = document.createElement("OPTION");
+					var opt = document.createElement("OPTION ");
 					opt.value = department;
 					opt.text = department;
 					deptBox.add(opt);
@@ -159,18 +159,18 @@
             var i = 0;
             var records =allrecords-1;
 
-			outputconsole ( "dirty", json );
+			outputconsole ( "dirty ", json );
 
 			// stript out repeated text from department names
             for( i=start ; i < allrecords ; ++i ) {
 				curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-				curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','');
-//				curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','').replace(' Light','').replace(' Vehicles','');
+				curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown ": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','');
+//				curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown ": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','').replace(' Light','').replace(' Vehicles','');
 //				.replace(' Equipment','').replace('Mobile ','').replace('Equipment ','');
                 json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i] = curr;
 			};
 
-			outputconsole ( "clean", json );
+			outputconsole ( "clean ", json );
 
             while (  swap ) {
                 swap = false;
@@ -188,7 +188,7 @@
                     }
                 }
 
-				outputconsole ("mid:"+start+":"+endstop, json );
+				outputconsole ("mid: "+start+": "+endstop, json );
 				records--;
 //                records--;
                 endstart = endstop-1;
@@ -208,9 +208,9 @@
                     }
                 }
 //                start++;
-				outputconsole ("end:"+start+":"+endstop, json );
+				outputconsole ("end: "+start+": "+endstop, json );
             }
-			outputconsole ( "final", json );
+			outputconsole ( "final ", json );
     };
 
     function calcassetdays ( curr ){
@@ -241,461 +241,68 @@
       var days = -999;
       var ass =  curr.ASSETNUM ;
       var lifetodate = 0.0;
-      ass += chosenpriority > 1 ? " ("+curr.PRIORITY+") [" : " [";
+      ass += chosenpriority > 1 ? " ( "+curr.PRIORITY+") [ " : " [ ";
       var locald =  curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
-      ass += daysBetween(locald,d) + "]<br/>";
-      if ( curr.ASSETNUM == "114"){
-        stop=0;
-      }
-      if ( pmpservice ){
-        reportdate = curr.WORKORDER[pmploc].SCHEDFINISH === undefined ? new Date(curr.WORKORDER[pmploc].TARGCOMPDATE) :new Date(curr.WORKORDER[pmploc].SCHEDFINISH);
-        days = Math.round(daysDiff(d,reportdate)/60.0/24.0);
-        ass += days< 0 ? "Late Back ": "Back "
-        ass +=  days + " Days";
-      }else if ( curr.ASSETMETER ) {
-        for ( am=0; am< curr.ASSETMETER.length; am++ ){
-          var currmeter = curr.ASSETMETER[am];
-          if ( currmeter.PMMETER ){
-            pmexists = true;
-            for ( pm=0; pm < currmeter.PMMETER.length; pm++) {
-              if ( currmeter.PMMETER[pm].LASTPMWOGENREADDT ) {
-                reportdate = new Date(currmeter.PMMETER[pm].LASTPMWOGENREADDT);
-                days = currmeter.AVERAGE == 0 ? 0 : currmeter.PMMETER[pm].FREQUENCY/currmeter.AVERAGE;
-                reportdate.setDate(reportdate.getDate() + days );
-                days = Math.round(daysDiff(d,reportdate)/60.0/24.0);
-                ass += days< 0 ? "<late style='color:black'>Late ": "Due ";
-                ass += days+ " Days";
-              }else {
-                lifetodate = currmeter.LIFETODATE;
-                reportdate = new Date(curr.INSTALLDATE);
-                rate = daysDiff(reportdate,d)/60.0/24.0;
-                average = lifetodate / rate ;
-                days =  Math.round(currmeter.PMMETER[pm].FREQUENCY/average);
-                reportdate.setDate(reportdate.getDate() + days );
-                ass += days< 0 ? "<late style='color:black'>Late ": "Due ";
-                ass += days+ " Days";
-              }
-            }
-          }
-        }
-        if ( !pmexists )
-            ass += "<late style='color:black'>No PM";
-      }
-      ;
-      reportdate = curr.INSTALLDATE === undefined ? new Date(curr.STATUSDATE ) :  new Date(curr.INSTALLDATE);
-      rate = daysDiff(reportdate,d)/60.0;
-      avail = Math.round(10000*(1-(curr.TOTDOWNTIME/rate)))/100;
-      ass += "<br/> Avail  " + avail + "%";
+      ass += daysBetween(locald,d) + "]<br/>"; if ( curr.ASSETNUM == "114"){ stop=0; } if ( pmpservice ){ reportdate = curr.WORKORDER[pmploc].SCHEDFINISH === undefined ? new Date(curr.WORKORDER[pmploc].TARGCOMPDATE) :new Date(curr.WORKORDER[pmploc].SCHEDFINISH); days = Math.round(daysDiff(d,reportdate)/60.0/24.0);
+ass += days
+< 0 ? "Late Back ": "Back " ass +=d ays + " Days"; }else if ( curr.ASSETMETER ) { for ( am=0; am< curr.ASSETMETER.length; am++ ){ var currmeter=c urr.ASSETMETER[am]; if ( currmeter.PMMETER ){ pmexists=t rue; for ( pm=0; pm < currmeter.PMMETER.length;
+    pm++) { if ( currmeter.PMMETER[pm].LASTPMWOGENREADDT ) { reportdate=n ew Date(currmeter.PMMETER[pm].LASTPMWOGENREADDT); days=c urrmeter.AVERAGE==0 ? 0 : currmeter.PMMETER[pm].FREQUENCY/currmeter.AVERAGE; reportdate.setDate(reportdate.getDate() + days
+    ); days=M ath.round(daysDiff(d,reportdate)/60.0/24.0); ass +=d ays< 0 ? "<late style='color:black'>Late ": "Due "; ass +=d ays+ " Days"; }else { lifetodate=c urrmeter.LIFETODATE; reportdate=n ew Date(curr.INSTALLDATE); rate=d aysDiff(reportdate,d)/60.0/24.0;
+    average=l ifetodate / rate ; days=M ath.round(currmeter.PMMETER[pm].FREQUENCY/average); reportdate.setDate(reportdate.getDate() + days ); ass +=d ays< 0 ? "<late style='color:black'>Late ": "Due "; ass +=d ays+ " Days"; } } } } if ( !pmexists ) ass +="<late style='color:black'>No PM"
+    ; } ; reportdate=c urr.INSTALLDATE===u ndefined ? new Date(curr.STATUSDATE ) : new Date(curr.INSTALLDATE); rate=d aysDiff(reportdate,d)/60.0; avail=M ath.round(10000*(1-(curr.TOTDOWNTIME/rate)))/100; ass +="<br/> Avail  " + avail + "%"; return ass; }
+    function buildassettitle ( curr , pmpfound, pmpservice, pmploc ){ var asstitle="" ; if ( pmpfound && !pmpservice ) { schdate=n ew Date(curr.WORKORDER[pmploc].SCHEDSTART); asstitle="Service Scheduled " + schdate.toLocaleDateString() + "<br/><br/>" + asstitle;
+    } if ( curr.WORKORDER ) { for ( w=0; w<curr.WORKORDER.length; w++ ){ var reportdate=n ew Date(curr.WORKORDER[w].REPORTDATE); asstitle +="<a href='http://maximoprod.boliden.internal/maximo/ui/maximo.jsp?event=loadapp&amp;value=WOTRACK&amp;uniqueid=" ;
+    asstitle +=c urr.WORKORDER[w].WORKORDERID + "' target='_blank'>"; asstitle +=c urr.WORKORDER[w].WONUM + "</a>"; asstitle +="<b>" ; asstitle +=" [reported " + reportdate.toLocaleDateString() + "]  </b>" asstitle +=c urr.WORKORDER[w].AMCREW===u ndefined
+    ? "" : curr.WORKORDER[w].AMCREW[0].DESCRIPTION; asstitle +="<br/>" ; asstitle +=c urr.WORKORDER[w].DESCRIPTION; asstitle +=c urr.WORKORDER[w].DESCRIPTION_LONGDESCRIPTION===u ndefined? "": ". <br/>" + curr.WORKORDER[w].DESCRIPTION_LONGDESCRIPTION.replace(/<\/?[^>]+(>|$)/g, " ").replace(/&#039;/g, "'"); if ( curr.WORKORDER[w].WORKLOG ) { asstitle += curr.WORKORDER[w].WORKLOG[0].DESCRIPTION === undefined ? "": ". <br/>" + curr.WORKORDER[w].WORKLOG[0].DESCRIPTION; } asstitle +="<br/><br/>"; } // ass = ass+"
+    <span
+        class=tooltiptext>"+asstitle+"</span>"; // asstitle = asstitle.replace(/
+        <\/?[^>]+(>|$)/g, "\n"); } return asstitle; } function displaytable ( json ) { var tr = null; var assetupcount=0; var assetdowncount=0; var assetservice=0; var assetbreakdowncount=0; var assettotal=0; var cellLength=0; var d = new Date(); var toptbl
+            = null; var toggle = false; var asstitle = ""; var department=""; var toptbl = document.getElementById( "tgt" ); tblhead = toptbl.getElementsByTagName("thead")[0]; tbl = toptbl.getElementsByTagName("tbody")[0]; var assetrecords = json.QueryREST_ASSETWResponse.rsCount;
+            if ( assetrecords == 0 ) return; set( "lastupdated", d.toLocaleString()); var assetcolums = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length; var sectionname = null; var oldsectionname = null; var nocolumns = 0; var found = false;
+            var days; var pmpfound = false; var pmpservice = false; var currdept="xx"; builddeptbox ( json ); tablelength = toptbl.rows.length; for (var i = 0 ; i
+            <tablelength; i++) { toptbl.deleteRow(0); } // start rebuild the header with the single
+                version of the description tr=t blhead.insertRow(0); // add columns for the machine types currently using CLASSSTRUCTURE td=t r.insertCell(-1);td.innerHTML="Department" HeaderCells=t optbl.rows.item(0).cells; for( i=0; i < assetcolums ; i++
+                ) { var curr=j son.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i]; sectionname=c urr.CLASSSTRUCTURE[0].DESCRIPTION; department=c urr.LOCATIONS[0].DESCRIPTION; ass=c urr.ASSETNUM; if ( (curr.PRIORITY <=c hosenpriority ) && ( chosendept==d
+                epartment ||chosendept=="All" ) && ( !curr.ISRUNNING || running=="All" ) ) { if ( nocolumns>0 ){ HeaderCells = toptbl.rows.item(0).cells; //gets cells of current row found = false; cellLength = HeaderCells.length; for ( var j = 0; j
+                <cellLength ; j++ ) { var cellVal=H eaderCells.item(j).innerHTML; if ( sectionname===c ellVal) { found=t
+                    rue; } } } // add them to the column headers if ( !found ){ td=t r.insertCell(-1); td.innerHTML=s ectionname; nocolumns +=1 ; oldsectionname=s ectionname; } cellLength=H eaderCells.length; } } cellLength=H eaderCells===u ndefined ? 0 :HeaderCells.length;
+                    if ( cellLength < 2 ) { toptbl.deleteRow(0); tr=t optbl.insertRow(0); td=t r.insertCell(-1); td.innerHTML=c ellLength + " type(s) found but not with chosen options"; return; } // run down through the cells with the logic of using the
+                    "machine type" field as a sort field swap=t rue; while ( swap ) { swap=false; for (l=1 ; l < HeaderCells.length-1; l++) { currsection=H eaderCells.item(l).innerHTML; nextsection=H eaderCells.item(l+1).innerHTML; if ( currsection> nextsection ) { HeaderCells.item(l).innerHTML = nextsection; HeaderCells.item(l+1).innerHTML = currsection ; swap= true; } } } for( i=0; i
+                    < assetcolums ; i++ ) { var curr=j son.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i]; department=c
+                        urr.LOCATIONS[0].DESCRIPTION; isrun=c urr.ISRUNNING; curprior=c urr.PRIORITY; if ( ( curr.PRIORITY <=c hosenpriority) && ( chosendept==d epartment || chosendept=="All" ) && ( !curr.ISRUNNING || running=="All" ) ) { sectionname=c urr.CLASSSTRUCTURE[0].DESCRIPTION;
+                        found=f alse; // find the next available slot var locald; assettotal++; for ( k=0; k<tbl.rows.length; ++k){ if ( !found ){ deptlabel=t bl.rows.item(k).cells; currdept=d eptlabel.item(0).innerHTML; if ( department==c urrdept ) { for
+                        (l=0 ; l < HeaderCells.length; l++) { currsection=H eaderCells.item(l).innerHTML; if ( sectionname==c urrsection ) { if ( !deptlabel.item(l).innerHTML ) { found=t rue; if ( curr.ASSETNUM=="116" ){ var stop=0 ; } pmpfound=f alse; pmpservice=f
+                        alse; var pmploc=0; if ( curr.ISRUNNING ){ deptlabel.item(l).className=c urr.WORKORDER ? "assetup2" : "assetup"; assetupcount +=1 ; } else { if ( curr.WORKORDER ) { for ( w=0; w<curr.WORKORDER.length; w++ ){ if ( curr.WORKORDER[w].WORKTYPE=="PMP"
+                        ){ pmpfound=t rue; pmploc=w ; } } if ( pmpfound && curr.WORKORDER[pmploc].STATUS=="INPRG" ) { deptlabel.item(l).className="assetservice" ; assetservice+=1; pmpservice=t rue; } else { assetdowncount +=1 ; assetbreakdowncount +=1 ; deptlabel.item(l).className="assetdown2"
+                        ; } } else { deptlabel.item(l).className="assetdown" ; assetdowncount +=1 ; } } days=c alcassetdays ( curr ); asstitle=b uildassettitle ( curr , pmpfound, pmpservice, pmploc ); ass=b uildassetcell( curr, pmpfound, pmpservice, pmploc
+                        ); if (days < 7 ){ if ( pmpfound ) { var stop=0; if ( !pmpservice) { //deptlabel.item(l).className="serviceduepmp" ; } }else { // deptlabel.item(l).className=c urr.ISRUNNING ? "servicedueup": "serviceduedn"; null; } } ass +=a sstitle.length>
+                    10 ? "<span class=tooltiptext>"+asstitle+"</span>" : "" ; deptlabel.item(l).innerHTML = ass; // deptlabel.item(l).innerHTML = ass+"<span class=tooltiptext>"+asstitle+"</span>"; // deptlabel.item(l).title = asstitle; break; } else {
+                        break; } } } } } } if ( !found ){ if ( curr.ASSETNUM == "116"){ var stop = 0; } tr = tbl.insertRow(-1); td = tr.insertCell( -1 ); td.innerHTML = department; if ( currdept==department ){ td.className = "productionh"; }else{ toggle=!toggle;
+                        td.className = "production"; }; ldept = department.toLowerCase(); currdept=department; for ( var j = 1; j
+                        <cellLength ; j++ ) { currsection=H eaderCells.item(j).innerHTML; td=t r.insertCell(-1); td.className="development" ; if (
+                            toggle ){ } if ( sectionname===c urrsection) { // td.innerHTML=a ss+ "<span class=tooltiptext>"+asstitle+ "</span>";; // td.title=a sstitle; pmpfound=f alse; pmpservice=f alse; if ( curr.ISRUNNING ){ td.className=c urr.WORKORDER
+                            ? "assetup2" : "assetup"; assetupcount +=1 ; if ( curr.WORKORDER ) { for ( w=0;w<curr.WORKORDER.length;w++ ){ if ( curr.WORKORDER[w].WORKTYPE=="PMP" ){ pmpfound=t rue; pmploc=w; } } } } else { if ( curr.WORKORDER ) { for ( w=0;w<curr.WORKORDER.length;w++
+                            ){ if ( curr.WORKORDER[w].WORKTYPE=="PMP" ){ pmpfound=t rue; pmploc=w; } } if ( pmpfound && curr.WORKORDER[pmploc].STATUS=="INPRG" ) { td.className="assetservice" ; assetservice+=1; pmpservice=t rue; } else { assetdowncount +=1
+                            ; assetbreakdowncount +=1; td.className="assetdown2" ; } } else { td.className="assetdown" ; assetdowncount +=1 ; } } days=c alcassetdays ( curr ); asstitle=b uildassettitle ( curr , pmpfound , pmpservice, pmploc); ass=b uildassetcell(
+                            curr , pmpfound, pmpservice, pmploc ); if (days < 7 ){ if ( pmpfound ) { var stop=0; if ( !pmpservice ) { td.className=c urr.ISRUNNING ? "serviceduepmp": "serviceduedn" } }else { td.className=c urr.ISRUNNING ? "servicedueup":
+                            "serviceduedn"; } } ass +=a sstitle.length> 10 ? "<span class=tooltiptext>"+asstitle+"</span>" : "" ; td.innerHTML = ass; // td.title= asstitle; } } } } } set("assetupcount",assetupcount); set("assetdowncount",assetdowncount); set("assetservice",assetservice); set("assetbreakdowncount",assetbreakdowncount);
+                            set("uppct",(Math.round(1000.0*assetupcount/assettotal)/10.0)+"%"); set("downpct",(Math.round(1000.0*assetdowncount/assettotal)/10.0)+"%"); set("servicepct",(Math.round(1000.0*assetservice/assettotal)/10.0)+"%"); set("breakpct",(Math.round(1000.0*assetbreakdowncount/assettotal)/10.0)+"%");
+                            } function daysDiff (date1, date2) { // Get 1 day in milliseconds var one_day=1000*60*60; var one_hour=1000*60*60; var one_min=1000*60; var mins; var hours; // Convert both dates to milliseconds // Calculate the difference
+                            in milliseconds // Convert back to days and return mins = (date2.getTime()-date1.getTime())/one_min; // mins = "0"+Math.round(mins); // while (mins.length
+                            < 10) { // mins="0" + mins; // } return mins; } function daysBetween
+                                (date1, date2) { // Get 1 day in milliseconds var one_day=1000*60*60; var one_hour=1000*60*60; var one_min=1000*60; var mins; var hours; // Convert both dates to milliseconds // Calculate the difference in milliseconds // Convert
+                                back to days and return mins=( date2.getTime()-date1.getTime())/one_min; mins=M ath.round(mins); hours=( mins/60.0); hours=M ath.round(hours); mins=m ins - hours*60.0; if ( hours==0 ) { downtime=m ins+ "M"; }else if ( hours>
+                            47 ) { downtime = Math.round(hours/2.4)/10.0+"D"; } else { downtime = hours+"H"; } return downtime; } // siteBox.onchange = function() { // var selectedSite = this.options[this.selectedIndex].value; // for( var j=storeBox.options.length-1;
+                                j >= 0; j-- ) { // storeBox.remove(j); // Clears all old values // } // var storefilter = {maxrows: 200,offset: 0,fields:[{"SITEID":selectedSite},{TYPE:"STOREROOM"},{INVOWNER:"%"}]}; // // SOA004Client.dataobject = "REST_STOREROOM";
+                                // var sites = SOA004Client.get(storefilter); // // if ( sites.QueryREST_STOREROOMResponse.rsCount>0) { // for( var i=0; i
+                                < sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS.length; i++ ) { // var curr=s ites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS[i];
+                                // var opt=d ocument.createElement( "OPTION"); // opt.value=c urr.LOCATION; // opt.text=c urr.DESCRIPTION; // storeBox.add(opt); // } // } // update(); // } function update() { var d=n ew Date(); var filter; chosenpriority=p
+                                    riBox.options[priBox.selectedIndex].value; filterpriority=c hosenpriority==9 9 ? "!~null~" : chosenpriority; if (chosenpriority==9 9 ){ filter={ maxrows: 600,offset: 0,fields: [{SITEID: "=TAR"},{ASSETTYPE: "=FLEET"},{STATUS:
+                                    "=OPERATING"},{LOCATION: "!~null~"},{CLASSSTRUCTUREID: "!~null~"}]}; }else { filter={ maxrows: 600,offset: 0,fields: [{SITEID: "=TAR"},{ASSETTYPE: "=FLEET"},{STATUS: "=OPERATING,=ACTIVE"},{LOCATION: "!~null~"},{CLASSSTRUCTUREID:
+                                    "!~null~"},{PRIORITY:filterpriority}]}; } SOA004Client.dataobject="REST_ASSETW" ; json=S OA004Client.get(filter); if ( json.error===u ndefined ) { sortbydept ( json, true ); displaytable (json); } else { set( "lastupdated", json.error
+                                    + "<br/>" + d.toLocaleString() ); } } SOA004Client.init(); SOA004Client.system="MAXIMO" ; SOA004Client.dataobject="REST_ASSETW" ; deptBox.value="All" ; priBox.value="1" ; runningBox.value="All" ; update(); setInterval(
+                                    function() {update();}, interval); </script>
 
-      return ass;
-    }
-
-    function buildassettitle ( curr , pmpfound, pmpservice, pmploc ){
-      var asstitle ="";
-
-      if ( pmpfound && !pmpservice ) {
-        schdate = new Date(curr.WORKORDER[pmploc].SCHEDSTART);
-        asstitle ="Service Scheduled "+ schdate.toLocaleDateString() + "<br/><br/>" + asstitle;
-      }
-
-      if ( curr.WORKORDER ) {
-        for ( w=0; w<curr.WORKORDER.length; w++ ){
-            var reportdate = new Date(curr.WORKORDER[w].REPORTDATE);
-          asstitle +="<a href='http://maximoprod.boliden.internal/maximo/ui/maximo.jsp?event=loadapp&amp;value=WOTRACK&amp;uniqueid=";
-          asstitle += curr.WORKORDER[w].WORKORDERID + "' target='_blank'>";
-          asstitle += curr.WORKORDER[w].WONUM + "</a>";
-          asstitle += "<b>";
-          asstitle += " [reported " + reportdate.toLocaleDateString() +"]  </b>"
-          asstitle += curr.WORKORDER[w].AMCREW === undefined ? "" : curr.WORKORDER[w].AMCREW[0].DESCRIPTION;
-          asstitle += "<br/>";
-          asstitle += curr.WORKORDER[w].DESCRIPTION;
-          asstitle += curr.WORKORDER[w].DESCRIPTION_LONGDESCRIPTION === undefined?"":". <br/>" + curr.WORKORDER[w].DESCRIPTION_LONGDESCRIPTION.replace(/<\/?[^>]+(>|$)/g, " ").replace(/&#039;/g, "'");
-          if ( curr.WORKORDER[w].WORKLOG )  {
-            asstitle += curr.WORKORDER[w].WORKLOG[0].DESCRIPTION === undefined ? "": ". <br/>" + curr.WORKORDER[w].WORKLOG[0].DESCRIPTION;
-          }
-          asstitle +="<br/><br/>";
-        }
-//						ass = ass+"<span class=tooltiptext>"+asstitle+"</span>";
-//						asstitle = asstitle.replace(/<\/?[^>]+(>|$)/g, "\n");
-      }
-      return asstitle;
-    }
-
-		function displaytable ( json ) {
-      var tr = null;
-      var assetupcount=0;
-      var assetdowncount=0;
-      var assetservice=0;
-			var assetbreakdowncount=0;
-			var assettotal=0;
-			var cellLength=0;
-      var d = new Date();
-      var toptbl = null;
-      var toggle = false;
-      var asstitle = "";
-      var department="";
-      var toptbl = document.getElementById( "tgt" );
-      tblhead = toptbl.getElementsByTagName("thead")[0];
-      tbl = toptbl.getElementsByTagName("tbody")[0];
-
-			var assetrecords = json.QueryREST_ASSETWResponse.rsCount;
-			if ( assetrecords == 0 ) return;
-
-      set( "lastupdated", d.toLocaleString());
-
-			var assetcolums  = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length;
-			var sectionname = null;
-			var oldsectionname = null;
-			var nocolumns = 0;
-			var found = false;
-      var days;
-      var pmpfound = false;
-      var pmpservice = false;
-      var currdept="xx";
-
-			builddeptbox ( json );
-
-      tablelength = toptbl.rows.length;
-			for (var i = 0 ; i <tablelength; i++) {
-				toptbl.deleteRow(0);
-			}
-
-      // start rebuild the header with the single version of the description
-      tr = tblhead.insertRow(0);
-
-			// add columns for the machine types currently using CLASSSTRUCTURE
-			td = tr.insertCell(-1);td.innerHTML = "Department"
-
-			HeaderCells = toptbl.rows.item(0).cells;
-			for( i=0; i < assetcolums ; i++ ) {
-				var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-				sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
-				department = curr.LOCATIONS[0].DESCRIPTION;
-				ass = curr.ASSETNUM;
-				if ( (curr.PRIORITY <= chosenpriority ) &&
-				   ( chosendept == department ||chosendept== "All" ) &&
-				   ( !curr.ISRUNNING || running == "All" ) ) {
-					if ( nocolumns>0 ){
-						HeaderCells = toptbl.rows.item(0).cells;
-						//gets cells of current row
-						found = false;
-						cellLength = HeaderCells.length;
-						for ( var j = 0; j<cellLength ; j++ ) {
-							var cellVal = HeaderCells.item(j).innerHTML;
-							if ( sectionname === cellVal)  {
-								found = true;
-								}
-							}
-						}
-						// add them to the column headers
-					if ( !found ){
-						td = tr.insertCell(-1);
-						td.innerHTML = sectionname;
-						nocolumns += 1;
-						oldsectionname= sectionname;
-					}
-					cellLength = HeaderCells.length;
-				}
-			}
-			cellLength = HeaderCells === undefined ? 0 :HeaderCells.length;
-
-			if ( cellLength < 2 ) {
-        toptbl.deleteRow(0);
-        tr = toptbl.insertRow(0);
-        td = tr.insertCell(-1);
-        td.innerHTML = cellLength + " type(s) found but not with chosen options";
-			return;
-			}
-
-			// run down through the cells with the logic of using the "machine type" field as a sort field
-			swap = true;
-			while ( swap ) {
-				swap=false;
-				for (l = 1; l < HeaderCells.length-1; l++) {
-					currsection = HeaderCells.item(l).innerHTML;
-					nextsection = HeaderCells.item(l+1).innerHTML;
-					if ( currsection > nextsection ) {
-						HeaderCells.item(l).innerHTML = nextsection;
-						HeaderCells.item(l+1).innerHTML = currsection ;
-						swap= true;
-					}
-				}
-			}
-
-			for( i=0; i < assetcolums ; i++ ) {
-				var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-				department = curr.LOCATIONS[0].DESCRIPTION;
-				isrun =  curr.ISRUNNING;
-				curprior = curr.PRIORITY;
-
-				if (   ( curr.PRIORITY <= chosenpriority)
-					&& ( chosendept == department || chosendept == "All" )
-					&& ( !curr.ISRUNNING || running == "All" ) ) {
-					sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
-					found = false;
-					// find the next available slot
-					var locald;
-					assettotal++;
-					for ( k=0; k<tbl.rows.length; ++k){
-						if ( !found ){
-							deptlabel = tbl.rows.item(k).cells;
-							currdept = deptlabel.item(0).innerHTML;
-							if ( department == currdept   ) {
-								for (l = 0; l < HeaderCells.length; l++) {
-									currsection = HeaderCells.item(l).innerHTML;
-									if ( sectionname == currsection ) {
-										if ( !deptlabel.item(l).innerHTML ) {
-											found = true;
-                      if ( curr.ASSETNUM == "116"){
-                        var stop = 0;
-                      }
-                      pmpfound = false;
-                      pmpservice = false;
-                      var pmploc=0;
-											if ( curr.ISRUNNING ){
-												deptlabel.item(l).className =  curr.WORKORDER ? "assetup2" :"assetup";
-												assetupcount += 1;
-											} else {
-												if ( curr.WORKORDER ) {
-													for ( w=0; w<curr.WORKORDER.length; w++ ){
-														if ( curr.WORKORDER[w].WORKTYPE == "PMP" ){
-															pmpfound = true;
-                              pmploc = w;
-														}
-													}
-													if ( pmpfound && curr.WORKORDER[pmploc].STATUS=="INPRG") {
-														deptlabel.item(l).className="assetservice";
-														assetservice+=1;
-                            pmpservice = true;
-													} else {
-														assetdowncount += 1;
-														assetbreakdowncount += 1;
-														deptlabel.item(l).className="assetdown2";
-													}
-												} else {
-													deptlabel.item(l).className="assetdown";
-													assetdowncount += 1;
-												}
-											}
-
-                      days = calcassetdays ( curr );
-                      asstitle = buildassettitle ( curr , pmpfound, pmpservice, pmploc  );
-                      ass = buildassetcell( curr, pmpfound, pmpservice, pmploc );
-
-                      if (days < 7 ){
-                        if ( pmpfound ) {
-                          var stop =0;
-                          if ( !pmpservice) {
-                            //deptlabel.item(l).className="serviceduepmp";
-                          }
-                        }else {
-//                          deptlabel.item(l).className= curr.ISRUNNING ? "servicedueup":"serviceduedn";
-                            null;
-                        }
-                      }
-                      ass += asstitle.length > 10 ? "<span class=tooltiptext>"+asstitle+"</span>" : "" ;
-											deptlabel.item(l).innerHTML =  ass;
-//                      deptlabel.item(l).innerHTML =  ass+"<span class=tooltiptext>"+asstitle+"</span>";
-//											deptlabel.item(l).title = asstitle;
-											break;
-										} else {
-											break;
-										}
-									}
-								}
-							}
-						}
-					}
-					if ( !found ){
-            if ( curr.ASSETNUM == "116"){
-              var stop = 0;
-            }
-						tr = tbl.insertRow(-1);
-            td = tr.insertCell( -1 );
-            td.innerHTML = department;
-            if ( currdept==department ){
-              td.className = "productionh";
-            }else{
-              toggle=!toggle;
-              td.className = "production";
-            };
-						ldept = department.toLowerCase();
-						currdept=department;
-						for ( var j = 1; j<cellLength ; j++ ) {
-							currsection = HeaderCells.item(j).innerHTML;
-							td = tr.insertCell(-1);
-              td.className= "development";
-              if ( toggle ){
-              }
-							if ( sectionname === currsection)  {
-//								td.innerHTML = ass+"<span class=tooltiptext>"+asstitle+"</span>";;
-//								td.title= asstitle;
-                  pmpfound = false;
-                  pmpservice = false;
-							if ( curr.ISRUNNING ){
-									td.className =  curr.WORKORDER ? "assetup2" :"assetup";
-									assetupcount += 1;
-                  if ( curr.WORKORDER ) {
-											for ( w=0;w<curr.WORKORDER.length;w++ ){
-												if ( curr.WORKORDER[w].WORKTYPE == "PMP" ){
-													pmpfound = true;
-                          pmploc=w;
-												}
-											}
-                  }
-								} else {
-  								if ( curr.WORKORDER ) {
-											for ( w=0;w<curr.WORKORDER.length;w++ ){
-												if ( curr.WORKORDER[w].WORKTYPE == "PMP" ){
-													pmpfound = true;
-                          pmploc=w;
-												}
-											}
-                      if ( pmpfound && curr.WORKORDER[pmploc].STATUS=="INPRG")  {
-                        td.className="assetservice";
-											  assetservice+=1;
-                        pmpservice = true;
-										  } else {
-											   assetdowncount += 1;
-											   assetbreakdowncount +=1;
-											   td.className="assetdown2";
-										  }
-									} else {
-										td.className="assetdown";
-										assetdowncount += 1;
-									}
-								}
-                days = calcassetdays ( curr );
-                asstitle = buildassettitle ( curr , pmpfound , pmpservice, pmploc);
-                ass = buildassetcell( curr  , pmpfound, pmpservice, pmploc );
-
-                if (days < 7 ){
-                  if ( pmpfound ) {
-                    var stop =0;
-                    if ( !pmpservice ) {
-                      td.className= curr.ISRUNNING ? "serviceduepmp":"serviceduedn"
-                    }
-                  }else {
-                    td.className= curr.ISRUNNING ? "servicedueup":"serviceduedn";
-                  }
-                }
-                ass += asstitle.length > 10 ? "<span class=tooltiptext>"+asstitle+"</span>" : "" ;
-                td.innerHTML = ass;
-//								td.title= asstitle;
-
-							}
-						}
-					}
-				}
-			}
-			set("assetupcount",assetupcount);
-			set("assetdowncount",assetdowncount);
-			set("assetservice",assetservice);
-			set("assetbreakdowncount",assetbreakdowncount);
-			set("uppct",(Math.round(1000.0*assetupcount/assettotal)/10.0)+"%");
-			set("downpct",(Math.round(1000.0*assetdowncount/assettotal)/10.0)+"%");
-			set("servicepct",(Math.round(1000.0*assetservice/assettotal)/10.0)+"%");
-			set("breakpct",(Math.round(1000.0*assetbreakdowncount/assettotal)/10.0)+"%");
-
-		}
-
-
-        function daysDiff (date1, date2) {
-            // Get 1 day in milliseconds
-            var one_day=1000*60*60;
-            var one_hour=1000*60*60;
-            var one_min=1000*60;
-            var mins;
-            var hours;
-          // Convert both dates to milliseconds
-          // Calculate the difference in milliseconds
-          // Convert back to days and return
-            mins = (date2.getTime()-date1.getTime())/one_min;
-//            mins = "0"+Math.round(mins);
-//			while (mins.length < 10) {
-//				mins = "0" + mins;
-//			}
-          return mins;
-        }
-
-        function daysBetween (date1, date2) {
-            // Get 1 day in milliseconds
-            var one_day=1000*60*60;
-            var one_hour=1000*60*60;
-            var one_min=1000*60;
-            var mins;
-            var hours;
-          // Convert both dates to milliseconds
-          // Calculate the difference in milliseconds
-          // Convert back to days and return
-            mins = (date2.getTime()-date1.getTime())/one_min;
-            mins = Math.round(mins);
-            hours = (mins/60.0);
-            hours = Math.round(hours);
-            mins = mins - hours*60.0;
-            if ( hours == 0 ) {
-                downtime = mins+"M";
-            }else if ( hours > 47 ) {
-                downtime = Math.round(hours/2.4)/10.0+"D";
-			} else {
-                downtime = hours+"H";
-            }
-          return downtime;
-        }
-
-//        siteBox.onchange = function() {
-//            var selectedSite = this.options[this.selectedIndex].value;
-//            for( var j=storeBox.options.length-1; j >= 0; j-- ) {
-//                storeBox.remove(j);   // Clears all old values
-//            }
-//            var storefilter = {maxrows: 200,offset: 0,fields:[{"SITEID":selectedSite},{TYPE:"STOREROOM"},{INVOWNER:"%"}]};
-//
-//            SOA004Client.dataobject = "REST_STOREROOM";
-//            var sites = SOA004Client.get(storefilter);
-//
-//            if ( sites.QueryREST_STOREROOMResponse.rsCount>0) {
-//                for( var i=0; i < sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS.length; i++ ) {
-//                    var curr = sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS[i];
-//                    var opt = document.createElement("OPTION");
-//                    opt.value = curr.LOCATION;
-//                    opt.text = curr.DESCRIPTION;
-//                    storeBox.add(opt);
-//                }
-//            }
-//            update();
-//        }
-
-    function update() {
-        var d = new Date();
-        var filter;
-        chosenpriority = priBox.options[priBox.selectedIndex].value;
-        filterpriority = chosenpriority == 99 ? "!~null~" : chosenpriority;
-        if (chosenpriority== 99 ){
-          filter = {maxrows: 600,offset: 0,fields: [{SITEID:"=TAR"},{ASSETTYPE:"=FLEET"},{STATUS:"=OPERATING"},{LOCATION:"!~null~"},{CLASSSTRUCTUREID:"!~null~"}]};
-        }else {
-          filter = {maxrows: 600,offset: 0,fields: [{SITEID:"=TAR"},{ASSETTYPE:"=FLEET"},{STATUS:"=OPERATING,=ACTIVE"},{LOCATION:"!~null~"},{CLASSSTRUCTUREID:"!~null~"},{PRIORITY:filterpriority}]};
-        }
-		    SOA004Client.dataobject = "REST_ASSETW";
-			  json = SOA004Client.get(filter);
-        if ( json.error === undefined  ) {
-          sortbydept ( json, true );
-  			  displaytable (json);
-        } else {
-          set( "lastupdated", json.error  + "<br/>" + d.toLocaleString() );
-        }
-    }
-
-        SOA004Client.init();
-		SOA004Client.system="MAXIMO";
-		SOA004Client.dataobject = "REST_ASSETW";
-		deptBox.value = "All";
-		priBox.value="1";
-		runningBox.value="All";
-		update();
-		setInterval( function() {update();}, interval);
-
-	</script>
-
-	</body>
+                                    </body>
 
 </html>
