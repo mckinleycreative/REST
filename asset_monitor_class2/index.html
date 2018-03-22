@@ -37,7 +37,10 @@
 					<option value="Down">Down Only</option>
 				</select>
             </td>
-            <td>Last Update<br/><span id="lastupdated"></span></td>
+            <td>
+                Last Update:<span id="lastupdated"></span>
+                <br/>Last Run:<span id="lastrun"></span>
+            </td>
             <tr>
                 <td class="assetup">Up</td>
                 <td class="assetdown">Down</td>
@@ -97,9 +100,9 @@
         var running = "All";
         var json = null;
         var HeaderCells;
-        var start = new Date();
+        var startdate = new Date();
 
-        start.setYear(1);
+        startdate.setYear(1);
 
         var deptBox = document.getElementById('department');
         var priBox = document.getElementById('priority');
@@ -119,7 +122,7 @@
         priBox.onchange = function() {
             //			chosenpriority = priBox.options[priBox.selectedIndex].value;
             //			displaytable( json );
-            start.setYear(1);
+            startdate.setYear(1);
             update();
         }
 
@@ -143,12 +146,12 @@
         }
 
         function outputconsole(text, json) {
-            var start = 0;
+            var j = 0;
             var allrecords = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length;
             var i = 0;
             var records = allrecords - 1;
             if (debug) {
-                for (i = start; i < allrecords; ++i) {
+                for (i = j; i < allrecords; ++i) {
                     curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
                     console.log(text + "::" + compile(curr));
                 };
@@ -182,7 +185,7 @@
         function sortbydept(json, dept) {
             var start = 0;
             var allrecords = json.QueryREST_ASSETWResponse.rsTotal;
-            if ( allrecords == 0 ) return;
+            if (allrecords == 0) return;
             var swap = true;
             var endstop = 0;
             var endstart = 0;
@@ -194,8 +197,8 @@
             // stript out repeated text from department names
             for (i = start; i < allrecords; ++i) {
                 curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-                curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','');
-//                curr.LOCATIONS.DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : curr.LOCATIONS.DESCRIPTION.replace('Mine ', '').replace(' Fleet', '');
+                curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : curr.LOCATIONS[0].DESCRIPTION.replace('Mine ', '').replace(' Fleet', '');
+                //                curr.LOCATIONS.DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : curr.LOCATIONS.DESCRIPTION.replace('Mine ', '').replace(' Fleet', '');
                 //				curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','').replace(' Light','').replace(' Vehicles','');
                 //				.replace(' Equipment','').replace('Mobile ','').replace('Equipment ','');
                 json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i] = curr;
@@ -369,11 +372,12 @@
             tblhead = toptbl.getElementsByTagName("thead")[0];
             tbl = toptbl.getElementsByTagName("tbody")[0];
 
-            start = new Date();
+
             var assetrecords = json.QueryREST_ASSETWResponse.rsCount;
             if (assetrecords == 0) return;
 
-            set("lastupdated", start.toLocaleString());
+            startdate = new Date();
+            set("lastupdated", startdate.toLocaleString());
 
             var assetcolums = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length;
             var sectionname = null;
@@ -677,38 +681,13 @@
             return downtime;
         }
 
-        //        siteBox.onchange = function() {
-        //            var selectedSite = this.options[this.selectedIndex].value;
-        //            for( var j=storeBox.options.length-1; j >= 0; j-- ) {
-        //                storeBox.remove(j);   // Clears all old values
-        //            }
-        //            var storefilter = {maxrows: 200,offset: 0,fields:[{"SITEID":selectedSite},{TYPE:"STOREROOM"},{INVOWNER:"%"}]};
-        //
-        //            SOA004Client.dataobject = "REST_STOREROOM";
-        //            var sites = SOA004Client.get(storefilter);
-        //
-        //            if ( sites.QueryREST_STOREROOMResponse.rsCount>0) {
-        //                for( var i=0; i < sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS.length; i++ ) {
-        //                    var curr = sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS[i];
-        //                    var opt = document.createElement("OPTION");
-        //                    opt.value = curr.LOCATION;
-        //                    opt.text = curr.DESCRIPTION;
-        //                    storeBox.add(opt);
-        //                }
-        //            }
-        //            update();
-        //        }
-
         function update() {
             var filter;
-            var text = start.toUTCString();
-            text = start.toLocaleDateString();
-            text = start.toLocaleTimeString();
-            text = start.toLocaleString();
-            text = start.toDateString();
-            text = start.toString();
-            text = start.toGMTString();
-            text = ">" + start.toISOString();
+            startdate.setHours(0);
+            startdate.setMinutes(0);
+
+            var text = ">" + startdate.toISOString();
+            set("lastrun", startdate.toLocaleString());
             chosenpriority = priBox.options[priBox.selectedIndex].value;
             filterpriority = chosenpriority == 99 ? "!~null~" : chosenpriority;
             if (chosenpriority == 99) {
@@ -755,7 +734,7 @@
                 sortbydept(json, true);
                 displaytable(json);
             } else {
-                set("lastupdated", json.error + "<br/>" + start.toLocaleString());
+                set("lastupdated", json.error + "<br/>" + startdate.toLocaleString());
             }
         }
 
