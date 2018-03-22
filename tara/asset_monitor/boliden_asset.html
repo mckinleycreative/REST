@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="css/boliden.css" />
+		<title>BOLIDEN Asset Monitor</title>
+		<script src="js/soa004.js"></script>
+		<script src="js/reservation.js"></script>
+	</head>
+	<body>
+        <p><div>
+            <storerooms>
+            Site <select id='site' >
+                    <option value='TAR'>Tara Mines</option>
+                    <option value='ODD'>Odda</option>
+                    <option value='KRI'>Kristineberg</option>
+                    <option value='KAN'>Kankberg</option>
+                    <option value='GAR'>Garpenberg</option>
+                    <option value='AIT'>Aitik</option>
+                    <option value='RON'>Rönnskär</option>
+                    <option value='BOL'>Boliden</option>
+                    <option value='REN'>Renström</option>
+                    <option value='MAU'>Maurliden</option>
+				</select>
+            Location <select id='loc' onChange="update();">
+					<option value='1'>Priority 1</option>
+				</select>
+            </storerooms>
+            <key>
+			Last update:<span id="lastupdated"></span><br >
+			Asset     up:<span id="assetupcount"></span><br>
+			Assets down:<span id="assetdowncount"></span>
+            </key>
+        </div>
+        </p>
+            <section>
+                <table id="tgt"  data-order="[[ 3, desc ]]">
+                <thead>
+                    <th>Asset Number</th>
+                    <th>Downtime<br>(Hours:Mins)</th>
+                    <th>Status Date</th>
+                    <th>Status Date</th>
+                    <th>Location</th>
+                    </thead>
+                <tbody></tbody>
+                </table>
+            </section>
+
+		<div id="output"></div>
+	</body>
+	
+	<script>
+        
+        var interval = 10000;
+//		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
+		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
+		var updatefilter = {maxrows: 10,offset: 2,fields: [{SITEID:"TAR"}]};
+        var filter = searchfilter
+        
+        var siteBox = document.getElementById('site');
+        var storeBox = document.getElementById('loc');
+        
+		function set (id, val) {
+			var el = document.getElementById(id);
+			if( !el ) return;
+			el.innerHTML = val;
+		}
+
+        function pad(num, size) {
+            var s
+            if ( num < 24 ) {
+                s = "00" + num;
+                s = s.substr(s.length-size);
+            } else {
+                s = num;
+            }
+            return s;
+        }
+        function daysBetween (date1, date2) {
+            // Get 1 day in milliseconds
+            var one_day=1000*60*60;
+            var one_hour=1000*60*60;
+            var one_min=1000*60;
+            var mins;
+            var hours;
+          // Convert both dates to milliseconds
+          var date1_ms = date1.getTime();
+          var date2_ms = date2.getTime();
+          // Calculate the difference in milliseconds
+          var difference_ms = date2_ms - date1_ms;
+          // Convert back to days and return
+            mins = difference_ms/one_min;
+            mins = Math.trunc(mins);
+            hours = (mins/60.0);
+            hours = Math.trunc(hours);
+            mins = mins - hours*60.0;
+          return pad(hours,2)+":"+pad(mins,2); 
+        }
+
+        siteBox.onchange = function() {
+            var selectedSite = this.options[this.selectedIndex].value;
+            for( var j=storeBox.options.length-1; j >= 0; j-- ) {
+                storeBox.remove(j);   // Clears all old values
+            }
+            var storefilter = {maxrows: 200,offset: 0,fields:[{"SITEID":selectedSite},{TYPE:"STOREROOM"},{INVOWNER:"%"}]};
+
+            SOA004Client.dataobject = "REST_STOREROOM";
+            var sites = SOA004Client.get(storefilter);                 
+            
+            if ( sites.QueryREST_STOREROOMResponse.rsCount>0) {
+                for( var i=0; i < sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS.length; i++ ) {
+                    var curr = sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS[i];
+                    console.log("curr::"+curr.LOCATION+"::"+curr.DESCRIPTION);
+                    var opt = document.createElement("OPTION");
+                    opt.value = curr.LOCATION;
+                    opt.text = curr.DESCRIPTION;
+                    storeBox.add(opt);
+                } 
+            }
+            update();
+        }
+        
+        output.onclick = function() {
+            var selectedrecord = this.options[this.selectedIndex].value;
+            console.log("click:"+selectedrecord)
+            if ( selectedrecord == "neil") {
+                td.className = "nextday";
+            }
+        }
+        
+        switched = function(workorder, invreserveid, print, picked){
+            var d = new Date(); 
+
+            if ( workorder == "481112") {
+                print ? setvalue=0 : setvalue=1;
+                var printeddata = [{C_PRINTED:setvalue}];
+                SOA004Client.post( invreserveid, printeddata, function( json ) {console.log( json );} );
+//                SOA004Client.postasync( invreserveid, printeddata, function( json ) {console.log( json );} );
+                console.log( "ID"+invreserveid+" "+setvalue+":"+print+":"+d.toLocaleString());
+            }
+        }
+
+        function update() {
+            var json = null;
+            var tr = null;
+            var assetupcount=0;
+            var assetdowncount=0;
+            
+            var d = new Date(); 
+//            d.setDate = (d.getDate());
+            set( "lastupdated", d.toLocaleString());
+            var tbl = null;
+            var tbl = document.getElementById( "tgt" );
+            var rowCount = tbl.rows.length;
+            for (var i = 1 ; i < rowCount; i++) {
+                tbl.deleteRow(1);
+            }
+
+		SOA004Client.dataobject = "REST_ASSET";
+    
+		var sitebox = document.getElementById("site");
+		var site = sitebox.options[sitebox.selectedIndex].value;
+
+		var locbox = document.getElementById("loc");
+		var loc = locbox.options[locbox.selectedIndex].value;
+
+//        filter.fields["1"].LOCATION= loc;
+        filter.fields["0"].SITEID=site;
+        
+//        set("URL",filter.fields["0"].SITEID+":"+filter.fields["1"].LOCATION);
+        json = SOA004Client.get(filter)
+
+    	set("rowsfetched", json.QueryREST_ASSETResponse.rsCount);
+            
+            if (  json.QueryREST_ASSETResponse.rsCount>0 ) {
+                for( i=0; i < json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET.length; i++ ) {
+                var curr = json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i];
+    //            console.log(curr.SITEID+":"+curr.LOCATION+"::"+curr.ITEMNUM+":"+curr.INVRESERVEID);
+                tr = tbl.insertRow(-1);
+                var td =null
+                var locald = new Date(curr.CHANGEDATE);
+
+                if ( curr.ISRUNNING ){
+                    tr.className="assetup";
+                    assetupcount += 1;
+                } else {
+                    tr.className="assetdown";
+                    var downtime = daysBetween(locald,d);
+                    assetdowncount += 1;
+                }
+
+                var assetid = curr.ASSETUID;
+
+                td = tr.insertCell( -1 );td.innerHTML = curr.ASSETNUM+":"+ curr.DESCRIPTION;
+                td = tr.insertCell( -1 );td.innerHTML = curr.ISRUNNING ? "" : downtime;
+                td.className="decimal";
+                td = tr.insertCell( -1 );td.innerHTML = locald.toLocaleString();
+                td = tr.insertCell( -1 );td.innerHTML = curr.ISRUNNING;
+//                td = tr.insertCell( -1 );td.innerHTML = curr.ASSETSTATUS === undefined ? "" : curr.ASSETSTATUS[0].WONUM === undefined ? "" : curr.ASSETSTATUS[0].WONUM;
+                td = tr.insertCell( -1 );td.innerHTML = curr.LOCATION === undefined ? "" : curr.LOCATIONS[0].DESCRIPTION;
+                }
+            }
+            
+            set("assetupcount",assetupcount);
+            set("assetdowncount",assetdowncount);
+        }
+                    
+        
+        
+        SOA004Client.init();
+		SOA004Client.system="MAXIMO";
+		SOA004Client.dataobject = "REST_ASSET";
+//        siteBox.onchange();
+		update();
+		setInterval( function() {update();}, interval);
+       
+	</script>
+</html>

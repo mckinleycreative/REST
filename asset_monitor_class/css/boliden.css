@@ -1,0 +1,443 @@
+@import url("styles.css");
+/* {
+    background-color: #222222;
+}
+*/
+
+h1 {
+	font: 36px Helvetica;
+	font-weight: bold;
+	}
+
+h2 {
+		font: 14px Helvetica;
+		color: Tomato;
+		font-weight: bold;
+		}
+
+body {
+    font: 12px arial;
+    text-align: center;
+}
+
+controls {
+    padding-left: 20px;
+    padding-right: 20px;
+    font: 14px arial;
+}
+
+.hover {
+	transition: all 0.1s ease-in-out 1s;
+}
+
+select, option {
+    font: 14px arial;
+    padding-left: 10px;
+}
+
+section {
+    font: 12px arial;
+    font-weight: bold
+}
+
+table#control {
+    font: 12px arial;
+    font-weight: bold;
+    text-align: center;
+    width: 90%;
+    border: 0px;
+    color: white;
+    background-color: #7D9BC1;
+	margin-top: 10px;
+}
+
+table#tgt {
+    font: 12px arial;
+    border-collapse: collapse;
+    text-align: center;
+    border: 1px solid black;
+    background-color: lightgrey;
+    color: white;
+}
+
+table#tgt tr:first-child th {
+    font: large arial;
+    border-bottom: 4px solid lightgrey;
+	background-color: lightgrey;
+}
+
+thead {
+	color: white;
+	font-weight: bold;
+	background-color: grey;
+	text-align: center;
+	}
+
+
+/*td { padding-left: 5px; padding-right: 5px; text-align: center; border-style: solid}*/
+
+th, td {
+    border: 1px solid black;
+    width: 6%;
+	border-bottom: 0px;
+	text-align: center;
+}
+
+lupdate {
+    color: black;
+    float: left;
+    margin-left: 20%;
+    padding: 10px 10px 10px 10px;
+    background-color: ghostwhite;
+}
+
+assup {
+    color: black;
+}
+
+assdn {
+    color: aqua;
+	width: 140px;
+}
+
+asssrv {
+    color: black;
+}
+
+
+/* table#tgt tr:nth-child(even) {background-color: #eee;} */
+
+.production {
+    background-color: grey;
+	font-weight: bold;
+}
+
+.productionh {
+	color: grey;
+    background-color: grey;
+	border: 0px;
+}
+
+.development {
+    background-color: lightblue;
+	font-weight: bold;
+}
+
+.developmenth {
+	color: lightgrey;
+    background-color: lightgrey;
+	border: 0px;
+}
+
+.other {
+    background-color: #7D9BC1;
+	font-weight: bold;
+}
+
+.otherh {
+	color: #7D9BC1;
+    background-color: #7D9BC1;
+	border: 0px;
+}
+
+.odd {
+    background-color: white
+}
+
+.even {
+    background-color: lightgray
+}
+
+.picked {
+    background-color: lightgoldenrodyellow
+}
+
+.assetup {
+    color: black;
+    background-color: lightgreen;
+	border-collapse: separate!important;
+    text-align: center;
+    padding-left: 1%;
+}
+
+.assetup .tooltiptext {
+    
+	font: 22px arial;
+    visibility: hidden;
+    width: 40%;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 6px;
+    padding: 20px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.assetup:hover .tooltiptext {
+    visibility: visible;
+}
+
+.assetup2 {
+    color: black;
+    background-color: #56bf56;
+	border-collapse: separate!important;
+    text-align: center;
+    padding-left: 1%;
+}
+
+.assetup2 .tooltiptext {
+    left: 20%;
+	font: 22px arial;
+    visibility: hidden;
+    width: 40%;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 6px;
+    padding: 20px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.assetup2:hover .tooltiptext {
+    visibility: visible;
+}
+
+.assetdown .tooltiptext {
+    left: 20%;
+	font: 22px arial;
+    visibility: hidden;
+    width: 40%;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 6px;
+    padding: 20px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.assetdown:hover .tooltiptext {
+    visibility: visible;
+		transition: all 0.5s ease 3s;
+}
+
+.assetdown2 {
+    color: #a6f5ed;
+    background-color: #993737;
+    text-align: center;
+}
+
+.assetdown2 .tooltiptext {
+    left: 20%;
+	font: 22px arial;
+    visibility: hidden;
+    width: 40%;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 6px;
+    padding: 20px;
+		transition: all 0.1s ease-in-out 1s;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.assetdown2:hover .tooltiptext {
+    visibility: visible;
+		transition: all 0.1s ease-in-out 1s;
+}
+
+.assetservice .tooltiptext {
+    left: 20%;
+	  font: 22px arial;
+    visibility: hidden;
+    width: 40%;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 10px;
+    padding: 10px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.assetservice:hover .tooltiptext {
+    visibility: visible;
+}
+
+.assetdown {
+    color: #a6f5ed;
+    background-color: #d22121;
+    text-align: center;
+	padding-left: 1%;
+}
+
+.assetdown1 {
+    color: #a6f5ed;
+    background-color: #CD5C5C;
+    text-align: center;
+	padding-left: 1%;
+}
+
+.assetdown3 {
+    color: #a6f5ed;
+    background-color: #ffcccc;
+    text-align: center;
+}
+
+.assetservice {
+	color: black;
+    background-color: Cornsilk;
+    text-align: center;
+	padding-left: 1%;
+}
+
+.serviceduepmp .tooltiptext {
+    left: 20%;
+	  font: 22px arial;
+    visibility: hidden;
+    width: 40%;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 10px;
+    padding: 10px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.serviceduepmp:hover .tooltiptext {
+    visibility: visible;
+}
+
+.serviceduepmp {
+	color: #a6f5ed;
+	background-color: #993737;
+  text-align: center;
+	padding-left: 1%;
+}
+
+.servicedue .tooltiptext {
+    left: 20%;
+	  font: 22px arial;
+    visibility: hidden;
+    width: 40%;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 10px;
+    padding: 10px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.servicedue:hover .tooltiptext {
+    visibility: visible;
+}
+
+.servicedue {
+	color: black;
+    background-color: orange;
+    text-align: center;
+	padding-left: 1%;
+}
+
+.servicedueup .tooltiptext {
+    left: 20%;
+	  font: 22px arial;
+    visibility: hidden;
+    width: 40%;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 10px;
+    padding: 10px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.servicedueup:hover .tooltiptext {
+    visibility: visible;
+}
+
+.servicedueup {
+		color: black;
+    background-color: #56bf56;
+    text-align: center;
+	padding-left: 1%;
+}
+
+.serviceduedn .tooltiptext {
+    left: 20%;
+	  font: 22px arial;
+    visibility: hidden;
+    width: 40%;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 10px;
+    padding: 10px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.serviceduedn:hover .tooltiptext {
+    visibility: visible;
+}
+
+.serviceduedn {
+	color: #a6f5ed;
+	background-color: #993737;
+    text-align: center;
+	padding-left: 1%;
+}
+
+.decimal {
+    text-align: right;
+    padding-right: 45px
+}
+
+key {
+    float: right;
+    text-align: left;
+    font-weight: bold;
+    font-size: large;
+    text-indent: 2px;
+    margin: 30px;
+    padding: 1px;
+}
+
+colourdue {
+    background-color: lightblue
+}
+
+colourprinted {
+    background-color: lightgreen
+}
+
+colourpicked {
+    background-color: lightgoldenrodyellow
+}
+
+table.sortable th:not(.sorttable_sorted_reverse):not(.sorttable_sorted):not(.sorttable_nosort):after {
+    content: " \25B4\25BE"
+}

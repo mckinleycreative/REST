@@ -1,0 +1,61 @@
+@import url("styles.css");
+
+{background-color: lightblue;}
+/*            section {font:30px "Arial";}*/
+tr { font:large "Arial";text-align: left; font-weight: normal; border-bottom: 1px solid #999;}
+td { padding-left: 5px; padding-right: 5px; text-align: center; border-style: solid;text-align: left;}
+/*tr:hover { color:white ; background-color: darkblue}*/
+
+body { font:20px "Arial"; text-align: left;}
+
+storerooms {padding-left: 20px; padding-right: 20px; font:22px "Arial";}
+
+select  { font:22px "Arial"; width: 20%; padding-left: 10px}
+
+section { font:22px "Arial"; font-style: bold}
+
+table#tgt {
+    font:smaller "Arial";
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    color: black;
+}
+
+table#tgt tr:first-child th {
+    font:large "Arial";
+    font-weight: bold;
+    border-bottom: 4px solid gray;
+}
+
+assup { color:black; float: right; padding: 10px 10px 10px 49px; background-color: lightgreen}
+
+assdn { color:black; float: right; padding: 10px 10px 10px 10px; background-color: indianred}
+
+asssrv { color:black; float: right; padding: 10px 10px 10px 10px; background-color: lightgoldenrodyellow}
+
+/* table#tgt tr:nth-child(even) {background-color: #eee;} */
+.odd { background-color: white}
+.even { background-color: lightgray}
+.picked { background-color: lightgoldenrodyellow}
+.printed { background-color: lightgreen}
+.assetup {background-color: lightgreen; text-align: center}
+.assetdown { background-color: indianred; text-align: center}
+.assetservice { background-color: lightgoldenrodyellow; text-align: center}
+.decimal { text-align: right; padding-right: 15px}
+
+key {
+      float: right;
+      width: 40%;
+      text-align: left;
+      font-size: large;
+      margin: 10px;
+      padding:10px;
+      border: 10px;
+    }
+
+colourdue { background-color: lightblue;padding: 10px}
+colourprinted { background-color: lightgreen;padding: 10px}
+colourpicked { background-color: lightgoldenrodyellow;padding: 10px}
+
+table.sortable th:not(.sorttable_sorted_reverse):not(.sorttable_sorted):not(.sorttable_nosort):after { content: " \25B4\25BE" }

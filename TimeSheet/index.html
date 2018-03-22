@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="js/soa004.js"></script>
+    <script src='main.js'></script>
+    <script src="js/storage.js"></script>
+    <script src="js/rep.js"></script>
+    <title>Tidsregistrering</title>
+    <script>
+        validUser()
+    </script>
+
+    <body onload='REP.addRow();'>
+        <div id="wrapper">
+            <header>
+                <a href="index.html" id="logo"></a>
+                <h1>Tidsregistrering</h1>
+            </header>
+            <nav class="main_menu">
+                <ul>
+                    <div id="loginName">
+                        <li>
+                            <script>
+                                user = JSON.parse(sessionStorage.user);
+                                document.write(user.PERSON[0].DISPLAYNAME);
+                            </script>
+                        </li>
+                    </div>
+                    <div id="content-menu">
+                        <li class="dropdown"><a href="javascript:void(0)"><i class="fa fa-print fa-lg" aria-hidden="true"></i> Rapporter</a>
+                            <div class="dropdown-content">
+                                <a href="#">Alt 1</a>
+                                <a href="#">Alt 2</a>
+                            </div>
+                        </li>
+                        <li><a onClick='logout();'><i class="fa fa-sign-out fa-lg" aria-hidden="true"></i> Logga ut
+          </a></li>
+                    </div>
+                </ul>
+            </nav>
+
+            <!---End Header-->
+            <div id="sendMx">
+                <a onClick="REP.send();"><i class="fa fa-share-square-o fa-2x" aria-hidden="true"></i>Skicka till Maximo</a>
+            </div>
+            <div class="table-wrapp">
+
+                <table id="inrap">
+                    <tr>
+                        <th>AO-Nummer</th>
+                        <th>Datum</th>
+                        <th>Typ</th>
+                        <th>Timmar</th>
+                    </tr>
+
+                    <div id="tablefoot">
+                        <a id="addRowText" onClick="REP.addRow();"><i class="fa fa-plus-circle fa-3x" aria-hidden="true"></i> Lägg till rad</a>
+                    </div>
+
+
+                </table>
+            </div>
+            <section class="instruction">
+                <article>
+                    <p>Skriv in arbetsordernummer, datum, typ av tid samt antalet timmar. För att lägga till en rad klicka på plusset<i class="fa fa-plus-circle" aria-hidden="true"></i>.<br /> Vill du ta bort en rad klicar du på minuset för den raden<i class='fa fa-minus-circle'
+                            aria-hidden='true'></i>.<br /> När du är klar klickar du på <i class="fa fa-share-square-o" aria-hidden="true"></i> Skicka till Maximo </p>
+                </article>
+            </section>
+            <script>
+                REP.tbl = document.getElementById("inrap");
+            </script>
+            <noscript>Enable Script</noscript>
+        </div>
+
+
+    </body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="js/soa004.js"></script>
+    <script src='main.js'></script>
+    <title>Login</title>
+</head>
+
+<body>
+  <div id="wrapper">
+      <header>
+          <a href="index.html" id="logo"></a>
+          <h1>Tidsregistrering</h1>
+        </header>
+        <nav class="main_menu">
+            
+        </nav>
+          <div class='form-select'>
+              <b>Sök ditt Personal ID via Företag:
+            <select id="companies" onChange="companyChanged(this);">
+             <option value="">[ Laddar företag ... ]</option>
+            </select>
+            </b>
+              <div id="labortarget">
+
+              </div>
+
+          </div>
+      </div>
+
+
+
+</body>
+<script>
+    fillCompanies();
+</script>
+
+</html>

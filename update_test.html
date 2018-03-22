@@ -1,0 +1,49 @@
+<html>
+	<head>
+		<title>Test v2</title>
+		<script src="soa004.js"></script>
+	</head>
+	<body>
+		Some test huh:<br />
+		<div id="output"></div>
+	</body>
+	
+	<script>
+        
+        function printed() {
+		var filter = {maxrows: 10,offset: 2,fields: [{SITEID:"TAR"}]};
+        
+		SOA004Client.system="MAXIMO";
+		SOA004Client.dataobject = "REST_INRESERVE";
+//		console.log( SOA004Client.get( filter ));
+		
+        var setvalue = 1
+        var clearvalue = 0
+		var printeddata = [{C_PRINTED:setvalue}];
+		//console.log( SOA004Client.post( "261214", data ) );
+		SOA004Client.postasync( "262097", printeddata, function( json ) {console.log( json );} );
+            
+        }
+        
+        function picked() {
+		var filter = {maxrows: 10,offset: 2,fields: [{SITEID:"TAR"}]};
+        
+		SOA004Client.system="MAXIMO";
+		SOA004Client.dataobject = "REST_INRESERVE";
+		
+        var setvalue = 1
+        var clearvalue = 0
+		var pickeddata = [{C_PICKED:setvalue}];
+		//console.log( SOA004Client.post( "261214", data ) );
+		SOA004Client.postasync( "262097", pickeddata, function( json ) {console.log( json );} );
+            
+        }
+        
+		SOA004Client.init();
+
+        printed();
+
+        //picked();
+		
+	</script>
+</html>

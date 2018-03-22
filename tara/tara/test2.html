@@ -1,0 +1,194 @@
+<html>
+	<head>
+		<title>BOLIDEN Material Reservations</title>
+		<script src="soa004.js"></script>
+		<script src="reservation.js"></script>
+        <style>
+            {background-color: lightblue;}
+/*            section {font:30px "Arial";}*/
+            tr { font:large "Arial";text-align: left; font-weight: normal; border-bottom: 1px solid #999;}
+            body { font:small "Arial"; text-align: left;}
+            storerooms {font:22px "Arial";}
+            select  {padding:10px; font:22px "Arial";}
+			table#tgt {
+			    font:smaller "Arial";
+				width: 100%;
+				border-collapse: collapse;
+                text-align: left;
+                order: true;
+			}
+			table#tgt tr:first-child th {
+		        font:large "Arial";
+				font-weight: bold;
+				border-bottom: 4px solid gray;
+			}
+			
+/*
+			table#tgt tr:nth-child(even) {
+				background-color: #eee;
+			}
+*/
+            .odd { background-color: white}
+            .even { background-color: lightgray}
+            .picked { background-color: lightgoldenrodyellow}
+            .printed {background-color: lightgreen}
+            .nextday { background-color: lightblue}
+
+        </style>
+	</head>
+	<body>
+        <p><div>
+            <storerooms>
+            Site <select id='site' onChange="update();">
+					<option value='TAR'>Tara</option>
+					<option value='GAR'>Garpenberg</option>
+					<option value='AIT'>Aitik</option>
+				</select>
+            Location <select id='loc' onChange="update();">
+					<option value='TAR01'>Surface </option>
+					<option value='TAR02'> U/G Engineering Store 1140 </option>
+					<option value='TAR04'>Swex Store 750</option>
+					<option value='AITIK'> Aitik Förråd </option>
+				</select>
+            </storerooms>
+        </div>
+        </p>
+            <section>
+			Last update: <span id="lastupdated"></span><br />
+			Rows fetched: <span id="rowsfetched"></span>
+            <br />URL: <span id="URL"></span>
+                <table id="tgt"  data-order="[[ 1, asc ]]">
+<!--                <table id="tgt">-->
+                <thead>
+                    <th><br>Request Number</th>
+                    <th><br>Bin</th>
+                    <th>Current<br>Balance</th>
+                    <th>Request<br>Date</th>
+                    <th>Requestors<br>Name</th>
+                    <th>Part<br>Number</th>
+                    <th><br>Description</th>
+                    <th>Supplier<br>Part Number</th>
+                    <th><br>Picked </th>
+                    <th><br>Printed </th>
+                    </thead>
+                <tbody></tbody>
+                </table>
+            </section>
+
+		<div id="output"></div>
+	</body>
+	
+	<script>
+        
+        var interval = 10000;
+		var filter = {maxrows: 200,offset: 0,fields: [{SITEID:"TAR"},{LOCATION:"TAR01"}]};
+        
+		function set (id, val) {
+			var el = document.getElementById(id);
+			if( !el ) return;
+			el.innerHTML = val;
+		}
+        
+        function daysBetween ( date1, date2 ) {
+  //Get 1 day in milliseconds
+          var one_day=1000*60*60*24;
+
+          // Convert both dates to milliseconds
+          var date1_ms = date1.getTime();
+          var date2_ms = date2.getTime();
+
+          // Calculate the difference in milliseconds
+          var difference_ms = date2_ms - date1_ms;
+
+          // Convert back to days and return
+          return difference_ms/one_day; 
+        }
+
+        function update() {
+
+        var json = null
+        var tr = null
+            
+        var d = new Date();
+            d.setDate = (d.getDate()+10);
+		set( "lastupdated", d.toLocaleString());
+
+        var tbl = null;
+		var tbl = document.getElementById( "tgt" );
+        var rowCount = tbl.rows.length;
+        for (var i = 1 ; i < rowCount; i++) {
+            tbl.deleteRow(1);
+        }
+
+        
+		var sitebox = document.getElementById( "site" );
+		var site = sitebox.options[sitebox.selectedIndex].value;
+
+		var locbox = document.getElementById( "loc" );
+		var loc = locbox.options[locbox.selectedIndex].value;
+
+        filter.fields["1"].LOCATION= loc;
+        filter.fields["0"].SITEID=site;
+        
+        set("URL",filter.fields["0"].SITEID+":"+filter.fields["1"].LOCATION);
+        json = SOA004Client.get(filter)
+
+        //set( "lastupdated", d.toLocaleString());
+    	set("rowsfetched", json.QueryREST_INRESERVEResponse.rsCount);
+            
+            if (  json.QueryREST_INRESERVEResponse.rsCount>0 ) {
+                for( i=0; i < json.QueryREST_INRESERVEResponse.REST_INRESERVESet.INVRESERVE.length; i++ ) {
+                var curr = json.QueryREST_INRESERVEResponse.REST_INRESERVESet.INVRESERVE[i];
+    //            console.log(curr.SITEID+":"+curr.LOCATION+"::"+curr.ITEMNUM+":"+curr.INVRESERVEID);
+                tr = tbl.insertRow(-1);
+                var td =null
+                var locald = new Date(curr.REQUESTEDDATE);
+
+                if ( curr.C_PICKED == "1"){
+                    tr.className="picked";
+                } else if ( curr.C_PRINTED == "1"){
+                    tr.className="printed";
+                } else if ( daysBetween(locald,d)>20) {
+                    tr.className="nextday";
+                }
+                else {           
+                    if (i%2 == 0) {
+                        tr.className="even";
+                    }else{
+                        tr.className="odd";
+                    }
+                }
+                td = tr.insertCell( -1 );td.innerHTML = curr.WONUM === undefined?curr.MRNUM:curr.WONUM+"(w)";
+                td = tr.insertCell( -1 );td.innerHTML = curr.INVENTORY[0].BINNUM === undefined ? "" : curr.INVENTORY[0].BINNUM;
+                td = tr.insertCell( -1 );td.innerHTML = curr.INVENTORY[0].CURBALTOTAL === undefined ?  "???" : curr.INVENTORY[0].CURBALTOTAL;
+                td = tr.insertCell( -1 );td.innerHTML = locald === undefined?"xx/xx/xxxx":locald.toLocaleDateString() ;
+                td = tr.insertCell( -1 );td.innerHTML = curr.PERSON[0].DISPLAYNAME === "crontaskadmin" ? "Auto": curr.PERSON[0].DISPLAYNAME
+                td = tr.insertCell( -1 );td.innerHTML = curr.ITEMNUM === undefined ? "" : curr.ITEMNUM;
+                td = tr.insertCell( -1 );td.innerHTML = curr.DESCRIPTION === undefined ? "" : curr.DESCRIPTION;
+                td = tr.insertCell( -1 );td.innerHTML = curr.INVENTORY[0].MODELNUM	 === undefined ? "" : curr.INVENTORY[0].MODELNUM;
+                td = tr.insertCell( -1 );td.innerHTML = curr.C_PICKED == "0" ? "No" : "Yes";
+                td = tr.insertCell( -1 );td.innerHTML = curr.C_PRINTED == "0" ? "No" : "Yes";
+//                td = tr.insertCell( -1 );td.innerHTML = curr.REQUESTNUM === undefined?"":curr.REQUESTNUM;
+//                td = tr.insertCell( -1 );td.innerHTML = curr.WONUM === undefined?"":curr.WONUM;
+                    
+    // *Update a post using the ID
+    //            SOA004Client.post( curr.invreserveid, data );
+    //        reservation.printed(curr.invreserveid);
+                var data = [{C_PICKED:1}];
+//            SOA004Client.post( curr.invreserveid, data );
+                }
+                console.log( "ID"+curr.INVRESERVEID+" "+d.toLocaleString());
+            }
+        
+            
+        }
+        
+		SOA004Client.init();
+		SOA004Client.system="MAXIMO";
+		SOA004Client.dataobject = "REST_INRESERVE";
+
+		update();
+		setInterval( function() {update();}, interval);
+       
+	</script>
+</html>

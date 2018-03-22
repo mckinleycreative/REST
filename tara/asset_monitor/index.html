@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+    <meta charset="utf-8" />
+		<link rel="shortcut icon" href="/img/boliden.png" />
+    <link rel="stylesheet" href="css/boliden.css" />
+		<title>BOLIDEN Asset Monitor</title>
+		<script src="js/soa004.js"></script>
+		<script src="js/reservation.js"></script>
+        <script src="js/sorttable.js"></script>
+	</head>
+    <header>
+        <a href="boliden_newasset.html" id="logo"></a>
+        <h1>Asset Status</h1>
+    </header>
+
+	<body>
+        <p><div id="options">
+            <storerooms>Site <select id='site' >
+                    <option value='TAR'>Tara Mines</option>
+                    <option value='ODD'>Odda</option>
+                    <option value='KRI'>Kristineberg</option>
+                    <option value='KAN'>Kankberg</option>
+                    <option value='GAR'>Garpenberg</option>
+                    <option value='AIT'>Aitik</option>
+                    <option value ='RON'>Rönnskär</option>
+                    <option value='BOL'>Boliden</option>
+                    <option value='REN'>Renström</option>
+                    <option value='MAU'>Maurliden</option>
+				</select>
+<!--
+        <div class="select">Location<select id='loc' onChange="update();">
+					<option value='1'>Priority 1</option></select>
+                </div>
+-->
+			<assup>Asset up: <span id="assetupcount"></span></assup>
+			<assdn>Assets down: <span id="assetdowncount"></span></assdn>
+			<asssrv>Assets down: <span id="assetservice"></span></asssrv>
+			<div> Last update:<span id="lastupdated"></span></div>
+            </storerooms>
+        </div>
+        </p>
+        <table id="tgt">
+            <thead></thead>
+						<tbody></tbody>
+            <tbody></tbody>
+        </table>
+
+		<div id="output"></div>
+	</body>
+
+	<script>
+        var interval = 30000;
+//		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
+		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"=TAR"},{ASSETTYPE:"=FLEET"},{STATUS:"=OPERATING"},{PRIORITY:1}]};
+		var updatefilter = {maxrows: 10,offset: 2,fields: [{SITEID:"=TAR"}]};
+        var filter = searchfilter
+
+        var siteBox = document.getElementById('site');
+        var storeBox = document.getElementById('loc');
+
+		function set (id, val) {
+			var el = document.getElementById(id);
+			if( !el ) return;
+			el.innerHTML = val;
+		}
+
+        function pad(num, size) {
+            var s
+            if ( num < 24 ) {
+                s = "00" + num;
+                s = s.substr(s.length-size);
+            } else {
+                s = num;
+            }
+            return s;
+        }
+
+        function sortbydept ( json ){
+            var start = 0;
+            var allrecords  = json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET.length;
+            var swap = true;
+            var endstop = 0;
+            var endstart = 0;
+            var i = 0;
+            var j = 0;
+            var records =allrecords-1;
+
+            while (  swap ) {
+                j=0;
+                swap = false;
+                for( i=start ; i < records ; ++i ) {
+                    curr = json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i];
+                    nextcurr = json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i+1];
+                    curr.LOCATIONS === undefined ? "": curr.LOCATIONS[0].DESCRIPTION= curr.LOCATIONS[0].DESCRIPTION;
+//                    .replace('Mill','').replace('Fleet','');
+                    var currdescription = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION;
+                    currdescription += curr.ASSETNUM;
+                    var nextdescription = nextcurr.LOCATIONS === undefined ? "Unknown" :nextcurr.LOCATIONS[0].DESCRIPTION;
+                    nextdescription += nextcurr.ASSETNUM;
+                    if ( currdescription>nextdescription) {
+                        swap= true
+                        endstop=i;
+                        json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i+1] = curr; json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i] = nextcurr;
+                        j++;
+                    }
+                }
+
+                records--;
+                endstart = endstop-1;
+                swap=false;
+
+
+                for( i=endstart ; i > start ; --i ) {
+                    curr = json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i];
+                    curr.LOCATIONS === undefined ? "": curr.LOCATIONS[0].DESCRIPTION= curr.LOCATIONS[0].DESCRIPTION;
+//                    .replace('Mill','').replace('Fleet','');
+                    nextcurr = json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i-1];
+                    var currdescription = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION;
+                    currdescription += curr.ASSETNUM;
+                    var nextdescription = nextcurr.LOCATIONS === undefined ? "Unknown" :nextcurr.LOCATIONS[0].DESCRIPTION;
+                    nextdescription += nextcurr.ASSETNUM;
+                    if ( currdescription<nextdescription) {
+                        swap= true
+                        endstop=i;
+                        json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i-1] = curr; json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i] = nextcurr;
+                        j++;
+                    }
+                }
+
+                start++;
+            }
+        }
+
+        function daysBetween (date1, date2) {
+            // Get 1 day in milliseconds
+            var one_day=1000*60*60;
+            var one_hour=1000*60*60;
+            var one_min=1000*60;
+            var mins;
+            var hours;
+          // Convert both dates to milliseconds
+          // Calculate the difference in milliseconds
+          // Convert back to days and return
+            mins = (date2.getTime()-date1.getTime())/one_min;
+            mins = Math.trunc(mins);
+            hours = (mins/60.0);
+            hours = Math.trunc(hours);
+            mins = mins - hours*60.0;
+            if ( hours == 0 ) {
+                downtime = mins+"m";
+            }else{
+                downtime = hours+"h";
+            }
+          return downtime;
+        }
+
+//        siteBox.onchange = function() {
+//            var selectedSite = this.options[this.selectedIndex].value;
+//            for( var j=storeBox.options.length-1; j >= 0; j-- ) {
+//                storeBox.remove(j);   // Clears all old values
+//            }
+//            var storefilter = {maxrows: 200,offset: 0,fields:[{"SITEID":selectedSite},{TYPE:"STOREROOM"},{INVOWNER:"%"}]};
+//
+//            SOA004Client.dataobject = "REST_STOREROOM";
+//            var sites = SOA004Client.get(storefilter);
+//
+//            if ( sites.QueryREST_STOREROOMResponse.rsCount>0) {
+//                for( var i=0; i < sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS.length; i++ ) {
+//                    var curr = sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS[i];
+//                    var opt = document.createElement("OPTION");
+//                    opt.value = curr.LOCATION;
+//                    opt.text = curr.DESCRIPTION;
+//                    storeBox.add(opt);
+//                }
+//            }
+//            update();
+//        }
+        
+        
+
+        function update() {
+            var json = null;
+            var tr = null;
+            var assetupcount=0;
+            var assetdowncount=0;
+            var assetservice=0;
+
+            var d = new Date();
+//            d.setDate = (d.getDate());
+            set( "lastupdated", d.toLocaleString());
+            var toptbl = null;
+            var toptbl = document.getElementById( "tgt" );
+            tblhead = toptbl.getElementsByTagName("thead")[0];
+            tbl = toptbl;
+
+//                for (var i = 1 ; i < toptbl.rows.length; i++) {
+//                    tbl.deleteRow(1);
+//                }
+
+		SOA004Client.dataobject = "REST_ASSET";
+
+		var sitebox = document.getElementById("site");
+		var site = sitebox.options[sitebox.selectedIndex].value;
+
+//		var locbox = document.getElementById("loc");
+//		var loc = locbox.options[locbox.selectedIndex].value;
+
+//        filter.fields["1"].LOCATION= loc;
+        filter.fields["0"].SITEID=site;
+
+//        set("URL",filter.fields["0"].SITEID+":"+filter.fields["1"].LOCATION);
+        json = SOA004Client.get(filter)
+
+        tablelength = toptbl.rows.length;
+        for (var i = 0 ; i <tablelength; i++) {
+            toptbl.deleteRow(0);
+        }
+
+        var assetrecords = json.QueryREST_ASSETResponse.rsCount;
+        var assetcolums  = json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET.length;
+        var sectionname = null;
+        var oldsectionname = null;
+        var nocolumns = 0;
+        var found = false;
+        var td =null;
+        sortbydept ( json );
+
+            // build the header with the single version of the description
+            th = toptbl.insertRow(0);
+            if (  assetrecords >0 ) {
+                // addtion column for the department field
+                td = th.insertCell(-1);td.innerHTML = "Department";
+                for( i=0; i < assetcolums ; i++ ) {
+                    var curr = json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i];
+                    sectionname = curr.FAILURECODE === undefined ? "Unknown" :curr.FAILURECODE[0].DESCRIPTION;
+                    if ( nocolumns>0 ){
+                        var HeaderCells = toptbl.rows.item(0).cells;
+                        //gets cells of current row
+                        var cellLength = HeaderCells.length;
+                        found = false;
+                        for ( var j = 0; j<cellLength ; j++ ) {
+                            var cellVal = HeaderCells.item(j).innerHTML;
+                            if ( sectionname === cellVal)  {
+                                found = true;
+                            }
+                        }
+                    }
+                    // add them to the column
+                    if ( !found ){
+                        td = th.insertCell();
+                        td.innerHTML = sectionname;
+                        nocolumns += 1;
+                        oldsectionname= sectionname;
+                    }
+                }
+                // run down through the cells with the logic of using the "department" field as a sort field
+                HeaderCells = toptbl.rows.item(0).cells;
+                for( i=0; i < assetcolums ; i++ ) {
+                    var curr = json.QueryREST_ASSETResponse.REST_ASSETSet.ASSET[i];
+                    sectionname = curr.FAILURECODE === undefined ? "Unknown" :curr.FAILURECODE[0].DESCRIPTION;
+                    department = curr.LOCATION === undefined ? "Unknown" : curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','');
+
+                    found = false;
+                    // find the next available slot
+                    for ( k=1;k<tbl.rows.length;++k){
+                        if ( !found ){
+                            deptlabel = tbl.rows.item(k).cells;
+                            currdept = deptlabel.item(0).innerHTML;
+                            ass = curr.ASSETNUM;
+                            if ( department == currdept) {
+                                for (l = 0; l < HeaderCells.length; l++) {
+                                    currsection = HeaderCells.item(l).innerHTML;
+                                    if ( sectionname == currsection ) {
+                                        console.log("check:"+curr.ASSETNUM+"::"+sectionname);
+                                        if ( deptlabel.item(l).innerHTML.length == 0 ) {
+                                            deptlabel.item(l).innerHTML = curr.ASSETNUM+"<br /> .";
+                                            if ( curr.ISRUNNING ){
+                                                deptlabel.item(l).className="assetup";
+                                                assetupcount += 1;
+                                                found = true;
+                                                break;
+                                            } else {
+                                                if ( curr.WORKORDER ) {
+                                                    if ( curr.WORKORDER[0].WORKTYPE === "PMP") {
+                                                        deptlabel.item(l).className="assetservice";
+                                                        assetservice+=1;
+                                                        var locald = new Date(curr.ASSETSTATUS[0].CHANGEDATE);
+                                                        var downtime = daysBetween(locald,d);
+                                                        deptlabel.item(l).innerHTML = curr.ASSETNUM+"<br />"+downtime;
+                                                        found = true;
+                                                        break;
+                                                    } else {
+                                                        assetdowncount += 1;
+                                                        deptlabel.item(l).className="assetdown";
+                                                        var locald = new Date(curr.ASSETSTATUS[0].CHANGEDATE);
+                                                        var downtime = daysBetween(locald,d);
+                                                        deptlabel.item(l).innerHTML = curr.ASSETNUM+"<br />"+downtime;
+                                                        found = true;
+                                                        break;
+                                                    }
+                                                } else {
+                                                    deptlabel.item(l).className="assetdown";
+                                                    assetdowncount += 1;
+                                                    var locald = new Date(curr.ASSETSTATUS[0].CHANGEDATE);
+                                                    var downtime = daysBetween(locald,d);
+                                                    deptlabel.item(l).innerHTML = curr.ASSETNUM+"<br />"+downtime;
+                                                    found = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    if ( !found ){
+                        tr = tbl.insertRow(-1);
+
+                        td = tr.insertCell( -1 );td.innerHTML = department;
+                        for ( var j = 0; j<cellLength-1 ; j++ ) {
+                            var cellVal = HeaderCells.item(j).innerHTML;
+                            if ( sectionname === cellVal)  {
+                                if ( curr.ISRUNNING ){
+                                    td.className="assetup";
+                                    assetupcount += 1;
+                                    td.innerHTML = curr.ASSETNUM+"<br /> .";
+                                } else {
+                                    if ( curr.WORKORDER ) {
+                                        if ( curr.WORKORDER[0].WORKTYPE === "PMP") {
+                                                td.className="assetservice";
+                                                assetservice+=1;
+                                            }else {
+                                                assetdowncount += 1;
+                                                td.className="assetdown";
+                                            }
+                                    }else {
+                                        td.className="assetdown";
+                                        assetdowncount += 1;
+                                    }
+                                    var locald = new Date(curr.ASSETSTATUS[0].CHANGEDATE);
+                                    var downtime = daysBetween(locald,d);
+                                    td.innerHTML = curr.ASSETNUM+"<br />"+downtime;
+                                }
+                            }
+                            td = tr.insertCell();
+                        }
+                    }
+                }
+            set("assetupcount",assetupcount);
+            set("assetdowncount",assetdowncount);
+            set("assetservice",assetservice);
+            }
+        }
+
+        SOA004Client.init();
+		SOA004Client.system="MAXIMO";
+		SOA004Client.dataobject = "REST_ASSET";
+//        siteBox.onchange();
+		update();
+		setInterval( function() {update();}, interval);
+
+	</script>
+</html>

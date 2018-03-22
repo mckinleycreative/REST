@@ -1,0 +1,69 @@
+<html>
+	<head>
+		<title>Material Reservations</title>
+		<script src="SOA004Client.js"></script>
+		<script src="reservation.js"></script>
+        <style>
+            body { font: 16px "Arial"; }
+        </style>
+	</head>
+	<body>
+		Tara Mines:<br />
+                    <section>
+                <table id="tgt">
+                    <td><br>MRNUM</td>
+                    <td>Request<br>Number</td>
+                    <td>Part<br>Number</td>
+                    <td><br>Description</td>
+                    <td>Workorder<br>Number</td>
+                    <td>Bin<br>Number</td>
+                    <td>Current<br>Balance</td>
+                    <td>Request<br>Date</td>
+                    <td>Supplier<br>Part Number</td>
+                    <td>Requestors<br>Name</td>
+                    <td>UID<br>No</td>
+                    <td><br>Picked</td>
+                    <td><br>Printed</td>
+                    <td>script<br>string</td>
+                </table>
+            </section>
+
+		<div id="output"></div>
+	</body>
+	
+	<script>
+		SOA004Client.init();
+        var json = null
+
+        var filter = {
+			maxrows: 100,
+			offset: 0,
+			fields: [{TYPE:"STOREROOM"}]
+		};
+        
+       var tbl = document.getElementById( "tgt" );
+        
+       for( var i=tbl.rows.length; i > 1; i-- ) tbl.deleteRow( i-1 );
+        
+		SOA004Client.system="MAXIMO";
+		SOA004Client.dataobject = "REST_STOREROOM";
+        
+        json = SOA004Client.get( filter ) ;
+
+     	for( i=0; i < json.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS.length; i++ ) {
+            
+            var curr = json.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS[i];
+
+            var tr = tbl.insertRow(-1);
+            var td =null
+            td = tr.insertCell( -1 );td.innerHTML = curr.SITEID === undefined?"":curr.SITEID;
+            td = tr.insertCell( -1 );td.innerHTML = curr.LOCATION === undefined?"":curr.LOCATION;
+            td = tr.insertCell( -1 );td.innerHTML = curr.DESCRIPTION === undefined?"":curr.DESCRIPTION;
+
+            console.log( curr );
+        }
+//		
+//        reservation.printed("261214");
+                
+	</script>
+</html>

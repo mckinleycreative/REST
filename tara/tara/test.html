@@ -1,0 +1,101 @@
+<html>
+	<head>
+		<title>Test with HTML5 to BIPService</title>
+		<style>
+			span {color:green;font-weight: bold;}
+			table#tgt {
+				width: 100%;
+				border-collapse: collapse;
+			}
+			
+			table#tgt tr:first-child td {
+				font-weight: bold;
+				border-bottom: 1px solid gray;
+			}
+			
+			table#tgt tr:nth-child(even) {
+				background-color: #eee;
+			}
+		</style>
+	</head>
+	<body>
+		<p>
+			Site <select id='site' onChange="update();">
+					<option value='TAR'>TAR</option>
+					<option value='GAR'>GAR</option>
+					<option value='AIT'>AIT</option>
+				</select><br />
+			Location <select id='loc' onChange="update();">
+					<option value='TAR01'>TAR01</option>
+					<option value='TAR02'>TAR02</option>
+					<option value='TAR03'>TAR03</option>
+				</select>
+
+		</p>
+		<p>
+			Lastupdated: <span id="lastupdated"></span><br />
+			Number of rows fetched: <span id="rowsfetched"></span>
+		</p>
+		
+		<table id="tgt">
+			<td>ITEMNUM</td>
+			<td>MRNUM</td>
+			<td>OPLOCATION</td>
+			<td>RTYPE</td>
+			<td>BALANCE</td>
+			<td>MODEL</td>
+			<td>Person</td>
+		</table>
+	</body>
+	<script>
+		var RESTURI = "http://bolsrv0138.boliden.internal:7802/SOA004/rest/BI/MAXIMO/REST_INRESERVE?SITEID=";
+		
+		// AJAX init
+		var AJAX = null;
+		if( window.XMLHttpRequest ) {
+			AJAX = new window.XMLHttpRequest();
+		} else {
+			AJAX = new ActiveXObject( "Microsoft.XMLHTTP" );
+		}
+		
+		function set( id, val ) {
+			var el = document.getElementById( id );
+			if( !el ) return;
+			el.innerHTML = val;
+		}
+		
+		function update() {
+			var sitebox = document.getElementById( "site" );
+			var site = sitebox.options[sitebox.selectedIndex].value;
+			var locbox = document.getElementById( "loc" );
+			var loc = locbox.options[locbox.selectedIndex].value;
+			var tbl = document.getElementById( "tgt" );
+			AJAX.open( "GET", RESTURI + site + "&LOCATION=" + loc, true );
+			AJAX.setRequestHeader( "Authorization", "Basic test" );
+			AJAX.onreadystatechange = function() {
+				if( AJAX.readyState == 4 ) {
+					// Clear the table
+					for( var i=tbl.rows.length; i > 1; i-- ) tbl.deleteRow( i-1 );
+					var json = JSON.parse( AJAX.responseText );
+					var d = new Date();
+					set( "lastupdated", d.toLocaleString());
+					set( "rowsfetched", json.QueryREST_INRESERVEResponse.rsCount );
+					for( i=0; i < json.QueryREST_INRESERVEResponse.REST_INRESERVESet.INVRESERVE.length; i++ ) {
+						var curr = json.QueryREST_INRESERVEResponse.REST_INRESERVESet.INVRESERVE[i];
+						var tr = tbl.insertRow(-1);
+						var td = tr.insertCell( -1 );td.innerHTML = curr.ITEMNUM === undefined ? "" : curr.ITEMNUM;
+						td = tr.insertCell( -1 );td.innerHTML = curr.MRNUM === undefined?"":curr.MRNUM;
+						td = tr.insertCell( -1 );td.innerHTML = curr.OPLOCATION === undefined ? "" : curr.OPLOCATION;
+						td = tr.insertCell( -1 );td.innerHTML = curr.RESTYPE === undefined ? "" : curr.RESTYPE;
+						td = tr.insertCell( -1 );td.innerHTML = curr.INVENTORY[0].CURBALTOTAL === undefined ? "" : curr.INVENTORY[0].CURBALTOTAL;
+						td = tr.insertCell( -1 );td.innerHTML = curr.INVENTORY[0].ITEMNUM === undefined ? "" : curr.INVENTORY[0].ITEMNUM;
+						td = tr.insertCell( -1 );td.innerHTML = curr.PERSON[0].DISPLAYNAME === undefined ? "" : curr.PERSON[0].DISPLAYNAME;
+					}
+				}
+			};
+			AJAX.send();
+		}
+		update();
+		setInterval( function() {update();}, 10000);
+	</script>
+</html>

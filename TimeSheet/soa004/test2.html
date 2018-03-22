@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<title>Test v2</title>
+		<script src="soa004.js"></script>
+	</head>
+	<body>
+		Some test huh:<br />
+		<div id="output"></div>
+	</body>
+	
+	<script>
+		SOA004Client.init();
+		
+		var filter = {
+			maxrows: 10,
+			offset: 2,
+			fields: [
+				{SITEID:"TAR"}
+			]
+		};
+		SOA004Client.system="MAXIMO";
+		SOA004Client.dataobject = "REST_INRESERVE";
+		console.log( SOA004Client.get( filter );
+		
+		var data = [
+			{C_PICKED:1}
+		];
+		//console.log( SOA004Client.post( "261214", data ) );
+		SOA004Client.postasync( "261214", data, function( json ) {console.log( json );} );
+		
+	</script>
+</html>

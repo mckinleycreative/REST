@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" type="image/ico" href="img/boliden.png" />
+	<link rel="stylesheet" href="css/boliden.css" />
+	<script src="js/soa004.js"></script>
+	<script src="js/reservation.js"></script>
+	<script src="js/stores.js"></script>
+	<title>Material Reservations</title>
+
+	<body>
+		<div>
+			<header>
+				<a href="index.html" id="logo"></a>
+				<h1>Material Reservations</h1>
+			</header>
+			<storerooms>
+				Site <select id='site'>
+                    <option value='TAR'>Tara Mines</option>
+                    <option value='ODD'>Odda</option>
+                    <option value='KRI'>Kristineberg</option>
+                    <option value='KAN'>Kankberg</option>
+                    <option value='GAR'>Garpenberg</option>
+                    <option value='AIT'>Aitik</option>
+                    <option value='RON'>Rönnskär</option>
+                    <option value='BOL'>Boliden</option>
+                    <option value='REN'>Renström</option>
+                    <option value='MAU'>Maurliden</option>
+				</select> Location <select id='loc' onChange="update();">
+					<option value='TAR01'>Surface Store</option>
+				</select>
+			</storerooms>
+			<key>
+				<colourdue>Required within 24h</colourdue>
+				<colourprinted>Reservation printed</colourprinted>
+				<colourpicked>Reservation picked</colourpicked>
+				<colourdue id="output"></colourdue>
+			</key>
+		</div>
+		Last update: <span id="lastupdated"></span><br> No of Reservations: <span id="rowsfetched"></span>
+
+		<table id="tgt">
+			<tr>
+				<th><br />Request Number</th>
+				<th><br />Request Number</th>
+				<th><br />Bin</th>
+				<th>Available<br />Balance</th>
+				<th>Current<br />Balance</th>
+				<th>Total<br />Res</th>
+				<th>Reserved</th>
+				<th>Request<br />Date</th>
+				<th>Requestors<br />Name</th>
+				<th>Part<br />Number</th>
+				<th><br />Description</th>
+				<th>Supplier<br />Part Number</th>
+				<th><br />Picked </th>
+				<th><br />Printed </th>
+			</tr>
+
+			<tbody></tbody>
+		</table>
+
+		<script>
+			var interval = 60000;
+			var filter = {
+				maxrows: 300,
+				offset: 0,
+				fields: [{
+					SITEID: "GAR"
+				}, {
+					LOCATION: "GARPENBERG"
+				}]
+			};
+			var siteBox = document.getElementById('site');
+			var storeBox = document.getElementById('loc');
+			var loc;
+
+			function set(id, val) {
+				var el = document.getElementById(id);
+				if (!el) return;
+				el.innerHTML = val;
+			}
+
+			function consolelog(text) {
+				console.log(text);
+			}
+
+			function setSelectBoxByText(eid, etxt) {
+				consolelog("checking:" + eid + " " + etxt);
+				var eid = document.getElementById(eid);
+				for (var i = 0; i < eid.options.length; ++i) {
+					chktext = eid.options[i].value;
+					consolelog("  curr store:" + etxt + "::" + chktext + " " + eid.options[i].text);
+					if (chktext === etxt) {
+						eid.options[i].selected = true;
+						break;
+					}
+				}
+			}
+
+			function daysBetween(date1, date2) {
+				// Get 1 day in milliseconds
+				var one_day = 1000 * 60 * 60 * 24;
+				// Convert both dates to milliseconds
+				var date1_ms = date1.getTime();
+				var date2_ms = date2.getTime();
+				// Calculate the difference in milliseconds
+				var difference_ms = date2_ms - date1_ms;
+				// Convert back to days and return
+				return difference_ms / one_day;
+			}
+
+			function initstores() {
+				var storeBox = document.getElementById("loc");
+				for (var j = storeBox.options.length - 1; j >= 0; j--) {
+					storeBox.remove(j); // Clears all old values
+				}
+				var sitebox = document.getElementById("site");
+				selectedsite = sitebox.options[sitebox.selectedIndex].value;
+				var storefilter = {
+					maxrows: 40,
+					offset: 0,
+					fields: [{
+						"SITEID": selectedsite
+					}, {
+						TYPE: "STOREROOM"
+					}, {
+						INVOWNER: "%"
+					}]
+				};
+				SOA004Client.dataobject = "REST_STOREROOM";
+				var sites = SOA004Client.get(storefilter);
+				if (sites.QueryREST_STOREROOMResponse.rsCount > 0) {
+					for (var i = 0; i < sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS.length; i++) {
+						var curr = sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS[i];
+						var opt = document.createElement("OPTION");
+						opt.value = curr.LOCATION;
+						opt.text = curr.DESCRIPTION;
+						storeBox.add(opt);
+					}
+				}
+			}
+            
+            switched = function(workorder, invreserveid, print, picked,itemnum){
+            var d = new Date(); 
+
+            if ( workorder == "489970") {
+                var pickvalue=0;
+                var printvalue=0;
+                if ( print & picked ) {
+                    print=0;
+                    picked=0;
+                   printvalue=0;
+                   pickvalue=0;
+                }else if ( print & !picked ) {
+                    print=1;
+                    picked=1;
+                   printvalue=1;
+                   pickvalue=1;
+                }else if ( !print & !picked ) {
+                    print=1;
+                    picked=0;
+                   printvalue=1;
+                   pickvalue=0;                    
+                };
+//                print ? setvalue=0 : setvalue=1;
+//                picked ? othervalue=0 : othervalue=1;
+                var printeddata = [{C_PRINTED:printvalue},{C_PICKED:pickvalue}];
+                SOA004Client.post( invreserveid, printeddata, function( json ) {console.log( json );} );
+//                SOA004Client.postasync( invreserveid, printeddata, function( json ) {console.log( json );} );
+                console.log( "ID:["+itemnum+"]"+printvalue+":"+print+":"+d.toLocaleString());
+            }
+        }
+
+
+
+			function getstores(selectedsite) {
+				var selectedSite = this.options[this.selectedIndex].value;
+				for (var j = storeBox.options.length - 1; j >= 0; j--) {
+					storeBox.remove(j); // Clears all old values
+				}
+				var storefilter = {
+					maxrows: 40,
+					offset: 0,
+					fields: [{
+						"SITEID": selectedSite
+					}, {
+						TYPE: "STOREROOM"
+					}, {
+						INVOWNER: "%"
+					}]
+				};
+
+				SOA004Client.dataobject = "REST_STOREROOM";
+				var sites = SOA004Client.get(storefilter);
+
+				if (sites.QueryREST_STOREROOMResponse.rsCount > 0) {
+					for (var i = 0; i < sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS.length; i++) {
+						var curr = sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS[i];
+						var opt = document.createElement("OPTION");
+						opt.value = curr.LOCATION;
+						opt.text = curr.DESCRIPTION;
+						storeBox.add(opt);
+					}
+				}
+
+			}
+
+			siteBox.onchange = function() {
+				var selectedSite = this.options[this.selectedIndex].value;
+				for (var j = storeBox.options.length - 1; j >= 0; j--) {
+					storeBox.remove(j); // Clears all old values
+				}
+				var storefilter = {
+					maxrows: 50,
+					offset: 0,
+					fields: [{
+						"SITEID": selectedSite
+					}, {
+						TYPE: "STOREROOM"
+					}, {
+						INVOWNER: "%"
+					}]
+				};
+				SOA004Client.dataobject = "REST_STOREROOM";
+				var sites = SOA004Client.get(storefilter);
+				if (sites.QueryREST_STOREROOMResponse.rsCount > 0) {
+					for (var i = 0; i < sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS.length; i++) {
+						var curr = sites.QueryREST_STOREROOMResponse.REST_STOREROOMSet.LOCATIONS[i];
+						var opt = document.createElement("OPTION");
+						opt.value = curr.LOCATION;
+						opt.text = curr.DESCRIPTION;
+						storeBox.add(opt);
+					}
+				}
+				update();
+			}
+
+			storeBox.onchange = function() {
+				update();
+			}
+
+			output.onclick = function() {
+				var selectedrecord = this.options[this.selectedIndex].value;
+				if (selectedrecord == "neil") {
+					td.className = "nextday";
+				}
+			}
+
+			function update() {
+				var json = null
+				var tr = null
+				var part = "";
+				var d = new Date();
+				//            d.setDate = (d.getDate());
+				set("lastupdated", d.toLocaleString());
+				var tbl = null;
+				var tbl = document.getElementById("tgt");
+
+				SOA004Client.dataobject = "REST_INRESERVE";
+
+				//		get current use choice it may have changed since last run
+				var sitebox = document.getElementById("site");
+				site = sitebox.options[sitebox.selectedIndex].value;
+
+				var locbox = document.getElementById("loc");
+				loc = locbox.options[locbox.selectedIndex].value;
+
+				filter.fields["1"].LOCATION = loc;
+				filter.fields["0"].SITEID = site;
+
+				json = SOA004Client.get(filter)
+
+				// now remove the currectly displayed table list just before reload
+				var rowCount = tbl.rows.length;
+				for (var i = 1; i < rowCount; i++) {
+					tbl.deleteRow(1);
+				}
+
+				set("rowsfetched", json.QueryREST_INRESERVEResponse.rsCount);
+				if (json.QueryREST_INRESERVEResponse.rsCount > 0) {
+					stores.sortbydate(json);
+					for (i = 0; i < json.QueryREST_INRESERVEResponse.REST_INRESERVESet.INVRESERVE.length; i++) {
+						var curr = json.QueryREST_INRESERVEResponse.REST_INRESERVESet.INVRESERVE[i];
+						tr = tbl.insertRow(-1);
+
+                        var td = null
+						// This stops the UTC flag putting the required date in the wrong day
+						reqpair = curr.REQUIREDDATE.split('T');
+						var locald = new Date(reqpair[0]);
+						var reportdate = new Date(curr.REPORTDATE);
+                        
+                        var reservationid = curr.WONUM === undefined?curr.MRNUM:curr.WONUM;
+                        var invreserveid = curr.INVRESERVEID;
+
+
+                        switched( reservationid , invreserveid, curr.C_PRINTED, curr.C_PICKED,curr.ITEMNUM);
+                        
+						if (curr.C_PICKED == "1") {
+							tr.className = "picked";
+						} else if (curr.C_PRINTED == "1") {
+							tr.className = "printed";
+						} else if (daysBetween(locald, d) > -2) {
+                            if (i % 2 == 0) {
+								tr.className = "nextdayeven";
+							} else {
+								tr.className = "nextdayodd";
+							}
+						} else if (daysBetween(reportdate, d) < (1.0/24.0) ) {
+							tr.class = "new";
+						} else {
+							if (i % 2 == 0) {
+								tr.className = "even";
+							} else {
+								tr.className = "odd";
+							}
+						}
+						td = tr.insertCell(-1);
+						td.innerHTML =  curr.INVRESERVEID;
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.WONUM === undefined ? curr.MRNUM : curr.WONUM + " (w)";
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.INVENTORY[0].BINNUM === undefined ? "" : curr.INVENTORY[0].BINNUM;
+
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.INVENTORY[0].CURBALTOTAL === undefined ? "???" : curr.INVENTORY[0].AVBLBALANCE;
+						td.className =curr.INVENTORY[0].AVBLBALANCE < 0  ? "negstock" : "decimal";
+
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.INVENTORY[0].CURBALTOTAL === undefined ? "???" : curr.INVENTORY[0].CURBALTOTAL;
+						td.className = "decimal";
+
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.INVENTORY[0].RESERVEDQTY === undefined ? "???" : curr.INVENTORY[0].RESERVEDQTY;
+						td.className = "decimal";
+
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.RESERVEDQTY === undefined ? "???" : curr.RESERVEDQTY;
+						td.className = "decimal";
+
+						td = tr.insertCell(-1);
+						reqpair = curr.REQUIREDDATE.split('T');
+						td.innerHTML = locald.toLocaleDateString(navigator.language);
+						td = tr.insertCell(-1);
+
+						// this is to show a valid user and not the "crontaskadmin" name
+						person = curr.PERSON[0].DISPLAYNAME
+						if (person === "crontaskadmin") {
+							if (curr.WORKORDER[0].LEAD != undefined) {
+								person = curr.WORKORDER[0].LEAD[0].DISPLAYNAME
+							} else {
+								person = curr.WORKORDER[0].PERSON[0].DISPLAYNAME;
+							}
+						}
+						td.innerHTML = person;
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.ITEMNUM === undefined ? "" : curr.ITEMNUM;
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.DESCRIPTION === undefined ? "" : curr.DESCRIPTION;
+						// currently MODELNUM is storing external part no but this will change
+						if (curr.INVENTORY[0].MODELNUM === undefined) {
+							if (curr.INVENTORY[0].CATALOGCODE === undefined) {
+								part = "";
+							} else {
+								part = curr.INVENTORY[0].CATALOGCODE;
+							}
+						} else {
+							part = curr.INVENTORY[0].MODELNUM;
+						}
+						td = tr.insertCell(-1);
+						td.innerHTML = part;
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.C_PICKED == "0" ? " " : "Picked";
+						td = tr.insertCell(-1);
+						td.innerHTML = curr.C_PRINTED == "0" ? " " : "Printed";
+					}
+				}
+			}
+
+			SOA004Client.init();
+			SOA004Client.system="MAXIMO";
+			SOA004Client.seturi();
+
+			set("output", navigator.platform + ":" + navigator.language);
+
+			parameters = stores.getUrlParams();
+			consolelog("Platform:" + navigator.platform + ":" + navigator.product + ":" + navigator.appName + ":" + navigator.appCodeName + ":" + navigator.language + ":" + location.search + ":");
+
+			if (parameters != undefined) {
+				consolelog("site:" + parameters['SITE']);
+				setSelectBoxByText("site", parameters['SITE']);
+				initstores();
+				if (parameters['STORE'] != undefined) {
+					consolelog("store:" + parameters['STORE']);
+					setSelectBoxByText("loc", parameters['STORE']);
+				};
+				if (parameters['INTERVAL'] != undefined) {
+					consolelog("interval" + parameters['INTERVAL']);
+					interval = parameters['INTERVAL'] * 1000;
+				}
+			} else {
+				initstores();
+			}
+
+			SOA004Client.dataobject = "REST_INRESERVE";
+			update();
+			if (interval > 10) {
+				setInterval(function() {
+					update();
+				}, interval);
+			}
+		</script>
+	</body>
+
+	</html>
