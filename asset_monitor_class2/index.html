@@ -65,7 +65,7 @@
     <div id="output"></div>
 
     <script>
-        var interval = 600000;
+        var interval = 60000;
         var debug = false;
         //		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
         var searchfilter = {
@@ -119,6 +119,7 @@
         priBox.onchange = function() {
             //			chosenpriority = priBox.options[priBox.selectedIndex].value;
             //			displaytable( json );
+            start.setYear(1);
             update();
         }
 
@@ -129,12 +130,11 @@
 
         function compile(curr, dept) {
             var d = new Date();
-            //            var currdescription = curr.LOCATIONS[0].DESCRIPTION === undefined ? curr.LOCATIONS.DESCRIPTION : curr.LOCATIONS[0].DESCRIPTION;
-            var currdescription = curr.LOCATIONS.DESCRIPTION;
+            var currdescription = curr.LOCATIONS[0].DESCRIPTION;
             //            currdescription += curr.CLASSSTRUCTURE[0].DESCRIPTION;
-            currdescription += curr.CLASSSTRUCTURE.DESCRIPTION;
+            currdescription += curr.CLASSSTRUCTURE[0].DESCRIPTION;
             currdescription += curr.ISRUNNING;
-            locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS.CHANGEDATE) : new Date(curr.CHANGEDATE);
+            locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
             downtime = daysDiff(locald, d);
             currdescription += downtime;
             currdescription += curr.ASSETNUM;
@@ -167,8 +167,7 @@
             deptBox.add(opt);
             for (i = 0; i < json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length; i++) {
                 var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-                //                department = curr.LOCATIONS[0].DESCRIPTION;
-                department = curr.LOCATIONS.DESCRIPTION;
+                department = curr.LOCATIONS[0].DESCRIPTION;
                 if (currdept != department) {
                     var opt = document.createElement("OPTION");
                     opt.value = department;
@@ -182,7 +181,8 @@
 
         function sortbydept(json, dept) {
             var start = 0;
-            var allrecords = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length;
+            var allrecords = json.QueryREST_ASSETWResponse.rsTotal;
+            if ( allrecords == 0 ) return;
             var swap = true;
             var endstop = 0;
             var endstart = 0;
@@ -194,8 +194,8 @@
             // stript out repeated text from department names
             for (i = start; i < allrecords; ++i) {
                 curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-                //            curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','');
-                curr.LOCATIONS.DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : curr.LOCATIONS.DESCRIPTION.replace('Mine ', '').replace(' Fleet', '');
+                curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','');
+//                curr.LOCATIONS.DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : curr.LOCATIONS.DESCRIPTION.replace('Mine ', '').replace(' Fleet', '');
                 //				curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','').replace(' Light','').replace(' Vehicles','');
                 //				.replace(' Equipment','').replace('Mobile ','').replace('Equipment ','');
                 json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i] = curr;
@@ -247,8 +247,7 @@
         function calcassetdays(curr) {
             var d = new Date();
             var days = 0;
-            //            locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
-            locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS.CHANGEDATE) : new Date(curr.CHANGEDATE);
+            locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
             downtime = daysBetween(locald, d);
             if (curr.ASSETMETER) {
                 for (am = 0; am < curr.ASSETMETER.length; am++) {
@@ -276,7 +275,7 @@
             var lifetodate = 0.0;
             ass += chosenpriority > 1 ? " (" + curr.PRIORITY + ") [" : " [";
             //            var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
-            var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS.CHANGEDATE) : new Date(curr.CHANGEDATE);
+            var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
             ass += daysBetween(locald, d) + "]<br/>";
             if (curr.ASSETNUM == "166") {
                 stop = 0;
@@ -339,7 +338,7 @@
                     asstitle += curr.WORKORDER[w].WONUM + "</a>";
                     asstitle += "<b>";
                     asstitle += " [reported " + reportdate.toLocaleDateString() + "]  </b>"
-                    asstitle += curr.WORKORDER[w].AMCREW === undefined ? "" : curr.WORKORDER[w].AMCREW.DESCRIPTION;
+                    asstitle += curr.WORKORDER[w].AMCREW === undefined ? "" : curr.WORKORDER[w].AMCREW[0].DESCRIPTION;
                     asstitle += "<br/>";
                     asstitle += curr.WORKORDER[w].DESCRIPTION;
                     asstitle += curr.WORKORDER[w].DESCRIPTION_LONGDESCRIPTION === undefined ? "" : ". <br/>" + curr.WORKORDER[w].DESCRIPTION_LONGDESCRIPTION.replace(/<\/?[^>]+(>|$)/g, " ").replace(/&#039;/g, "'");
@@ -405,8 +404,8 @@
                 var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
                 //                sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
                 //                department = curr.LOCATIONS[0].DESCRIPTION;
-                sectionname = curr.CLASSSTRUCTURE.DESCRIPTION;
-                department = curr.LOCATIONS.DESCRIPTION;
+                sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
+                department = curr.LOCATIONS[0].DESCRIPTION;
                 ass = curr.ASSETNUM;
                 if ((curr.PRIORITY <= chosenpriority) &&
                     (chosendept == department || chosendept == "All") &&
@@ -460,14 +459,14 @@
 
             for (i = 0; i < assetcolums; i++) {
                 var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-                department = curr.LOCATIONS.DESCRIPTION;
+                department = curr.LOCATIONS[0].DESCRIPTION;
                 isrun = curr.ISRUNNING;
                 curprior = curr.PRIORITY;
 
                 if ((curr.PRIORITY <= chosenpriority) &&
                     (chosendept == department || chosendept == "All") &&
                     (!curr.ISRUNNING || running == "All")) {
-                    sectionname = curr.CLASSSTRUCTURE.DESCRIPTION;
+                    sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
                     found = false;
                     // find the next available slot
                     var locald;
@@ -709,7 +708,7 @@
             text = start.toDateString();
             text = start.toString();
             text = start.toGMTString();
-            text = ">"+start.toISOString().replace('T',' ').replace('Z','');
+            text = ">" + start.toISOString();
             chosenpriority = priBox.options[priBox.selectedIndex].value;
             filterpriority = chosenpriority == 99 ? "!~null~" : chosenpriority;
             if (chosenpriority == 99) {
@@ -738,6 +737,8 @@
                         SITEID: "=TAR"
                     }, {
                         ASSETTYPE: "=FLEET"
+                    }, {
+                        CHANGEDATE: text
                     }, {
                         STATUS: "OPERATING"
                     }, {

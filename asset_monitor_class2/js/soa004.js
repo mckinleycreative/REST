@@ -46,9 +46,10 @@ SOA004Client = {
 		this.AJAX.open("GET", url, false);
 		this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
 		this.AJAX.send();
-		var newText = xmlToJSON.parseString(this.AJAX.responseText);
+//		var newText = xmlToJSON.parseString(this.AJAX.responseText);
+    newText = JSON.parse(this.AJAX.responseText);
 		return ( newText );
-		
+
 		var jsonobj = JSON.parse(newText);
 		var jsonobj = JSON.parse(this.AJAX.responseText);
 		var temp  = JSON.stringify(jsonobj);
