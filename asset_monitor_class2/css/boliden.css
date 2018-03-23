@@ -218,7 +218,7 @@ asssrv {
     text-align: left;
     border-radius: 6px;
     padding: 20px;
-
+		transition: all 0.1s ease-in-out 0.1s;
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -226,7 +226,7 @@ asssrv {
 
 .assetdown:hover .tooltiptext {
     visibility: visible;
-		transition: all 0.5s ease 3s;
+		transition: all 0.1s ease-in-out 0.1s;
 }
 
 .assetdown2 {

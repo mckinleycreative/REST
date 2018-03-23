@@ -68,42 +68,16 @@
     <div id="output"></div>
 
     <script>
-        var interval = 60000;
-        var debug = false;
+        var interval = 120000;
+        var debug = true;
         //		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
-        var searchfilter = {
-            maxrows: 600,
-            offset: 0,
-            fields: [{
-                SITEID: "=TAR"
-            }, {
-                LOCATION: "=102A"
-            }, {
-                ASSETTYPE: "=FLEET"
-            }, {
-                STATUS: "=OPERATING"
-            }, {
-                PRIORITY: 1
-            }]
-        };
-        var updatefilter = {
-            maxrows: 10,
-            offset: 2,
-            fields: [{
-                SITEID: "=TAR"
-            }]
-        };
-        var filter = searchfilter;
-
         var chosenpriority = 1;
         var chosendept = "All";
         var running = "All";
         var json = null;
-        var newjson = null;
         var HeaderCells;
         var startdate = new Date();
 
-        startdate.setYear(1);
 
         var deptBox = document.getElementById('department');
         var priBox = document.getElementById('priority');
@@ -123,8 +97,8 @@
         priBox.onchange = function() {
             //			chosenpriority = priBox.options[priBox.selectedIndex].value;
             //			displaytable( json );
-            startdate.setYear(1);
-            update();
+            startdate.setFullYear(1);
+            reload();
         }
 
         deptBox.onchange = function() {
@@ -183,6 +157,38 @@
             deptBox.value = chosendept;
         }
 
+        function mergejson(json, newjson) {
+            var allrecords = json.QueryREST_ASSETWResponse.rsTotal;
+            var newrecords = newjson.QueryREST_ASSETWResponse.rsTotal;
+            if (allrecords == 0 || newrecords == 0) return;
+            var i = 0;
+            var j = 0;
+            var records = allrecords - 1;
+            debug = true;
+
+            // stript out repeated text from department names
+            for (i; i < newrecords; ++i) {
+                newcurr = newjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
+                for (j = 0; j < allrecords; ++j) {
+                    curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[j];
+                    curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : trimlocationdesc(curr.LOCATIONS[0].DESCRIPTION);
+                    if (newcurr.ASSETID == curr.ASSETID) {
+                        json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[j] = newcurr;
+                        set("lastupdated", startdate.toLocaleString());
+                        console.log("merge " + startdate + ":" + curr.CHANGEDATE + ": Asset [" + curr.ASSETNUM + "] :" + compile(curr));
+                    }
+                }
+            };
+            debug = false;
+
+        }
+
+
+        function trimlocationdesc(locationdescription) {
+            return(locationdescription.replace('Mine ', '').replace(' Fleet', ''));
+        }
+
+
         function sortbydept(json, dept) {
             var start = 0;
             var allrecords = json.QueryREST_ASSETWResponse.rsTotal;
@@ -198,7 +204,7 @@
             // stript out repeated text from department names
             for (i = start; i < allrecords; ++i) {
                 curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-                curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : curr.LOCATIONS[0].DESCRIPTION.replace('Mine ', '').replace(' Fleet', '');
+                curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : trimlocationdesc(curr.LOCATIONS[0].DESCRIPTION);
                 //                curr.LOCATIONS.DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : curr.LOCATIONS.DESCRIPTION.replace('Mine ', '').replace(' Fleet', '');
                 //				curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','').replace(' Light','').replace(' Vehicles','');
                 //				.replace(' Equipment','').replace('Mobile ','').replace('Equipment ','');
@@ -377,9 +383,6 @@
             var assetrecords = json.QueryREST_ASSETWResponse.rsCount;
             if (assetrecords == 0) return;
 
-            startdate = new Date();
-            set("lastupdated", startdate.toLocaleString());
-
             var assetcolums = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length;
             var sectionname = null;
             var oldsectionname = null;
@@ -508,9 +511,13 @@
                                                         assetservice += 1;
                                                         pmpservice = true;
                                                     } else {
-                                                        assetdowncount += 1;
-                                                        assetbreakdowncount += 1;
+                                                      assetdowncount += 1;
+                                                      assetbreakdowncount += 1;
+                                                      if ( pmpfound ) {
+                                                        deptlabel.item(l).className = "assetdown";
+                                                      } else {
                                                         deptlabel.item(l).className = "assetdown2";
+                                                      }
                                                     }
                                                 } else {
                                                     deptlabel.item(l).className = "assetdown";
@@ -658,20 +665,11 @@
         }
 
         function daysBetween(date1, date2) {
-            // Get 1 day in milliseconds
-            var one_day = 1000 * 60 * 60;
-            var one_hour = 1000 * 60 * 60;
-            var one_min = 1000 * 60;
             var mins;
             var hours;
-            // Convert both dates to milliseconds
-            // Calculate the difference in milliseconds
-            // Convert back to days and return
-            mins = (date2.getTime() - date1.getTime()) / one_min;
-            mins = Math.round(mins);
-            hours = (mins / 60.0);
-            hours = Math.round(hours);
-            mins = mins - hours * 60.0;
+            mins = Math.round(daysDiff(date1, date2));
+            hours = Math.round((mins / 60.0));
+            mins = mins - (hours * 60.0);
             if (hours == 0) {
                 downtime = mins + "M";
             } else if (hours > 47) {
@@ -682,19 +680,10 @@
             return downtime;
         }
 
-        function reload() {
+        function setfilter() {
             var filter;
-            startdate.setHours(0);
-            startdate.setMinutes(0);
-            update();
-        }
-
-        function update() {
-            var filter;
-            startdate.setHours(0);
-            startdate.setMinutes(0);
+            // temp to cause delta data set
             var text = ">" + startdate.toISOString();
-            set("lastrun", startdate.toLocaleString());
             chosenpriority = priBox.options[priBox.selectedIndex].value;
             filterpriority = chosenpriority == 99 ? "!~null~" : chosenpriority;
             if (chosenpriority == 99) {
@@ -733,11 +722,33 @@
                         PRIORITY: filterpriority
                     }]
                 };
-                //          filter = {maxrows: 600,offset: 0,fields: [{SITEID:"=TAR"},{ASSETTYPE:"=FLEET"},{STATUS:"=OPERATING,=ACTIVE"},{LOCATION:"!~null~"},{PRIORITY:filterpriority}]};
             }
-            SOA004Client.dataobject = "REST_ASSETW";
-            json = SOA004Client.get(filter);
-            if (json.error === undefined) {
+            startdate = new Date();
+            return filter;
+        }
+
+        function reload() {
+            set("lastupdated", startdate.toLocaleString());
+            tempYear = startdate.getFullYear();
+            startdate.setFullYear(1900);
+            json = SOA004Client.get(setfilter());
+            startdate.setFullYear(tempYear);
+            update();
+        }
+
+        function update() {
+            //            startdate.setHours(0);
+            //            startdate.setMinutes(0);
+            var tMins = startdate.getMinutes();
+            var newjson = null;
+            tMins -= 40;
+            startdate.setMinutes(tMins);
+            console.log("startdate ::" + startdate);
+            set("lastrun", startdate.toLocaleString());
+            newjson = SOA004Client.get(setfilter());
+            mergejson(json, newjson);
+
+            if (newjson.error === undefined) {
                 sortbydept(json, true);
                 displaytable(json);
             } else {
