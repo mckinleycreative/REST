@@ -99,6 +99,7 @@
         var chosendept = "All";
         var running = "All";
         var json = null;
+        var newjson = null;
         var HeaderCells;
         var startdate = new Date();
 
@@ -681,6 +682,13 @@
             return downtime;
         }
 
+        function reload() {
+            var filter;
+            startdate.setHours(0);
+            startdate.setMinutes(0);
+            update();
+        }
+
         function update() {
             var filter;
             startdate.setHours(0);
@@ -743,7 +751,8 @@
         deptBox.value = "All";
         priBox.value = "1";
         runningBox.value = "All";
-        update();
+        reload();
+
         setInterval(function() {
             update();
         }, interval);
