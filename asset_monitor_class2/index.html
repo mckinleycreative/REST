@@ -106,7 +106,7 @@
             displaytable(json);
         }
 
-        function compile(curr, dept) {
+        function compile(curr, downtime) {
             var d = new Date();
             var currdescription = curr.LOCATIONS[0].DESCRIPTION;
             //            currdescription += curr.CLASSSTRUCTURE[0].DESCRIPTION;
@@ -114,12 +114,9 @@
             currdescription += curr.CLASSSTRUCTURE[0].DESCRIPTION;
             currdescription += ".";
             currdescription += curr.ISRUNNING === false ? 0 : 1;
-            currdescription += ".";
+            currdescription += ":";
             locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
-            downtime = daysDiff(locald, d);
-            currdescription += ".";
-            currdescription += downtime;
-            currdescription += ".";
+            downtime  = daysDiff(locald, d);
             currdescription += curr.ASSETNUM;
             //					console.log('desc:'+currdescription);
             return currdescription;
@@ -218,14 +215,17 @@
 
             outputconsole("clean", json);
 
+            var cdowntime = 0.0;
+            var ndowntime = 0.0;
+
             while (swap) {
                 swap = false;
                 for (i = start; i < records; ++i) {
                     curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
                     nextcurr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i + 1];
-                    var currdescription = compile(curr, dept);
-                    var nextdescription = compile(nextcurr, dept);
-                    if (currdescription > nextdescription) {
+                    var currdescription = compile(curr, cdowntime);
+                    var nextdescription = compile(nextcurr, ndowntime);
+                    if (currdescription > nextdescription  ) {
                         swap = true
                         endstop = i;
                         json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i + 1] = curr;
@@ -244,9 +244,9 @@
                 for (i = records; i > start; --i) {
                     curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
                     nextcurr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i - 1];
-                    var currdescription = compile(curr, dept);
-                    var nextdescription = compile(nextcurr, dept);
-                    if (currdescription < nextdescription) {
+                    var currdescription = compile(curr, cdowntime);
+                    var nextdescription = compile(nextcurr, ndowntime);
+                    if (currdescription < nextdescription  ) {
                         swap = true
                         endstop = i;
                         json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i - 1] = curr;
@@ -281,6 +281,26 @@
             return days;
         };
 
+        function calculate_nextdue ( pmmeter, average, lifetodate, installdate){
+          var days =0.0;
+
+          if ( pmmeter.LASTPMWOGENREADDT) {
+              reportdate = new Date(pmmeter.LASTPMWOGENREADDT);
+              days = average == 0 ? 0 : pmmeter.FREQUENCY / average;
+              reportdate.setDate(reportdate.getDate() + days);
+              days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
+          } else {
+              reportdate = new Date(installdate);
+              rate = daysDiff(reportdate, d) / 60.0 / 24.0;
+              average = lifetodate / rate;
+              days = Math.round(cpmmeter.FREQUENCY / average);
+              reportdate.setDate(reportdate.getDate() + days);
+              ass += days < 0 ? "late style='color:black'><br/>Late " : "<br/>Due ";
+              ass += days + " Days";
+          }
+
+        };
+
         function buildassetcell(curr, pmpfound, pmpservice, pmploc) {
             var d = new Date();
             var pmexists = false;
@@ -291,16 +311,17 @@
             ass += chosenpriority > 1 ? " (" + curr.PRIORITY + ") [" : " [";
             //            var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
             var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
-            ass += daysBetween(locald, d) + "]<br/>";
+            ass += daysBetween(locald, d) + "]";
             if (curr.ASSETNUM == "337") {
                 stop = 0;
             }
             if (pmpservice) {
                 reportdate = curr.WORKORDER[pmploc].SCHEDFINISH === undefined ? new Date(curr.WORKORDER[pmploc].TARGCOMPDATE) : new Date(curr.WORKORDER[pmploc].SCHEDFINISH);
                 days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
-                ass += days < 0 ? "Late Back " : "Back "
+                ass += days < 0 ? "<br/>Late Back " : "<br/>Back "
                 ass += days + " Days";
             } else if (curr.ASSETMETER) {
+                currmeter = curr.ASSETMETER;
                 for (am = 0; am < curr.ASSETMETER.length; am++) {
                     var currmeter = curr.ASSETMETER[am];
                     if (currmeter.PMMETER) {
@@ -311,7 +332,7 @@
                                 days = currmeter.AVERAGE == 0 ? 0 : currmeter.PMMETER[pm].FREQUENCY / currmeter.AVERAGE;
                                 reportdate.setDate(reportdate.getDate() + days);
                                 days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
-                                ass += days < 0 ? "<late style='color:black'>Late " : "Due ";
+                                ass += days < 0 ? "<late style='color:black'><br/>Late " : "<br/>Due ";
                                 ass += days + " Days";
                             } else {
                                 lifetodate = currmeter.LIFETODATE;
@@ -320,7 +341,7 @@
                                 average = lifetodate / rate;
                                 days = Math.round(currmeter.PMMETER[pm].FREQUENCY / average);
                                 reportdate.setDate(reportdate.getDate() + days);
-                                ass += days < 0 ? "<late style='color:black'>Late " : "Due ";
+                                ass += days < 0 ? "late style='color:black'><br/>Late " : "<br/>Due ";
                                 ass += days + " Days";
                             }
                         }
@@ -332,7 +353,7 @@
             reportdate = curr.INSTALLDATE === undefined ? new Date(curr.STATUSDATE) : new Date(curr.INSTALLDATE);
             rate = daysDiff(reportdate, d) / 60.0;
             avail = Math.round(10000 * (1 - (curr.TOTDOWNTIME / rate))) / 100;
-            ass += "<br/> Avail  " + avail + "%";
+            ass += "<br/>Avail " + avail + "%";
 
             return ass;
         }
@@ -721,8 +742,6 @@
                         CHANGEDATE: text
                     }, {
                         STATUS: "OPERATING"
-                    }, {
-                        LOCATION: "!~null~"
                     }, {
                         PRIORITY: filterpriority
                     }]

@@ -5,25 +5,25 @@
 */
 
 h1 {
-	font: 36px Helvetica;
+	font: 36px Tahoma;
 	font-weight: bold;
 	}
 
 h2 {
-		font: 14px Helvetica;
+		font: 14px Tahoma;
 		color: Tomato;
 		font-weight: bold;
 		}
 
 body {
-    font: 12px arial;
+    font: 12px Tahoma;
     text-align: center;
 }
 
 controls {
     padding-left: 20px;
     padding-right: 20px;
-    font: 14px arial;
+    font: 14px Tahoma;
 }
 
 .hover {
