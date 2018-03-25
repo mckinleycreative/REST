@@ -1,19 +1,24 @@
 @import url("styles.css");
+
 /* {
     background-color: #222222;
 }
 */
 
+header {
+    height: 120px;
+}
+
 h1 {
-	font: 36px Helvetica;
-	font-weight: bold;
-	}
+    font: 36px Helvetica;
+    font-weight: bold;
+}
 
 h2 {
-		font: 14px Helvetica;
-		color: Tomato;
-		font-weight: bold;
-		}
+    font: 14px Helvetica;
+    color: Tomato;
+    font-weight: bold;
+}
 
 body {
     font: 10px Tahoma;
@@ -27,7 +32,7 @@ controls {
 }
 
 .hover {
-	transition: all 0.1s ease-in-out 1s;
+    transition: all 0.1s ease-in-out 1s;
 }
 
 select, option {
@@ -43,15 +48,28 @@ section {
 table#control {
     font: 14px Tahoma;
     text-align: center;
-    width: 90%;
+    width: 70%;
     border: 0px;
     color: white;
     background-color: #7D9BC1;
-	margin-top: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+table#output {
+    font: 14px Tahoma;
+    text-align: left;
+    width: 50%;
+    border: 10px;
+    color: white;
+    background-color: #7D9BC1;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    padding: 5px;
 }
 
 table#tgt {
-    font: 11px Tahoma;
+    font: 11px Tahoma font-weight: normal;
     border-collapse: collapse;
     text-align: center;
     border: 1px solid black;
@@ -62,15 +80,15 @@ table#tgt {
 table#tgt tr:first-child th {
     font: large arial;
     border-bottom: 4px solid lightgrey;
-	background-color: lightgrey;
+    background-color: lightgrey;
 }
 
 thead {
-	color: white;
-	font-weight: bold;
-	background-color: grey;
-	text-align: center;
-	}
+    color: white;
+    font-weight: bold;
+    background-color: grey;
+    text-align: center;
+}
 
 
 /*td { padding-left: 5px; padding-right: 5px; text-align: center; border-style: solid}*/
@@ -78,9 +96,20 @@ thead {
 th, td {
     border: 1px solid black;
     width: 6%;
-		padding: 0px;
-	border-bottom: 0px;
-	text-align: center;
+    padding: 0px;
+    text-align: center;
+}
+
+.output {
+    font: 14px Tahoma;
+    text-align: left;
+    width: 50%;
+    border: 10px;
+    color: white;
+    background-color: #7D9BC1;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    padding: 5px;
 }
 
 lupdate {
@@ -97,7 +126,7 @@ assup {
 
 assdn {
     color: aqua;
-	width: 140px;
+    width: 140px;
 }
 
 asssrv {
@@ -109,35 +138,35 @@ asssrv {
 
 .production {
     background-color: grey;
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .productionh {
-	color: grey;
+    color: grey;
     background-color: grey;
-	border: 0px;
+    border: 0px;
 }
 
 .development {
     background-color: lightblue;
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .developmenth {
-	color: lightgrey;
+    color: lightgrey;
     background-color: lightgrey;
-	border: 0px;
+    border: 0px;
 }
 
 .other {
     background-color: #7D9BC1;
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .otherh {
-	color: #7D9BC1;
+    color: #7D9BC1;
     background-color: #7D9BC1;
-	border: 0px;
+    border: 0px;
 }
 
 .odd {
@@ -155,13 +184,12 @@ asssrv {
 .assetup {
     color: black;
     background-color: lightgreen;
-  	border-collapse: separate!important;
+    border-collapse: separate!important;
     text-align: center;
 }
 
 .assetup .tooltiptext {
-    
-	font: 22px arial;
+     font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -169,7 +197,6 @@ asssrv {
     text-align: left;
     border-radius: 6px;
     padding: 20px;
-
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -182,13 +209,13 @@ asssrv {
 .assetup2 {
     color: black;
     background-color: #56bf56;
-	border-collapse: separate!important;
+    border-collapse: separate!important;
     text-align: center;
 }
 
 .assetup2 .tooltiptext {
     left: 20%;
-	font: 22px arial;
+    font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -196,7 +223,6 @@ asssrv {
     text-align: left;
     border-radius: 6px;
     padding: 20px;
-
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -208,7 +234,7 @@ asssrv {
 
 .assetdown .tooltiptext {
     left: 20%;
-	font: 22px arial;
+    font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -216,7 +242,7 @@ asssrv {
     text-align: left;
     border-radius: 6px;
     padding: 20px;
-		transition: all 0.1s ease-in-out 0.1s;
+    transition: all 0.1s ease-in-out 0.1s;
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -224,7 +250,7 @@ asssrv {
 
 .assetdown:hover .tooltiptext {
     visibility: visible;
-		transition: all 0.1s ease-in-out 0.1s;
+    transition: all 0.1s ease-in-out 0.1s;
 }
 
 .assetdown2 {
@@ -235,7 +261,7 @@ asssrv {
 
 .assetdown2 .tooltiptext {
     left: 20%;
-	font: 22px arial;
+    font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -243,7 +269,7 @@ asssrv {
     text-align: left;
     border-radius: 6px;
     padding: 20px;
-		transition: all 0.1s ease-in-out 1s;
+    transition: all 0.1s ease-in-out 1s;
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -251,12 +277,12 @@ asssrv {
 
 .assetdown2:hover .tooltiptext {
     visibility: visible;
-		transition: all 0.1s ease-in-out 1s;
+    transition: all 0.1s ease-in-out 1s;
 }
 
 .assetservice .tooltiptext {
     left: 20%;
-	  font: 22px arial;
+    font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -264,7 +290,6 @@ asssrv {
     text-align: left;
     border-radius: 10px;
     padding: 10px;
-
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -293,14 +318,14 @@ asssrv {
 }
 
 .assetservice {
-	color: black;
+    color: black;
     background-color: Cornsilk;
     text-align: center;
 }
 
 .serviceduepmp .tooltiptext {
     left: 20%;
-	  font: 22px arial;
+    font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -308,7 +333,6 @@ asssrv {
     text-align: left;
     border-radius: 10px;
     padding: 10px;
-
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -319,15 +343,15 @@ asssrv {
 }
 
 .serviceduepmp {
-	color: #a6f5ed;
-	background-color: #56bf56;
-##	background-color: #993737;
-  text-align: center;
+    color: #a6f5ed;
+    background-color: #56bf56;
+    ## background-color: #993737;
+    text-align: center;
 }
 
 .servicedue .tooltiptext {
     left: 20%;
-	  font: 22px arial;
+    font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -335,7 +359,6 @@ asssrv {
     text-align: left;
     border-radius: 10px;
     padding: 10px;
-
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -346,14 +369,14 @@ asssrv {
 }
 
 .servicedue {
-	color: black;
+    color: black;
     background-color: orange;
     text-align: center;
 }
 
 .servicedueup .tooltiptext {
     left: 20%;
-	  font: 22px arial;
+    font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -361,7 +384,6 @@ asssrv {
     text-align: left;
     border-radius: 10px;
     padding: 10px;
-
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -372,14 +394,14 @@ asssrv {
 }
 
 .servicedueup {
-		color: black;
+    color: black;
     background-color: #56bf56;
     text-align: center;
 }
 
 .serviceduedn .tooltiptext {
     left: 20%;
-	  font: 22px arial;
+    font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -387,7 +409,6 @@ asssrv {
     text-align: left;
     border-radius: 10px;
     padding: 10px;
-
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
@@ -398,8 +419,8 @@ asssrv {
 }
 
 .serviceduedn {
-	color: #a6f5ed;
-	background-color: #993737;
+    color: #a6f5ed;
+    background-color: #993737;
     text-align: center;
 }
 
