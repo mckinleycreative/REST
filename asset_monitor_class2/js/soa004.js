@@ -24,100 +24,101 @@
 // */
 
 SOA004Client = {
-	//_RESTURI: "http://bolsrv0138.boliden.internal:7802/SOA004/rest/BI/",
-	// _RESTURI: "http://bolsrv0461.boliden.internal:4181/",	// TEST
-   //_RESTURI: "http://bolsrv0461.boliden.internal:6081/",	// QA
-   _RESTURI: "http://bolsrv0461.boliden.internal:8081/",	// PROD
-	_AUTHSTR: "mxIntBi", //PROD
-	//_AUTHSTR: "test", // TEST
-	AJAX: null,
-	get: function (filter, id, fields) {
-		if (this.AJAX === null) {
-            return null;
-        }
-		if (this.system === "" || this.dataobject === "") {
-            return null;
-        }
-		var url = this._RESTURI + this.system + "/" + this.dataobject;
-		if (id) {
-            url += "/" + id;
-        }
-		url += "?filter=" + JSON.stringify(filter);
-		this.AJAX.open("GET", url, false);
-		this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
-		this.AJAX.send();
-//		var newText = xmlToJSON.parseString(this.AJAX.responseText);
+  //_RESTURI: "http://bolsrv0138.boliden.internal:7802/SOA004/rest/BI/",
+  // _RESTURI: "http://bolsrv0461.boliden.internal:4181/",	// TEST
+     //_RESTURI: "http://bolsrv0461.boliden.internal:6081/",	// QA
+    
+  _RESTURI: "http://bolsrv0461.boliden.internal:8081/", // PROD
+  _AUTHSTR: "mxIntBi", //PROD
+  //_AUTHSTR: "test", // TEST
+  AJAX: null,
+  get: function(filter, id, fields) {
+    if (this.AJAX === null) {
+      return null;
+    }
+    if (this.system === "" || this.dataobject === "") {
+      return null;
+    }
+    var url = this._RESTURI + this.system + "/" + this.dataobject;
+    if (id) {
+      url += "/" + id;
+    }
+    url += "?filter=" + JSON.stringify(filter);
+    this.AJAX.open("GET", url, false);
+    this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
+    this.AJAX.send();
+    //		var newText = xmlToJSON.parseString(this.AJAX.responseText);
     newText = JSON.parse(this.AJAX.responseText);
-		return ( newText );
+    return (newText);
 
-		var jsonobj = JSON.parse(newText);
-		var jsonobj = JSON.parse(this.AJAX.responseText);
-		var temp  = JSON.stringify(jsonobj);
-		return JSON.parse(this.AJAX.responseText);
-	},
-	getasync: function (filter, id, fields, callback) {
-		if (this.AJAX === null) {
-            return null;
-        }
-		if (this.system === "" || this.dataobject === "") {
-            return null;
-        }
-		var url = this._RESTURI + this.system + "/" + this.dataobject;
-		if (id) {
-            url += "/" + id;
-        }
-        url += "?filter=" + JSON.stringify(filter);
-		this.AJAX.open("GET", url, true);
-		this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
-		this.AJAX.onreadystatechange = function () {
-			if (this.readyState === 4) {
-                callback(JSON.parse(this.responseText));
-			}
-		};
-		this.AJAX.send();
-	},
-	init: function () {
-		this.AJAX = (window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"));
-	},
-	post: function (id, data) {
-		if (this.AJAX === null) {
-            return null;
-        }
-		if (this.system === "" || this.dataobject === "" || !data) {
-            return null;
-        }
-		var url = this._RESTURI + this.system + "/" + this.dataobject;
-		if (id) {
-            url += "/" + id;
-        }
-		url += "?data=" + JSON.stringify(data);
-		this.AJAX.open("POST", url, false);
-		this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
-		this.AJAX.send();
-		return JSON.parse(this.AJAX.responseText);
-	},
-	postasync: function (id, data, callback) {
-		if (this.AJAX === null) {
-            return null;
-        }
-		if (this.system === "" || this.dataobject === "" || !data) {
-            return null;
-        }
-		var url = this._RESTURI + this.system + "/" + this.dataobject;
-		if (id) {
-            url += "/" + id;
-        }
-		url += "?data=" + JSON.stringify(data);
-		this.AJAX.open("POST", url, true);
-		this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
-		this.AJAX.onreadystatechange = function () {
-			if (this.readyState === 4) {
-				callback(JSON.parse(this.responseText));
-			}
-		};
-		this.AJAX.send();
-	},
+    var jsonobj = JSON.parse(newText);
+    var jsonobj = JSON.parse(this.AJAX.responseText);
+    var temp = JSON.stringify(jsonobj);
+    return JSON.parse(this.AJAX.responseText);
+  },
+  getasync: function(filter, id, fields, callback) {
+    if (this.AJAX === null) {
+      return null;
+    }
+    if (this.system === "" || this.dataobject === "") {
+      return null;
+    }
+    var url = this._RESTURI + this.system + "/" + this.dataobject;
+    if (id) {
+      url += "/" + id;
+    }
+    url += "?filter=" + JSON.stringify(filter);
+    this.AJAX.open("GET", url, true);
+    this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
+    this.AJAX.onreadystatechange = function() {
+      if (this.readyState === 4) {
+        callback(JSON.parse(this.responseText));
+      }
+    };
+    this.AJAX.send();
+  },
+  init: function() {
+    this.AJAX = (window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"));
+  },
+  post: function(id, data) {
+    if (this.AJAX === null) {
+      return null;
+    }
+    if (this.system === "" || this.dataobject === "" || !data) {
+      return null;
+    }
+    var url = this._RESTURI + this.system + "/" + this.dataobject;
+    if (id) {
+      url += "/" + id;
+    }
+    url += "?data=" + JSON.stringify(data);
+    this.AJAX.open("POST", url, false);
+    this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
+    this.AJAX.send();
+    return JSON.parse(this.AJAX.responseText);
+  },
+  postasync: function(id, data, callback) {
+    if (this.AJAX === null) {
+      return null;
+    }
+    if (this.system === "" || this.dataobject === "" || !data) {
+      return null;
+    }
+    var url = this._RESTURI + this.system + "/" + this.dataobject;
+    if (id) {
+      url += "/" + id;
+    }
+    url += "?data=" + JSON.stringify(data);
+    this.AJAX.open("POST", url, true);
+    this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
+    this.AJAX.onreadystatechange = function() {
+      if (this.readyState === 4) {
+        callback(JSON.parse(this.responseText));
+      }
+    };
+    this.AJAX.send();
+  },
 
-	system: "",
-	dataobject: ""
+  system: "",
+  dataobject: ""
 };
