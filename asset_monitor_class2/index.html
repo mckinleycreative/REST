@@ -60,7 +60,8 @@
   <tr>
     <tr/>
     <table id="output">
-      <td class="output"><span id="outputmess"></span></td>
+      <td class="assetuplist"><span id="messup"></span></td>
+      <td class="assetdownlist"><span id="messdown"></span></td>
     </table>
 
     <table id="tgt">
@@ -93,7 +94,7 @@
 
       runningBox.onchange = function() {
         running = runningBox.options[runningBox.selectedIndex].value;
-        displaytable(json);
+        refresh();
       }
 
       priBox.onchange = function() {
@@ -104,7 +105,7 @@
 
       deptBox.onchange = function() {
         chosendept = deptBox.options[deptBox.selectedIndex].value;
-        displaytable(json);
+        refresh();
       }
 
       function compile(curr, downtime) {
@@ -187,19 +188,32 @@
 
       function displaynew(newjson) {
         var newrecords = newjson.QueryREST_ASSETWResponse.rsTotal;
-        if (newrecords == 0) return;
-        var i = 0;
-        var exists = false;
-        var message = "";
-
-        for (i; i < newrecords; ++i) {
-          newcurr = newjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-          set("lastupdated", startdate.toLocaleString());
-          message += exists ? "<br/>" : "";
-          message += (newcurr.ISRUNNING == 0 ? "Down" : "Up") + ": " + newcurr.ASSETNUM + " " + newcurr.DESCRIPTION;
-          exists = true;
-        };
-        set("outputmess", message);
+        if (newrecords > 0) {
+          var i = 0;
+          var uexists = false;
+          var dexists = false;
+          var umessage = "";
+          var dmessage = "";
+          set("messup", null);
+          set("messdown", null);
+          for (i; i < newrecords; ++i) {
+            newcurr = newjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
+            if (newcurr.ISRUNNING == 0) {
+              dmessage += dexists ? "<br/>" : "";
+              dmessage += newcurr.ASSETNUM + " " + newcurr.DESCRIPTION;
+              dexists = true;
+            } else {
+              umessage += uexists ? "<br/>" : "";
+              umessage += newcurr.ASSETNUM + " " + newcurr.DESCRIPTION;
+              uexists = true;
+            }
+          };
+          if (uexists) set("messup", umessage);
+          if (dexists) set("messdown", dmessage);
+        } else {
+          document.getElementById("output").style.display = 'none';
+        }
+        set("lastupdated", startdate.toLocaleString());
 
       }
 
@@ -317,6 +331,46 @@
 
       };
 
+      function meterdays(currmeter) {
+        var d = new Date();
+        for (pm = 0; pm < currmeter.PMMETER.length; pm++) {
+          if (currmeter.PMMETER[pm].LASTPMWOGENREADDT) {
+            reportdate = new Date(currmeter.PMMETER[pm].LASTPMWOGENREADDT);
+            days = currmeter.AVERAGE == 0 ? 0 : currmeter.PMMETER[pm].FREQUENCY / currmeter.AVERAGE;
+            reportdate.setDate(reportdate.getDate() + days);
+            days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
+          } else {
+            reportdate = new Date(curr.INSTALLDATE);
+            rate = (daysDiff(reportdate, d) / 60.0 / 24.0);
+            average = currmeter.LIFETODATE / rate;
+            days = Math.round(currmeter.PMMETER[pm].FREQUENCY / average);
+          }
+        }
+        return days;
+      };
+
+      function swapmeters(curr, pmpfound, pmpservice, pmploc) {
+        swap = true;
+        currdays = 999;
+        nextdays = 999;
+        while (swap) {
+          swap = false;
+          for (am = 0; am < curr.ASSETMETER.length - 1; am++) {
+            currmeter = curr.ASSETMETER[am];
+            nextmeter = curr.ASSETMETER[am + 1];
+            if (currmeter.PMMETER)
+              currdays = meterdays(currmeter);
+            if (nextmeter.PMMETER)
+              nextdays = meterdays(nextmeter);
+            if (currdays > nextdays) {
+              curr.ASSETMETER[am] = nextmeter;
+              curr.ASSETMETER[am + 1] = currmeter;
+              swap = true;
+            }
+          }
+        }
+      };
+
       function buildassetcell(curr, pmpfound, pmpservice, pmploc) {
         var d = new Date();
         var pmexists = false;
@@ -328,44 +382,28 @@
         //            var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
         var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
         ass += daysBetween(locald, d) + "]";
-        if (curr.ASSETNUM == "337") {
-          stop = 0;
-        }
+        if (curr.ASSETNUM == "205") stop = 0;
         if (pmpservice) {
           reportdate = curr.WORKORDER[pmploc].SCHEDFINISH === undefined ? new Date(curr.WORKORDER[pmploc].TARGCOMPDATE) : new Date(curr.WORKORDER[pmploc].SCHEDFINISH);
           days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
           ass += days < 0 ? "<br/>Late Back " : "<br/>Back "
           ass += days + " Days";
         } else if (curr.ASSETMETER) {
-          currmeter = curr.ASSETMETER;
-          for (am = 0; am < curr.ASSETMETER.length; am++) {
+          swapmeters(curr);
+          //          for (am = 0; am < curr.ASSETMETER.length; am++) {
+          for (am = 0; am < 1; am++) {
             var currmeter = curr.ASSETMETER[am];
             if (currmeter.PMMETER) {
+              days = meterdays(currmeter);
               pmexists = true;
-              for (pm = 0; pm < currmeter.PMMETER.length; pm++) {
-                if (currmeter.PMMETER[pm].LASTPMWOGENREADDT) {
-                  reportdate = new Date(currmeter.PMMETER[pm].LASTPMWOGENREADDT);
-                  days = currmeter.AVERAGE == 0 ? 0 : currmeter.PMMETER[pm].FREQUENCY / currmeter.AVERAGE;
-                  reportdate.setDate(reportdate.getDate() + days);
-                  days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
-                  ass += days < 0 ? "<late style='color:black'><br/>Late " : "<br/>Due ";
-                  ass += days + " Days";
-                } else {
-                  lifetodate = currmeter.LIFETODATE;
-                  reportdate = new Date(curr.INSTALLDATE);
-                  rate = daysDiff(reportdate, d) / 60.0 / 24.0;
-                  average = lifetodate / rate;
-                  days = Math.round(currmeter.PMMETER[pm].FREQUENCY / average);
-                  reportdate.setDate(reportdate.getDate() + days);
-                  ass += days < 0 ? "late style='color:black'><br/>Late " : "<br/>Due ";
-                  ass += days + " Days";
-                }
-              }
+              ass += days < 0 ? "<late style='color:black'><br/>Late " : "<br/>Due ";
+              ass += days + " Days";
             }
           }
           if (!pmexists)
             ass += "<late style='color:black'>No PM";
-        };
+        }
+
         reportdate = curr.INSTALLDATE === undefined ? new Date(curr.STATUSDATE) : new Date(curr.INSTALLDATE);
         rate = daysDiff(reportdate, d) / 60.0;
         avail = Math.round(10000 * (1 - (curr.TOTDOWNTIME / rate))) / 100;
@@ -441,10 +479,8 @@
         for (var i = 0; i < tablelength; i++) {
           toptbl.deleteRow(0);
         }
-
         // start rebuild the header with the single version of the description
         tr = tblhead.insertRow(0);
-
         // add columns for the machine types currently using CLASSSTRUCTURE
         td = tr.insertCell(-1);
         td.innerHTML = "Department"
@@ -452,14 +488,12 @@
         HeaderCells = toptbl.rows.item(0).cells;
         for (i = 0; i < assetcolums; i++) {
           var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-          //                sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
-          //                department = curr.LOCATIONS[0].DESCRIPTION;
           sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
           department = curr.LOCATIONS[0].DESCRIPTION;
           ass = curr.ASSETNUM;
           if ((curr.PRIORITY <= chosenpriority) &&
             (chosendept == department || chosendept == "All") &&
-            (!curr.ISRUNNING || running == "All" || running == "Available")) {
+            (!curr.ISRUNNING || running == "All")) {
             if (nocolumns > 0) {
               HeaderCells = toptbl.rows.item(0).cells;
               //gets cells of current row
@@ -492,7 +526,7 @@
           return;
         }
 
-        // run down through the cells with the logic of using the "machine type" field as a sort field
+        // run down through the cells with the logic of using the "machine classificaiton description as the sort field
         swap = true;
         while (swap) {
           swap = false;
@@ -506,6 +540,7 @@
             }
           }
         }
+
 
         for (i = 0; i < assetcolums; i++) {
           var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
@@ -531,9 +566,7 @@
                     if (sectionname == currsection) {
                       if (!deptlabel.item(l).innerHTML) {
                         found = true;
-                        if (curr.ASSETNUM == "337") {
-                          var stop = 0;
-                        }
+                        if (curr.ASSETNUM == "337") stop = 0;
                         pmpfound = false;
                         pmpservice = false;
                         var pmploc = 0;
@@ -596,9 +629,7 @@
               }
             }
             if (!found) {
-              if (curr.ASSETNUM == "337") {
-                var stop = 0;
-              }
+              if (curr.ASSETNUM == "337") stop = 0;
               tr = tbl.insertRow(-1);
               td = tr.insertCell(-1);
               td.innerHTML = department;
@@ -687,8 +718,6 @@
 
       }
 
-
-
       function daysDiff(date1, date2) {
         // Get 1 day in milliseconds
         var one_day = 1000 * 60 * 60;
@@ -757,8 +786,8 @@
               ASSETTYPE: "=FLEET"
             }, {
               CHANGEDATE: text
+              //            }, {               LOCATION: "=102A"
             }, {
-              //                            LOCATION: "=102A"       }, {
               STATUS: "OPERATING"
             }, {
               PRIORITY: filterpriority
@@ -774,6 +803,7 @@
         tempYear.setFullYear(1900);
         json = SOA004Client.get(setfilter(tempYear));
         update();
+        set("lastupdated", startdate.toLocaleString());
         refresh();
       }
 
@@ -785,17 +815,16 @@
       }
 
       function update() {
-        //            startdate.setHours(0);
-        //            startdate.setMinutes(0);
         newjson = null;
         targetdate = new Date(startdate);
-        targetdate.setMinutes(targetdate.getMinutes() - 60);
+        targetdate.setMinutes(targetdate.getMinutes() - 15);
         set("lastrun", startdate.toLocaleString());
         newjson = SOA004Client.get(setfilter(targetdate));
         mergejson(json, newjson);
         if (newjson.error) {
           set("lastupdated", json.error + "<br/>" + startdate.toLocaleString());
         }
+        console.log("update() startdate ::" + startdate);
       }
 
       SOA004Client.init();
@@ -804,6 +833,8 @@
       deptBox.value = "All";
       priBox.value = "1";
       runningBox.value = "All";
+      set("messup", "@@@@@@@@@@@@@@@@");
+      set("messdown", "^^^^^^^^^^^^^^^^^");
       reload();
 
       setInterval(function() {

@@ -46,30 +46,21 @@ section {
 }
 
 table#control {
-    font: 14px Tahoma;
     text-align: center;
     width: 70%;
     border: 0px;
     color: white;
     background-color: #7D9BC1;
-    margin-top: 5px;
-    margin-bottom: 5px;
 }
 
 table#output {
-    font: 14px Tahoma;
     text-align: left;
-    width: 50%;
+    width: 70%;
     border: 10px;
-    color: white;
-    background-color: #7D9BC1;
-    margin-top: 5px;
-    margin-bottom: 0px;
     padding: 5px;
 }
 
 table#tgt {
-    font: 11px Tahoma font-weight: normal;
     border-collapse: collapse;
     text-align: center;
     border: 1px solid black;
@@ -83,6 +74,10 @@ table#tgt tr:first-child th {
     background-color: lightgrey;
 }
 
+table {
+  font: 12px Tahoma;
+  margin-top: 5px;
+}
 thead {
     color: white;
     font-weight: bold;
@@ -98,6 +93,7 @@ th, td {
     width: 6%;
     padding: 0px;
     text-align: center;
+    vertical-align: text-top;
 }
 
 .output {
@@ -138,7 +134,8 @@ asssrv {
 
 .production {
     background-color: grey;
-    font-weight: bold;
+    font-weight: normal;
+    border-bottom: 0px;
 }
 
 .productionh {
@@ -188,8 +185,25 @@ asssrv {
     text-align: center;
 }
 
+.assetuplist {
+    color: black;
+    background-color: lightgreen;
+    border-collapse: separate!important;
+    text-align: left;
+    padding: 2px;
+    padding-left: 6px;
+}
+
+.assetdownlist {
+    color: #a6f5ed;
+    background-color: #d22121;
+    text-align: left;
+    padding: 2px;
+    padding-left: 6px;
+}
+
 .assetup .tooltiptext {
-     font: 22px arial;
+    font: 22px arial;
     visibility: hidden;
     width: 40%;
     background-color: black;
@@ -230,6 +244,12 @@ asssrv {
 
 .assetup2:hover .tooltiptext {
     visibility: visible;
+}
+
+.assetdown {
+    color: #a6f5ed;
+    background-color: #d22121;
+    text-align: center;
 }
 
 .assetdown .tooltiptext {
@@ -299,11 +319,6 @@ asssrv {
     visibility: visible;
 }
 
-.assetdown {
-    color: #a6f5ed;
-    background-color: #d22121;
-    text-align: center;
-}
 
 .assetdown1 {
     color: #a6f5ed;
