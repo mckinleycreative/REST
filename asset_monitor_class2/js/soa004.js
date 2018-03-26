@@ -48,12 +48,8 @@ SOA004Client = {
     this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
     this.AJAX.send();
     //		var newText = xmlToJSON.parseString(this.AJAX.responseText);
-    newText = JSON.parse(this.AJAX.responseText);
-    return (newText);
-
-    var jsonobj = JSON.parse(newText);
-    var jsonobj = JSON.parse(this.AJAX.responseText);
-    var temp = JSON.stringify(jsonobj);
+//    newText = JSON.parse(this.AJAX.responseText);
+//    return (newText);
     return JSON.parse(this.AJAX.responseText);
   },
   getasync: function(filter, id, fields, callback) {

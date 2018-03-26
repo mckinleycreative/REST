@@ -60,6 +60,7 @@
   <tr>
     <tr/>
     <table id="output">
+      <td> Updates in last 15 minutes</td>
       <td class="assetuplist"><span id="messup"></span></td>
       <td class="assetdownlist"><span id="messdown"></span></td>
     </table>
@@ -100,6 +101,8 @@
       priBox.onchange = function() {
         //			chosenpriority = priBox.options[priBox.selectedIndex].value;
         //			displaytable( json );
+        chosenpriority = priBox.options[priBox.selectedIndex].value;
+        filterpriority = chosenpriority == 99 ? "!~null~" : chosenpriority;
         reload();
       }
 
@@ -210,10 +213,11 @@
           };
           if (uexists) set("messup", umessage);
           if (dexists) set("messdown", dmessage);
+          document.getElementById("output").style.display = '';
+          set("lastupdated", startdate.toLocaleString());
         } else {
           document.getElementById("output").style.display = 'none';
         }
-        set("lastupdated", startdate.toLocaleString());
 
       }
 
@@ -232,15 +236,9 @@
         var records = allrecords - 1;
 
         outputconsole("dirty", json);
-
-        // stript out repeated text from department names
         for (i = start; i < allrecords; ++i) {
           curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
           curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : trimlocationdesc(curr.LOCATIONS[0].DESCRIPTION);
-          //                curr.LOCATIONS.DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : curr.LOCATIONS.DESCRIPTION.replace('Mine ', '').replace(' Fleet', '');
-          //				curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown": curr.LOCATIONS[0].DESCRIPTION.replace('Mine ','').replace(' Fleet','').replace(' Light','').replace(' Vehicles','');
-          //				.replace(' Equipment','').replace('Mobile ','').replace('Equipment ','');
-          json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i] = curr;
         };
 
         outputconsole("clean", json);
@@ -756,8 +754,6 @@
         var filter;
         // temp to cause delta data set
         var text = ">" + targetdate.toISOString();
-        chosenpriority = priBox.options[priBox.selectedIndex].value;
-        filterpriority = chosenpriority == 99 ? "!~null~" : chosenpriority;
         if (chosenpriority == 99) {
           //          filter = {maxrows: 600,offset: 0,fields: [{SITEID:"=TAR"},{ASSETTYPE:"=FLEET"},{STATUS:"=OPERATING"},{LOCATION:"!~null~"},{CLASSSTRUCTUREID:"!~null~"}]};
           filter = {
@@ -790,7 +786,7 @@
             }, {
               STATUS: "OPERATING"
             }, {
-              PRIORITY: filterpriority
+              PRIORITY: chosenpriority
             }]
           };
         }
@@ -803,7 +799,6 @@
         tempYear.setFullYear(1900);
         json = SOA004Client.get(setfilter(tempYear));
         update();
-        set("lastupdated", startdate.toLocaleString());
         refresh();
       }
 
@@ -817,7 +812,7 @@
       function update() {
         newjson = null;
         targetdate = new Date(startdate);
-        targetdate.setMinutes(targetdate.getMinutes() - 15);
+        targetdate.setMinutes(targetdate.getMinutes() - 30);
         set("lastrun", startdate.toLocaleString());
         newjson = SOA004Client.get(setfilter(targetdate));
         mergejson(json, newjson);
@@ -833,6 +828,7 @@
       deptBox.value = "All";
       priBox.value = "1";
       runningBox.value = "All";
+      document.getElementById("output").style.display = '';
       set("messup", "@@@@@@@@@@@@@@@@");
       set("messdown", "^^^^^^^^^^^^^^^^^");
       reload();
@@ -843,7 +839,7 @@
 
       setInterval(function() {
         update();
-      }, interval);
+      }, interval-200);
     </script>
 
 </body>
