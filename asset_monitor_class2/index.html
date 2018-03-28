@@ -34,9 +34,7 @@
           <option value="Down">Down</option>
         </select>
       </td>
-      <td>
-        Last Update:<span id="lastupdated"></span>
-        <br/>Last Run:<span id="lastrun"></span>
+      <td><br/>Last Run: <span id="lastrun"></span>
       </td>
       <tr>
         <td class="assetup">Up</td>
@@ -60,7 +58,7 @@
   <tr>
     <tr/>
     <table id="output">
-      <td> Updates in last 15 minutes</td>
+      <td>Updated:<span id="lastupdated">Updated</td>
       <td class="assetuplist"><span id="messup"></span></td>
       <td class="assetdownlist"><span id="messdown"></span></td>
     </table>
@@ -81,7 +79,13 @@
       var newjson = null;
       var HeaderCells;
       var startdate = new Date();
+      var displaylevel = 1;
 
+      var assetupcount = 0;
+      var assetdowncount = 0;
+      var assetservice = 0;
+      var assetbreakdowncount = 0;
+      var assettotal = 0;
 
       var deptBox = document.getElementById('department');
       var priBox = document.getElementById('priority');
@@ -173,16 +177,18 @@
         var message = "";
         var records = allrecords - 1;
         debug = true;
+        d = new Date();
 
         // stript out repeated text from department names
         for (i; i < newrecords; ++i) {
           newcurr = newjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
+          newcurr.LOCATIONS[0].DESCRIPTION = newcurr.LOCATIONS === undefined ? "Unknown" : trimlocationdesc(newcurr.LOCATIONS[0].DESCRIPTION);
+          var locald = new Date(newcurr.CHANGEDATE);
+          console.log("merge Asset [" + newcurr.ASSETNUM + "] " + daysBetween(locald, d) + ":" + compile(newcurr));
           for (j = 0; j < allrecords; ++j) {
             curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[j];
-            curr.LOCATIONS[0].DESCRIPTION = curr.LOCATIONS === undefined ? "Unknown" : trimlocationdesc(curr.LOCATIONS[0].DESCRIPTION);
             if (newcurr.ASSETID == curr.ASSETID) {
               json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[j] = newcurr;
-              console.log("merge " + newcurr.CHANGEDATE + ": Asset [" + newcurr.ASSETNUM + "] :" + compile(newcurr));
             }
           }
         };
@@ -214,7 +220,7 @@
           if (uexists) set("messup", umessage);
           if (dexists) set("messdown", dmessage);
           document.getElementById("output").style.display = '';
-          set("lastupdated", startdate.toLocaleString());
+          set("lastupdated", startdate.toLocaleTimeString());
         } else {
           document.getElementById("output").style.display = 'none';
         }
@@ -242,10 +248,8 @@
         };
 
         outputconsole("clean", json);
-
         var cdowntime = 0.0;
         var ndowntime = 0.0;
-
         while (swap) {
           swap = false;
           for (i = start; i < records; ++i) {
@@ -260,6 +264,7 @@
               json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i] = nextcurr;
               //						displaytable(json);
             }
+            swapmeters(curr);
           }
 
           outputconsole("mid:" + start + ":" + endstop, json);
@@ -287,67 +292,46 @@
         outputconsole("final", json);
       };
 
-      function calcassetdays(curr) {
+      function calcassetdays(curr, first) {
         var d = new Date();
-        var days = 0;
+        var days;
         locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
         downtime = daysBetween(locald, d);
+        loop = first ? 1 : curr.ASSETMETER.length;
         if (curr.ASSETMETER) {
-          for (am = 0; am < curr.ASSETMETER.length; am++) {
+          for (am = 0; am < loop; am++) {
             var currmeter = curr.ASSETMETER[am];
             if (currmeter.PMMETER) {
-              for (pm = 0; pm < currmeter.PMMETER.length; pm++) {
-                if (currmeter.PMMETER[pm].LASTPMWOGENREADDT) {
-                  reportdate = new Date(currmeter.PMMETER[pm].LASTPMWOGENREADDT);
-                  reportdate.setDate(reportdate.getDate() + currmeter.PMMETER[0].FREQUENCY / currmeter.AVERAGE);
-                  days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
-                }
-              }
+              days = meterdays(currmeter);
             }
           }
-        };
-        return days;
-      };
-
-      function calculate_nextdue(pmmeter, average, lifetodate, installdate) {
-        var days = 0.0;
-
-        if (pmmeter.LASTPMWOGENREADDT) {
-          reportdate = new Date(pmmeter.LASTPMWOGENREADDT);
-          days = average == 0 ? 0 : pmmeter.FREQUENCY / average;
-          reportdate.setDate(reportdate.getDate() + days);
-          days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
-        } else {
-          reportdate = new Date(installdate);
-          rate = daysDiff(reportdate, d) / 60.0 / 24.0;
-          average = lifetodate / rate;
-          days = Math.round(cpmmeter.FREQUENCY / average);
-          reportdate.setDate(reportdate.getDate() + days);
-          ass += days < 0 ? "late style='color:black'><br/>Late " : "<br/>Due ";
-          ass += days + " Days";
         }
-
+        return days;
       };
 
       function meterdays(currmeter) {
         var d = new Date();
-        for (pm = 0; pm < currmeter.PMMETER.length; pm++) {
-          if (currmeter.PMMETER[pm].LASTPMWOGENREADDT) {
-            reportdate = new Date(currmeter.PMMETER[pm].LASTPMWOGENREADDT);
-            days = currmeter.AVERAGE == 0 ? 0 : currmeter.PMMETER[pm].FREQUENCY / currmeter.AVERAGE;
-            reportdate.setDate(reportdate.getDate() + days);
-            days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
-          } else {
-            reportdate = new Date(curr.INSTALLDATE);
-            rate = (daysDiff(reportdate, d) / 60.0 / 24.0);
-            average = currmeter.LIFETODATE / rate;
-            days = Math.round(currmeter.PMMETER[pm].FREQUENCY / average);
+        var days;
+        if (currmeter.PMMETER) {
+          for (pm = 0; pm < currmeter.PMMETER.length; pm++) {
+            if (currmeter.PMMETER[pm].LASTPMWOGENREADDT) {
+              reportdate = new Date(currmeter.PMMETER[pm].LASTPMWOGENREADDT);
+              days = currmeter.AVERAGE == 0 ? 0 : currmeter.PMMETER[pm].FREQUENCY / currmeter.AVERAGE;
+              reportdate.setDate(reportdate.getDate() + days);
+              days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
+            } else {
+              reportdate = new Date(curr.INSTALLDATE);
+              rate = (daysDiff(reportdate, d) / 60.0 / 24.0);
+              average = currmeter.LIFETODATE / rate;
+              days = Math.round(currmeter.PMMETER[pm].FREQUENCY / average);
+            }
           }
+          return days;
         }
-        return days;
       };
 
-      function swapmeters(curr, pmpfound, pmpservice, pmploc) {
+      function swapmeters(curr) {
+        // method swaps meters till the earliest one is first
         swap = true;
         currdays = 999;
         nextdays = 999;
@@ -376,36 +360,42 @@
         var days = -999;
         var ass = curr.ASSETNUM;
         var lifetodate = 0.0;
-        ass += chosenpriority > 1 ? " (" + curr.PRIORITY + ") [" : " [";
+        if (displaylevel > 1) {
+          ass += chosenpriority > 1 ? " (" + curr.PRIORITY + ") [" : " [";
+        } else {
+          ass += chosenpriority > 1 ? " (" + curr.PRIORITY + ") <br/>[" : " <br/>[";
+        }
         //            var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
         var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
         ass += daysBetween(locald, d) + "]";
-        if (curr.ASSETNUM == "205") stop = 0;
-        if (pmpservice) {
-          reportdate = curr.WORKORDER[pmploc].SCHEDFINISH === undefined ? new Date(curr.WORKORDER[pmploc].TARGCOMPDATE) : new Date(curr.WORKORDER[pmploc].SCHEDFINISH);
-          days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
-          ass += days < 0 ? "<br/>Late Back " : "<br/>Back "
-          ass += days + " Days";
-        } else if (curr.ASSETMETER) {
-          swapmeters(curr);
-          //          for (am = 0; am < curr.ASSETMETER.length; am++) {
-          for (am = 0; am < 1; am++) {
-            var currmeter = curr.ASSETMETER[am];
-            if (currmeter.PMMETER) {
+        if (curr.ASSETNUM == "205")
+          stop = 0;
+        if (displaylevel > 1) {
+          if (pmpservice) {
+            reportdate = curr.WORKORDER[pmploc].SCHEDFINISH === undefined ? new Date(curr.WORKORDER[pmploc].TARGCOMPDATE) : new Date(curr.WORKORDER[pmploc].SCHEDFINISH);
+            days = Math.round(daysDiff(d, reportdate) / 60.0 / 24.0);
+            ass += days < 0 ? "<br/>Late Back " : "<br/>Back "
+            ass += days + " Days";
+          } else if (curr.ASSETMETER) {
+            loop = displaylevel > 3 ? curr.ASSETMETER.length : 1;
+            for (am = 0; am < loop; am++) {
+              currmeter = curr.ASSETMETER[am];
               days = meterdays(currmeter);
-              pmexists = true;
-              ass += days < 0 ? "<late style='color:black'><br/>Late " : "<br/>Due ";
-              ass += days + " Days";
+              if (days !== undefined) {
+                pmexists = true;
+                ass += (days < 0 ? "<late style='color:black'><br/>Late " : "<br/>Due ") + days + " Days";
+              }
             }
           }
           if (!pmexists)
             ass += "<late style='color:black'>No PM";
         }
-
-        reportdate = curr.INSTALLDATE === undefined ? new Date(curr.STATUSDATE) : new Date(curr.INSTALLDATE);
-        rate = daysDiff(reportdate, d) / 60.0;
-        avail = Math.round(10000 * (1 - (curr.TOTDOWNTIME / rate))) / 100;
-        ass += "<br/>Avail " + avail + "%";
+        if (displaylevel > 2) {
+          reportdate = curr.INSTALLDATE === undefined ? new Date(curr.STATUSDATE) : new Date(curr.INSTALLDATE);
+          rate = daysDiff(reportdate, d) / 60.0;
+          avail = Math.round(10000 * (1 - (curr.TOTDOWNTIME / rate))) / 100;
+          ass += "<br/>Avail " + avail + "%";
+        }
 
         return ass;
       }
@@ -415,7 +405,7 @@
 
         if (pmpfound && !pmpservice) {
           schdate = new Date(curr.WORKORDER[pmploc].SCHEDSTART);
-          asstitle = "Service Scheduled " + schdate.toLocaleDateString() + "<br/><br/>" + asstitle;
+          asstitle = "Service Scheduled:" + schdate.toLocaleDateString() + "<br/><br/>" + asstitle;
         }
 
         if (curr.WORKORDER) {
@@ -441,13 +431,81 @@
         return asstitle;
       }
 
+      function findclasspos(Hcell, title) {
+        for (l = 0; l < Hcell.length; l++) {
+          currsection = Hcell.item(l).innerHTML;
+          if (title == currsection)
+            return (l);
+        }
+      }
+
+      function setassetclass(deptlabel, Hcell, curr) {
+        found = true;
+        if (curr.ASSETNUM == "337") stop = 0;
+        pmpfound = false;
+        pmpservice = false;
+        assup = 0;
+        assdown = 0;
+        var pmploc = 0;
+        if (curr.ISRUNNING) {
+          deptlabel.className = curr.WORKORDER ? "assetup2" : "assetup";
+          assetupcount += 1;
+          assup=1;
+        } else {
+          assdown=1;
+          if (curr.WORKORDER) {
+            for (w = 0; w < curr.WORKORDER.length; w++) {
+              if (curr.WORKORDER[w].WORKTYPE == "PMP") {
+                pmpfound = true;
+                pmploc = w;
+              }
+            }
+            if (pmpfound && curr.WORKORDER[pmploc].STATUS == "INPRG") {
+              deptlabel.className = "assetservice";
+              assetservice += 1;
+              pmpservice = true;
+            } else {
+              assetdowncount += 1;
+              assetbreakdowncount += 1;
+              if (pmpfound) {
+                deptlabel.className = "assetdown";
+              } else {
+                deptlabel.className = "assetdown2";
+              }
+            }
+          } else {
+            deptlabel.className = "assetdown";
+            assetdowncount += 1;
+          }
+        }
+
+        days = calcassetdays(curr, true);
+        asstitle = buildassettitle(curr, pmpfound, pmpservice, pmploc);
+        ass = buildassetcell(curr, pmpfound, pmpservice, pmploc);
+
+        if (days < 7) {
+          if (pmpfound) {
+            var stop = 0;
+            if (!pmpservice) {
+              //deptlabel.item(l).className="serviceduepmp";
+            }
+          } else {
+            //                          deptlabel.item(l).className= curr.ISRUNNING ? "servicedueup":"serviceduedn";
+            null;
+          }
+        }
+        ass += asstitle.length > 10 ? "<span class=tooltiptext>" + asstitle + "</span>" : "";
+        deptlabel.innerHTML = ass;
+        position = findclasspos(HeaderCells, curr.CLASSSTRUCTURE[0].DESCRIPTION);
+
+        pcttotalobj.item(position).innerHTML = Number(pcttotalobj.item(position).innerHTML) + 1;
+        pctupobj.item(position).innerHTML = Number(pctupobj.item(position).innerHTML) + assup;
+        pctdownobj.item(position).innerHTML = Number(pctdownobj.item(position).innerHTML) + assdown;
+
+      }
+
       function displaytable(json) {
         var tr = null;
-        var assetupcount = 0;
-        var assetdowncount = 0;
-        var assetservice = 0;
-        var assetbreakdowncount = 0;
-        var assettotal = 0;
         var cellLength = 0;
         var toptbl = null;
         var toggle = false;
@@ -470,6 +528,13 @@
         var pmpfound = false;
         var pmpservice = false;
         var currdept = "xx";
+        var pmploc = 0;
+
+        assetupcount = 0;
+        assetdowncount = 0;
+        assetservice = 0;
+        assetbreakdowncount = 0;
+        assettotal = 0;
 
         builddeptbox(json);
 
@@ -481,7 +546,8 @@
         tr = tblhead.insertRow(0);
         // add columns for the machine types currently using CLASSSTRUCTURE
         td = tr.insertCell(-1);
-        td.innerHTML = "Department"
+        tr.id = "depttitle";
+        td.innerHTML = "Department";
 
         HeaderCells = toptbl.rows.item(0).cells;
         for (i = 0; i < assetcolums; i++) {
@@ -539,6 +605,36 @@
           }
         }
 
+        tr = tblhead.insertRow(-1);
+        tr.id = "pctup";
+        for (l = 1; l < HeaderCells.length + 1; l++) {
+          // add columns for the machine types currently using CLASSSTRUCTURE
+          td = tr.insertCell(-1);
+          if (l==1) td.className="productionh";
+          td.innerHTML = 0;
+        }
+        tr = tblhead.insertRow(-1);
+        tr.id = "pctdown";
+        for (l = 1; l < HeaderCells.length + 1; l++) {
+          // add columns for the machine types currently using CLASSSTRUCTURE
+          td = tr.insertCell(-1);
+          td.innerHTML = 0;
+          if (l==1) td.className="productionh";
+        }
+        tr = tblhead.insertRow(-1);
+        tr.id = "pcttotal";
+        for (l = 1; l < HeaderCells.length + 1; l++) {
+          // add columns for the machine types currently using CLASSSTRUCTURE
+          td = tr.insertCell(-1);
+          td.innerHTML = 0;
+          if (l==1) td.className="productionh";
+        }
+
+        //        document.getElementById("pct").style.display = 'none';
+
+        pcttotalobj = document.getElementById("pcttotal").cells;
+        pctupobj = document.getElementById("pctup").cells;
+        pctdownobj = document.getElementById("pctdown").cells;
 
         for (i = 0; i < assetcolums; i++) {
           var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
@@ -559,69 +655,11 @@
                 deptlabel = tbl.rows.item(k).cells;
                 currdept = deptlabel.item(0).innerHTML;
                 if (department == currdept) {
-                  for (l = 0; l < HeaderCells.length; l++) {
-                    currsection = HeaderCells.item(l).innerHTML;
-                    if (sectionname == currsection) {
-                      if (!deptlabel.item(l).innerHTML) {
-                        found = true;
-                        if (curr.ASSETNUM == "337") stop = 0;
-                        pmpfound = false;
-                        pmpservice = false;
-                        var pmploc = 0;
-                        if (curr.ISRUNNING) {
-                          deptlabel.item(l).className = curr.WORKORDER ? "assetup2" : "assetup";
-                          assetupcount += 1;
-                        } else {
-                          if (curr.WORKORDER) {
-                            for (w = 0; w < curr.WORKORDER.length; w++) {
-                              if (curr.WORKORDER[w].WORKTYPE == "PMP") {
-                                pmpfound = true;
-                                pmploc = w;
-                              }
-                            }
-                            if (pmpfound && curr.WORKORDER[pmploc].STATUS == "INPRG") {
-                              deptlabel.item(l).className = "assetservice";
-                              assetservice += 1;
-                              pmpservice = true;
-                            } else {
-                              assetdowncount += 1;
-                              assetbreakdowncount += 1;
-                              if (pmpfound) {
-                                deptlabel.item(l).className = "assetdown";
-                              } else {
-                                deptlabel.item(l).className = "assetdown2";
-                              }
-                            }
-                          } else {
-                            deptlabel.item(l).className = "assetdown";
-                            assetdowncount += 1;
-                          }
-                        }
-
-                        days = calcassetdays(curr);
-                        asstitle = buildassettitle(curr, pmpfound, pmpservice, pmploc);
-                        ass = buildassetcell(curr, pmpfound, pmpservice, pmploc);
-
-                        if (days < 7) {
-                          if (pmpfound) {
-                            var stop = 0;
-                            if (!pmpservice) {
-                              //deptlabel.item(l).className="serviceduepmp";
-                            }
-                          } else {
-                            //                          deptlabel.item(l).className= curr.ISRUNNING ? "servicedueup":"serviceduedn";
-                            null;
-                          }
-                        }
-                        ass += asstitle.length > 10 ? "<span class=tooltiptext>" + asstitle + "</span>" : "";
-                        deptlabel.item(l).innerHTML = ass;
-                        //                      deptlabel.item(l).innerHTML =  ass+"<span class=tooltiptext>"+asstitle+"</span>";
-                        //											deptlabel.item(l).title = asstitle;
-                        break;
-                      } else {
-                        break;
-                      }
-                    }
+                  position = findclasspos(HeaderCells, sectionname);
+                  objecttext = deptlabel.item(position);
+                  if (!objecttext.innerHTML) {
+                    found = true;
+                    setassetclass(objecttext, HeaderCells, curr);
                   }
                 }
               }
@@ -643,63 +681,8 @@
                 currsection = HeaderCells.item(j).innerHTML;
                 td = tr.insertCell(-1);
                 td.className = "development";
-                if (toggle) {}
                 if (sectionname === currsection) {
-                  //								td.innerHTML = ass+"<span class=tooltiptext>"+asstitle+"</span>";;
-                  //								td.title= asstitle;
-                  pmpfound = false;
-                  pmpservice = false;
-                  if (curr.ISRUNNING) {
-                    td.className = curr.WORKORDER ? "assetup2" : "assetup";
-                    assetupcount += 1;
-                    if (curr.WORKORDER) {
-                      for (w = 0; w < curr.WORKORDER.length; w++) {
-                        if (curr.WORKORDER[w].WORKTYPE == "PMP") {
-                          pmpfound = true;
-                          pmploc = w;
-                        }
-                      }
-                    }
-                  } else {
-                    if (curr.WORKORDER) {
-                      for (w = 0; w < curr.WORKORDER.length; w++) {
-                        if (curr.WORKORDER[w].WORKTYPE == "PMP") {
-                          pmpfound = true;
-                          pmploc = w;
-                        }
-                      }
-                      if (pmpfound && curr.WORKORDER[pmploc].STATUS == "INPRG") {
-                        td.className = "assetservice";
-                        assetservice += 1;
-                        pmpservice = true;
-                      } else {
-                        assetdowncount += 1;
-                        assetbreakdowncount += 1;
-                        td.className = "assetdown2";
-                      }
-                    } else {
-                      td.className = "assetdown";
-                      assetdowncount += 1;
-                    }
-                  }
-                  days = calcassetdays(curr);
-                  asstitle = buildassettitle(curr, pmpfound, pmpservice, pmploc);
-                  ass = buildassetcell(curr, pmpfound, pmpservice, pmploc);
-
-                  if (days < 7) {
-                    if (pmpfound) {
-                      var stop = 0;
-                      if (!pmpservice) {
-                        td.className = curr.ISRUNNING ? "serviceduepmp" : "serviceduedn"
-                      }
-                    } else {
-                      td.className = curr.ISRUNNING ? "servicedueup" : "serviceduedn";
-                    }
-                  }
-                  ass += asstitle.length > 10 ? "<span class=tooltiptext>" + asstitle + "</span>" : "";
-                  td.innerHTML = ass;
-                  //								td.title= asstitle;
-
+                  setassetclass(td, HeaderCells, curr)
                 }
               }
             }
@@ -713,6 +696,7 @@
         set("downpct", (Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%");
         set("servicepct", (Math.round(1000.0 * assetservice / assettotal) / 10.0) + "%");
         set("breakpct", (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%");
+
 
       }
 
@@ -800,6 +784,7 @@
         json = SOA004Client.get(setfilter(tempYear));
         update();
         refresh();
+        set("lastupdated", startdate.toLocaleTimeString());
       }
 
       function refresh() {
@@ -813,12 +798,12 @@
         newjson = null;
         targetdate = new Date(startdate);
         targetdate.setMinutes(targetdate.getMinutes() - 30);
-        set("lastrun", startdate.toLocaleString());
         newjson = SOA004Client.get(setfilter(targetdate));
         mergejson(json, newjson);
         if (newjson.error) {
           set("lastupdated", json.error + "<br/>" + startdate.toLocaleString());
         }
+        set("lastrun", startdate.toLocaleString());
         console.log("update() startdate ::" + startdate);
       }
 
@@ -839,7 +824,7 @@
 
       setInterval(function() {
         update();
-      }, interval-200);
+      }, interval - 200);
     </script>
 
 </body>
