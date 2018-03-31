@@ -39,13 +39,13 @@ maximo = {
     return i;
   },
 
-  leftpad: function(str, len, ch) {
+  leftpad: function(str, finallen, chr) {
     str = String(str);
     var i = -1;
-    if (!ch && ch !== 0) ch = ' ';
-    len = len - str.length;
-    while (++i < len) {
-      str = ch + str;
+    if (!chr && chr !== 0) chr = ' ';
+    finallen = finallen - str.length;
+    while (++i < finallen) {
+      str = chr + str;
     }
     return str;
   }
