@@ -176,10 +176,10 @@
         currdescription += curr.CLASSSTRUCTURE[0].DESCRIPTION;
         currdescription += ".";
         currdescription += curr.ISRUNNING === false ? 0 : 1;
-        currdescription += ":";
+        currdescription += ".";
         locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
-        downtime = daysDiff(locald, d);
-        currdescription += curr.ASSETNUM;
+        downtime = Math.round(daysDiff(locald, d));
+        currdescription += maximo.leftpad(downtime,10,"0");
         return currdescription;
       }
 
@@ -252,37 +252,41 @@
       }
 
       function displaynew(newjson) {
-        if (newjson) {
-          var newrecords = newjson.QueryREST_ASSETWResponse.rsTotal;
-          if (newrecords > 0) {
-            var i = 0;
-            var uexists = false;
-            var dexists = false;
-            var umessage = "";
-            var dmessage = "";
-            set("messup", null);
-            set("messdown", null);
-            for (i; i < newrecords; ++i) {
-              newcurr = newjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-              if (newcurr.ISRUNNING == 0) {
-                dmessage += dexists ? "<br/>" : "";
-                dmessage += newcurr.ASSETNUM + " " + newcurr.DESCRIPTION;
-                dexists = true;
-              } else {
-                umessage += uexists ? "<br/>" : "";
-                umessage += newcurr.ASSETNUM + " " + newcurr.DESCRIPTION;
-                uexists = true;
-              }
-            };
-            if (uexists) set("messup", umessage);
-            if (dexists) set("messdown", dmessage);
-            document.getElementById("output").style.display = '';
-          } else {
-            document.getElementById("output").style.display = 'none';
+        if (lookback > 15) {
+          if (newjson) {
+            var newrecords = newjson.QueryREST_ASSETWResponse.rsTotal;
+            if (newrecords > 0) {
+              var i = 0;
+              var uexists = false;
+              var dexists = false;
+              var umessage = "";
+              var dmessage = "";
+              set("messup", null);
+              set("messdown", null);
+              for (i; i < newrecords; ++i) {
+                newcurr = newjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
+                if (newcurr.ISRUNNING == 0) {
+                  dmessage += dexists ? "<br/>" : "";
+                  dmessage += newcurr.ASSETNUM + " " + newcurr.DESCRIPTION;
+                  dexists = true;
+                } else {
+                  umessage += uexists ? "<br/>" : "";
+                  umessage += newcurr.ASSETNUM + " " + newcurr.DESCRIPTION;
+                  uexists = true;
+                }
+              };
+              if (uexists) set("messup", umessage);
+              if (dexists) set("messdown", dmessage);
+              document.getElementById("output").style.display = '';
+            } else {
+              document.getElementById("output").style.display = 'none';
+            }
           }
+        }else {
+          document.getElementById("output").style.display = 'none';
         }
-
       }
+
 
       function setlastrun() {
         set("lastupdated", startdate.toLocaleTimeString() + " for last " + HoursBetween(lookback, true));
@@ -621,11 +625,11 @@
           sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
           department = curr.LOCATIONS[0].DESCRIPTION;
           ass = curr.ASSETNUM;
-          if (  (curr.PRIORITY <= chosenpriority) &&
+          if ((curr.PRIORITY <= chosenpriority) &&
             (chosendept == department || chosendept == "All") &&
-            ( (!curr.ISRUNNING && running == 'Down') ||
+            ((!curr.ISRUNNING && running == 'Down') ||
               running == "All" ||
-            (curr.ISRUNNING && running == 'Available'))) {
+              (curr.ISRUNNING && running == 'Available'))) {
             if (nocolumns > 0) {
               HeaderCells = toptbl.rows.item(0).cells;
               //gets cells of current row
@@ -747,65 +751,65 @@
             (chosendept == department || chosendept == "All") &&
             ((!curr.ISRUNNING && running == 'Down') ||
               running == "All" ||
-            (curr.ISRUNNING && running == 'Available'))) {
-          sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
-          found = false;
-          // find the next available slot
-          var locald;
-          assettotal++;
-          for (k = 0; k < tbl.rows.length; ++k) {
+              (curr.ISRUNNING && running == 'Available'))) {
+            sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
+            found = false;
+            // find the next available slot
+            var locald;
+            assettotal++;
+            for (k = 0; k < tbl.rows.length; ++k) {
+              if (!found) {
+                deptlabel = tbl.rows.item(k).cells;
+                currdept = deptlabel.item(0).innerHTML;
+                if (department == currdept) {
+                  position = findclasspos(HeaderCells, sectionname);
+                  objecttext = deptlabel.item(position);
+                  if (!objecttext.innerHTML) {
+                    found = true;
+                    setassetclass(objecttext, HeaderCells, curr);
+                  }
+                }
+              }
+            }
             if (!found) {
-              deptlabel = tbl.rows.item(k).cells;
-              currdept = deptlabel.item(0).innerHTML;
-              if (department == currdept) {
-                position = findclasspos(HeaderCells, sectionname);
-                objecttext = deptlabel.item(position);
-                if (!objecttext.innerHTML) {
-                  found = true;
-                  setassetclass(objecttext, HeaderCells, curr);
+              if (curr.ASSETNUM == "337") stop = 0;
+              tr = tbl.insertRow(-1);
+              td = tr.insertCell(-1);
+              td.innerHTML = department;
+              if (currdept == department) {
+                td.className = "productionh";
+              } else {
+                toggle = !toggle;
+                td.className = "production";
+              };
+              ldept = department.toLowerCase();
+              currdept = department;
+              for (var j = 1; j < cellLength; j++) {
+                currsection = HeaderCells.item(j).innerHTML;
+                td = tr.insertCell(-1);
+                td.className = "development";
+                if (sectionname === currsection) {
+                  setassetclass(td, HeaderCells, curr)
                 }
               }
             }
           }
-          if (!found) {
-            if (curr.ASSETNUM == "337") stop = 0;
-            tr = tbl.insertRow(-1);
-            td = tr.insertCell(-1);
-            td.innerHTML = department;
-            if (currdept == department) {
-              td.className = "productionh";
-            } else {
-              toggle = !toggle;
-              td.className = "production";
-            };
-            ldept = department.toLowerCase();
-            currdept = department;
-            for (var j = 1; j < cellLength; j++) {
-              currsection = HeaderCells.item(j).innerHTML;
-              td = tr.insertCell(-1);
-              td.className = "development";
-              if (sectionname === currsection) {
-                setassetclass(td, HeaderCells, curr)
-              }
-            }
-          }
         }
-      }
 
 
-      for (var j = 1; j < pct.length; j++) {
-        pct.item(j).innerHTML = Math.round(1000.0 * Number(pctupobj.item(j).innerHTML) / Number(pcttotalobj.item(j).innerHTML)) / 10 + "%";
-        pct1.item(j).innerHTML = Math.round(1000.0 * Number(pctdownobj.item(j).innerHTML) / Number(pcttotalobj.item(j).innerHTML)) / 10 + "%";
-      }
+        for (var j = 1; j < pct.length; j++) {
+          pct.item(j).innerHTML = Math.round(1000.0 * Number(pctupobj.item(j).innerHTML) / Number(pcttotalobj.item(j).innerHTML)) / 10 + "%";
+          pct1.item(j).innerHTML = Math.round(1000.0 * Number(pctdownobj.item(j).innerHTML) / Number(pcttotalobj.item(j).innerHTML)) / 10 + "%";
+        }
 
-      set("assetupcount", assetupcount);
-      set("assetdowncount", assetdowncount);
-      set("assetservice", assetservice);
-      set("assetbreakdowncount", assetbreakdowncount);
-      set("uppct", (Math.round(1000.0 * assetupcount / assettotal) / 10.0) + "%");
-      set("downpct", (Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%");
-      set("servicepct", (Math.round(1000.0 * assetservice / assettotal) / 10.0) + "%");
-      set("breakpct", (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%");
+        set("assetupcount", assetupcount);
+        set("assetdowncount", assetdowncount);
+        set("assetservice", assetservice);
+        set("assetbreakdowncount", assetbreakdowncount);
+        set("uppct", (Math.round(1000.0 * assetupcount / assettotal) / 10.0) + "%");
+        set("downpct", (Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%");
+        set("servicepct", (Math.round(1000.0 * assetservice / assettotal) / 10.0) + "%");
+        set("breakpct", (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%");
 
 
       }
