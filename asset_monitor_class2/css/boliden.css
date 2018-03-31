@@ -1,471 +1,491 @@
 @import url("styles.css");
-
 /* {
     background-color: #222222;
 }
 */
 
 header {
-    height: 120px;
+  height: 135px;
 }
 
 h1 {
-    font: 36px Helvetica;
-    font-weight: bold;
+  font: 36px Helvetica;
+  font-weight: bold;
 }
 
 h2 {
-    font: 14px Helvetica;
-    color: Tomato;
-    font-weight: bold;
+  font: 14px Helvetica;
+  color: Tomato;
+  font-weight: bold;
 }
 
 body {
-    font: 10px Tahoma;
-    text-align: center;
+  font: 10px Tahoma;
+  text-align: center;
 }
 
 controls {
-    padding-left: 20px;
-    padding-right: 20px;
-    font: 14px arial;
+  padding-left: 20px;
+  padding-right: 20px;
+  font: 14px arial;
 }
 
 .hover {
-    transition: all 0.1s ease-in-out 1s;
+  transition: all 0.1s ease-in-out 1s;
 }
 
 select, option {
-    font: 14px arial;
-    padding-left: 10px;
+  font: 14px arial;
+  padding-left: 10px;
 }
 
 section {
-    font: 12px arial;
-    font-weight: bold
+  font: 12px arial;
+  font-weight: bold
 }
 
 table#control {
-    text-align: center;
-    width: 70%;
-    border: 0px;
-    color: white;
-    background-color: #7D9BC1;
+  text-align: center;
+  width: 70%;
+  border: 0px;
+  color: white;
+  background-color: #7D9BC1;
 }
 
 table#output {
-    text-align: left;
-    width: 70%;
-    border: 10px;
-    padding: 5px;
+  text-align: left;
+  width: 70%;
+  border: 10px;
+  padding: 5px;
 }
 
 table#tgt {
-    border-collapse: collapse;
-    text-align: center;
-    border: 1px solid black;
-    background-color: lightgrey;
-    color: white;
+  border-collapse: collapse;
+  text-align: center;
+  border: 1px solid black;
+  background-color: lightgrey;
+  color: white;
 }
 
 table#tgtxx tr:first-child {
-    font: 14px Tahoma;
-    border-bottom: 1px solid black;
-    background-color: grey;
+  font: 14px Tahoma;
+  border-bottom: 1px solid black;
+  background-color: grey;
 }
+
 thead tr:first-child {
-    font: 14px Tahoma;
-    border-bottom: 1px solid black;
-    background-color: grey;
+  font: 12px Tahoma;
+  border-bottom: 1px solid black;
+  background-color: grey;
 }
 
 table {
   font: 12px Tahoma;
   margin-top: 5px;
 }
+
 thead {
-    font: 14px Tahoma;
-    color: white;
-    font-weight: bold;
-    background-color: grey;
-    text-align: center;
+  font: 12px Tahoma;
+  color: white;
+  font-weight: bold;
+  background-color: grey;
+  text-align: center;
 }
 
 th, td {
-    border: 1px solid black;
-    width: 6%;
-    padding: 0px;
-    text-align: center;
-    padding: 1px;
-    vertical-align: text-top;
+  border: 1px solid black;
+  width: 6%;
+  padding: 0px;
+  text-align: center;
+  padding: 1px;
+  vertical-align: text-top;
 }
 
 .output {
-    font: 14px Tahoma;
-    text-align: left;
-    width: 50%;
-    border: 10px;
-    color: white;
-    background-color: #7D9BC1;
-    margin-top: 5px;
-    margin-bottom: 0px;
-    padding: 5px;
+  font: 14px Tahoma;
+  text-align: left;
+  width: 50%;
+  border: 10px;
+  color: white;
+  background-color: #7D9BC1;
+  margin-top: 5px;
+  margin-bottom: 0px;
+  padding: 5px;
 }
 
 lupdate {
-    color: black;
-    float: left;
-    margin-left: 20%;
-    padding: 10px 10px 10px 10px;
-    background-color: ghostwhite;
+  color: black;
+  float: left;
+  margin-left: 20%;
+  padding: 10px 10px 10px 10px;
+  background-color: ghostwhite;
 }
 
 assup {
-    color: black;
+  color: black;
 }
 
 assdn {
-    color: aqua;
-    width: 140px;
+  color: aqua;
+  width: 140px;
 }
 
 asssrv {
-    color: black;
+  color: black;
 }
-
 
 /* table#tgt tr:nth-child(even) {background-color: #eee;} */
 
+.button {
+  #color: #7D9BC1;
+  color: yellow;
+  #background-color: #7D9BC1;
+  background-color: darkblue;
+  border: 2px;
+  border-collapse;
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 5px;
+
+}
+
+.buttonh {
+  color: #7D9BC1;
+  background-color: #7D9BC1;
+  font-size: 8px;
+  padding: 5px;
+  border: 0px;
+}
+
 .production {
-    background-color: grey;
-    font-weight: normal;
-    border-bottom: 0px;
+  background-color: grey;
+  font-weight: normal;
+  border-bottom: 0px;
 }
 
 .productionh {
-    color: grey;
-    background-color: grey;
-    border: 0px;
+  color: grey;
+  background-color: grey;
+  border: 0px;
 }
 
 .development {
-    background-color: lightblue;
-    font-weight: bold;
+  background-color: lightblue;
+  font-weight: bold;
 }
 
 .developmenth {
-    color: lightgrey;
-    background-color: lightgrey;
-    border: 0px;
+  color: lightgrey;
+  background-color: lightgrey;
+  border: 0px;
 }
 
 .other {
-    background-color: #7D9BC1;
-    font-weight: bold;
+  background-color: #7D9BC1;
+  font-weight: bold;
 }
 
 .otherh {
-    color: #7D9BC1;
-    background-color: #7D9BC1;
-    border: 0px;
+  color: #7D9BC1;
+  background-color: #7D9BC1;
+  border: 0px;
 }
 
 .odd {
-    background-color: white
+  background-color: white
 }
 
 .even {
-    background-color: lightgray
+  background-color: lightgray
 }
 
 .picked {
-    background-color: lightgoldenrodyellow
+  background-color: lightgoldenrodyellow
 }
 
 .assetup {
-    color: black;
-    background-color: lightgreen;
-    border-collapse: separate!important;
-    text-align: center;
+  color: black;
+  background-color: lightgreen;
+  border-collapse: separate !important;
+  text-align: center;
 }
 
 .assetuplist {
-    color: black;
-    background-color: lightgreen;
-    border-collapse: separate!important;
-    text-align: left;
-    padding: 2px;
-    padding-left: 6px;
+  color: black;
+  background-color: lightgreen;
+  border-collapse: separate !important;
+  text-align: left;
+  padding: 2px;
+  padding-left: 6px;
 }
 
 .assetdownlist {
-    color: #a6f5ed;
-    background-color: #d22121;
-    text-align: left;
-    padding: 2px;
-    padding-left: 6px;
+  color: #a6f5ed;
+  background-color: #d22121;
+  text-align: left;
+  padding: 2px;
+  padding-left: 6px;
 }
 
 .assetup .tooltiptext {
-    font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 6px;
-    padding: 20px;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+  font: 22px arial;
+  visibility: hidden;
+  width: 40%;
+  background-color: black;
+  color: white;
+  text-align: left;
+  border-radius: 6px;
+  padding: 20px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
 
 .assetup:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
 .assetup2 {
-    color: black;
-    background-color: #56bf56;
-    border-collapse: separate!important;
-    text-align: center;
+  color: black;
+  background-color: #56bf56;
+  border-collapse: separate !important;
+  text-align: center;
 }
 
 .assetup2 .tooltiptext {
-    left: 20%;
-    font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 6px;
-    padding: 20px;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+  left: 20%;
+  font: 22px arial;
+  visibility: hidden;
+  width: 40%;
+  background-color: black;
+  color: white;
+  text-align: left;
+  border-radius: 6px;
+  padding: 20px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
 
 .assetup2:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
 .assetdown {
-    color: #a6f5ed;
-    background-color: #d22121;
-    text-align: center;
+  color: #a6f5ed;
+  background-color: #d22121;
+  text-align: center;
 }
 
 .assetdown .tooltiptext {
-    left: 20%;
-    font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 6px;
-    padding: 20px;
-    transition: all 0.1s ease-in-out 0.1s;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+  left: 20%;
+  font: 22px arial;
+  visibility: hidden;
+  width: 40%;
+  background-color: black;
+  color: white;
+  text-align: left;
+  border-radius: 6px;
+  padding: 20px;
+  transition: all 0.1s ease-in-out 0.1s;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
 
 .assetdown:hover .tooltiptext {
-    visibility: visible;
-    transition: all 0.1s ease-in-out 0.1s;
+  visibility: visible;
+  transition: all 0.1s ease-in-out 0.1s;
 }
 
 .assetdown2 {
-    color: #a6f5ed;
-    background-color: #993737;
-    text-align: center;
+  color: #a6f5ed;
+  background-color: #993737;
+  text-align: center;
 }
 
 .assetdown2 .tooltiptext {
-    left: 20%;
-    font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 6px;
-    padding: 20px;
-    transition: all 0.1s ease-in-out 1s;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+  left: 20%;
+  font: 22px arial;
+  visibility: hidden;
+  width: 40%;
+  background-color: black;
+  color: white;
+  text-align: left;
+  border-radius: 6px;
+  padding: 20px;
+  transition: all 0.1s ease-in-out 1s;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
 
 .assetdown2:hover .tooltiptext {
-    visibility: visible;
-    transition: all 0.1s ease-in-out 1s;
+  visibility: visible;
+  transition: all 0.1s ease-in-out 1s;
 }
 
 .assetservice .tooltiptext {
-    left: 20%;
-    font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 10px;
-    padding: 10px;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+  left: 20%;
+  font: 22px arial;
+  visibility: hidden;
+  width: 40%;
+  background-color: black;
+  color: white;
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
 
 .assetservice:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
-
 .assetdown1 {
-    color: #a6f5ed;
-    background-color: #CD5C5C;
-    text-align: center;
+  color: #a6f5ed;
+  background-color: #CD5C5C;
+  text-align: center;
 }
 
 .assetdown3 {
-    color: #a6f5ed;
-    background-color: #ffcccc;
-    text-align: center;
+  color: #a6f5ed;
+  background-color: #ffcccc;
+  text-align: center;
 }
 
 .assetservice {
-    color: black;
-    background-color: Cornsilk;
-    text-align: center;
+  color: black;
+  background-color: Cornsilk;
+  text-align: center;
 }
 
 .serviceduepmp .tooltiptext {
-    left: 20%;
-    font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 10px;
-    padding: 10px;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+  left: 20%;
+  font: 22px arial;
+  visibility: hidden;
+  width: 40%;
+  background-color: black;
+  color: white;
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
 
 .serviceduepmp:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
 .serviceduepmp {
-    color: #a6f5ed;
-    background-color: #56bf56;
-    ## background-color: #993737;
-    text-align: center;
+  color: #a6f5ed;
+  background-color: #56bf56;
+  ## background-color: #993737;
+  text-align: center;
 }
 
 .servicedue .tooltiptext {
-    left: 20%;
-    font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 10px;
-    padding: 10px;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+  left: 20%;
+  font: 22px arial;
+  visibility: hidden;
+  width: 40%;
+  background-color: black;
+  color: white;
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
 
 .servicedue:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
 .servicedue {
-    color: black;
-    background-color: orange;
-    text-align: center;
+  color: black;
+  background-color: orange;
+  text-align: center;
 }
 
 .servicedueup .tooltiptext {
-    left: 20%;
-    font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 10px;
-    padding: 10px;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+  left: 20%;
+  font: 22px arial;
+  visibility: hidden;
+  width: 40%;
+  background-color: black;
+  color: white;
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
 
 .servicedueup:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
 .servicedueup {
-    color: black;
-    background-color: #56bf56;
-    text-align: center;
+  color: black;
+  background-color: #56bf56;
+  text-align: center;
 }
 
 .serviceduedn .tooltiptext {
-    left: 20%;
-    font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 10px;
-    padding: 10px;
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
+  left: 20%;
+  font: 22px arial;
+  visibility: hidden;
+  width: 40%;
+  background-color: black;
+  color: white;
+  text-align: left;
+  border-radius: 10px;
+  padding: 10px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
 
 .serviceduedn:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
 .serviceduedn {
-    color: #a6f5ed;
-    background-color: #993737;
-    text-align: center;
+  color: #a6f5ed;
+  background-color: #993737;
+  text-align: center;
 }
 
 .decimal {
-    text-align: right;
-    padding-right: 45px
+  text-align: right;
+  padding-right: 45px
 }
 
 key {
-    float: right;
-    text-align: left;
-    font-weight: bold;
-    font-size: large;
-    text-indent: 2px;
-    margin: 30px;
-    padding: 1px;
+  float: right;
+  text-align: left;
+  font-weight: bold;
+  font-size: large;
+  text-indent: 2px;
+  margin: 30px;
+  padding: 1px;
 }
 
 colourdue {
-    background-color: lightblue
+  background-color: lightblue
 }
 
 colourprinted {
-    background-color: lightgreen
+  background-color: lightgreen
 }
 
 colourpicked {
-    background-color: lightgoldenrodyellow
+  background-color: lightgoldenrodyellow
 }
