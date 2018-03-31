@@ -20,14 +20,14 @@ h2 {
 }
 
 body {
-  font: 10px Tahoma;
+  font: 10px Arial;
   text-align: center;
 }
 
 controls {
   padding-left: 20px;
   padding-right: 20px;
-  font: 14px arial;
+  font: 14px;
 }
 
 .hover {
@@ -68,24 +68,24 @@ table#tgt {
 }
 
 table#tgtxx tr:first-child {
-  font: 14px Tahoma;
+  font: 14px Arial;
   border-bottom: 1px solid black;
   background-color: grey;
 }
 
 thead tr:first-child {
-  font: 12px Tahoma;
+  font: 12px Arial;
   border-bottom: 1px solid black;
   background-color: grey;
 }
 
 table {
-  font: 12px Tahoma;
+  font: 12px Arial;
   margin-top: 5px;
 }
 
 thead {
-  font: 12px Tahoma;
+  font: 12px Arial;
   color: white;
   font-weight: bold;
   background-color: grey;
@@ -102,7 +102,7 @@ th, td {
 }
 
 .output {
-  font: 14px Tahoma;
+  font: 14px Arial;
   text-align: left;
   width: 50%;
   border: 10px;
