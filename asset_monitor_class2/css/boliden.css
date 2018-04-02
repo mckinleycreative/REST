@@ -5,7 +5,7 @@
 */
 
 header {
-  height: 135px;
+  height: 120px;
 }
 
 h1 {
@@ -24,19 +24,18 @@ body {
   text-align: center;
 }
 
-controls {
+control {
   padding-left: 20px;
   padding-right: 20px;
   font: 14px;
 }
 
-.hover {
-  transition: all 0.1s ease-in-out 1s;
-}
 
 select, option {
-  font: 14px arial;
+  font: 12px arial;
   padding-left: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 section {
@@ -44,9 +43,16 @@ section {
   font-weight: bold
 }
 
+table {
+  font: 12px Arial;
+  margin-top: 1px;
+  border-collapse: collapse;
+}
+
 table#control {
   text-align: center;
-  width: 70%;
+  vertical-align: text-top;
+  width: 75%;
   border: 0px;
   color: white;
   background-color: #7D9BC1;
@@ -54,17 +60,17 @@ table#control {
 
 table#output {
   text-align: left;
-  width: 70%;
+  vertical-align: middle;
+  width: 80%;
   border: 10px;
   padding: 5px;
 }
 
 table#tgt {
-  border-collapse: collapse;
   text-align: center;
   border: 1px solid black;
-  background-color: lightgrey;
   color: white;
+  background-color: lightblue;
 }
 
 table#tgtxx tr:first-child {
@@ -79,10 +85,6 @@ thead tr:first-child {
   background-color: grey;
 }
 
-table {
-  font: 12px Arial;
-  margin-top: 5px;
-}
 
 thead {
   font: 12px Arial;
@@ -92,19 +94,18 @@ thead {
   text-align: center;
 }
 
-th, td {
+td {
   border: 1px solid black;
-  width: 6%;
-  padding: 0px;
+  width: 0%;
   text-align: center;
+  vertical-align: middle;
   padding: 1px;
-  vertical-align: text-top;
 }
 
 .output {
   font: 14px Arial;
   text-align: left;
-  width: 50%;
+  width:80%;
   border: 10px;
   color: white;
   background-color: #7D9BC1;
@@ -134,26 +135,36 @@ asssrv {
   color: black;
 }
 
+
+#logo {
+  padding: 1px;
+  border: 0px;
+  margin: 3px;
+}
 /* table#tgt tr:nth-child(even) {background-color: #eee;} */
 
-.button {
-  #color: #7D9BC1;
-  color: yellow;
-  #background-color: #7D9BC1;
-  background-color: darkblue;
-  border: 2px;
-  border-collapse;
-  font-size: 12px;
-  padding: 5px;
-  border-radius: 5px;
+.buttonl {
+  color: ghostwhite;
+  background-color: #7D9BC1;
+  padding-right: 15px;
+}
 
+.buttonr {
+  color: ghostwhite;
+  background-color: #7D9BC1;
+  padding-left: 15px;
+}
+.button {
+  color: ghostwhite;
+  background-color: #7D9BC1;
+  padding: 5px;
+  font-size: 12px;
 }
 
 .buttonh {
   color: #7D9BC1;
   background-color: #7D9BC1;
   font-size: 8px;
-  padding: 5px;
   border: 0px;
 }
 
@@ -171,7 +182,7 @@ asssrv {
 
 .development {
   background-color: lightblue;
-  font-weight: bold;
+  #font-weight: bold;
 }
 
 .developmenth {
@@ -203,20 +214,43 @@ asssrv {
   background-color: lightgoldenrodyellow
 }
 
+.tooltiptext {
+  font: 16px arial;
+  left: 20%;
+  width: 60%;
+  visibility: hidden;
+  background-color: black;
+  color: ghostwhite;
+  text-align: left;
+  border-radius: 5px;
+  padding: 5px;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.hover {
+  visibility: visible;
+  transition: all 6.0s;
+}
+
 .assetup {
   color: black;
   background-color: lightgreen;
-  border-collapse: separate !important;
   text-align: center;
+}
+
+.assetup:hover .tooltiptext {
+  visibility: visible;
 }
 
 .assetuplist {
   color: black;
   background-color: lightgreen;
-  border-collapse: separate !important;
   text-align: left;
   padding: 2px;
   padding-left: 6px;
+  vertical-align: text-top;
 }
 
 .assetdownlist {
@@ -225,50 +259,18 @@ asssrv {
   text-align: left;
   padding: 2px;
   padding-left: 6px;
-}
-
-.assetup .tooltiptext {
-  font: 22px arial;
-  visibility: hidden;
-  width: 40%;
-  background-color: black;
-  color: white;
-  text-align: left;
-  border-radius: 6px;
-  padding: 20px;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
-
-.assetup:hover .tooltiptext {
-  visibility: visible;
+  vertical-align: text-top;
 }
 
 .assetup2 {
   color: black;
   background-color: #56bf56;
-  border-collapse: separate !important;
   text-align: center;
-}
-
-.assetup2 .tooltiptext {
-  left: 20%;
-  font: 22px arial;
-  visibility: hidden;
-  width: 40%;
-  background-color: black;
-  color: white;
-  text-align: left;
-  border-radius: 6px;
-  padding: 20px;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
 }
 
 .assetup2:hover .tooltiptext {
   visibility: visible;
+  transition: ease-out 5.0s;
 }
 
 .assetdown {
@@ -277,25 +279,8 @@ asssrv {
   text-align: center;
 }
 
-.assetdown .tooltiptext {
-  left: 20%;
-  font: 22px arial;
-  visibility: hidden;
-  width: 40%;
-  background-color: black;
-  color: white;
-  text-align: left;
-  border-radius: 6px;
-  padding: 20px;
-  transition: all 0.1s ease-in-out 0.1s;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
-
 .assetdown:hover .tooltiptext {
   visibility: visible;
-  transition: all 0.1s ease-in-out 0.1s;
 }
 
 .assetdown2 {
@@ -304,43 +289,7 @@ asssrv {
   text-align: center;
 }
 
-.assetdown2 .tooltiptext {
-  left: 20%;
-  font: 22px arial;
-  visibility: hidden;
-  width: 40%;
-  background-color: black;
-  color: white;
-  text-align: left;
-  border-radius: 6px;
-  padding: 20px;
-  transition: all 0.1s ease-in-out 1s;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
-
 .assetdown2:hover .tooltiptext {
-  visibility: visible;
-  transition: all 0.1s ease-in-out 1s;
-}
-
-.assetservice .tooltiptext {
-  left: 20%;
-  font: 22px arial;
-  visibility: hidden;
-  width: 40%;
-  background-color: black;
-  color: white;
-  text-align: left;
-  border-radius: 10px;
-  padding: 10px;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
-
-.assetservice:hover .tooltiptext {
   visibility: visible;
 }
 
@@ -362,22 +311,7 @@ asssrv {
   text-align: center;
 }
 
-.serviceduepmp .tooltiptext {
-  left: 20%;
-  font: 22px arial;
-  visibility: hidden;
-  width: 40%;
-  background-color: black;
-  color: white;
-  text-align: left;
-  border-radius: 10px;
-  padding: 10px;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
-
-.serviceduepmp:hover .tooltiptext {
+.assetservice:hover .tooltiptext {
   visibility: visible;
 }
 
@@ -388,73 +322,16 @@ asssrv {
   text-align: center;
 }
 
-.servicedue .tooltiptext {
-  left: 20%;
-  font: 22px arial;
-  visibility: hidden;
-  width: 40%;
-  background-color: black;
-  color: white;
-  text-align: left;
-  border-radius: 10px;
-  padding: 10px;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
-
-.servicedue:hover .tooltiptext {
-  visibility: visible;
-}
-
 .servicedue {
   color: black;
   background-color: orange;
   text-align: center;
 }
 
-.servicedueup .tooltiptext {
-  left: 20%;
-  font: 22px arial;
-  visibility: hidden;
-  width: 40%;
-  background-color: black;
-  color: white;
-  text-align: left;
-  border-radius: 10px;
-  padding: 10px;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
-
-.servicedueup:hover .tooltiptext {
-  visibility: visible;
-}
-
 .servicedueup {
   color: black;
   background-color: #56bf56;
   text-align: center;
-}
-
-.serviceduedn .tooltiptext {
-  left: 20%;
-  font: 22px arial;
-  visibility: hidden;
-  width: 40%;
-  background-color: black;
-  color: white;
-  text-align: left;
-  border-radius: 10px;
-  padding: 10px;
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-}
-
-.serviceduedn:hover .tooltiptext {
-  visibility: visible;
 }
 
 .serviceduedn {
