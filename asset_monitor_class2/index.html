@@ -79,6 +79,7 @@
       var maxdisplay = 4;
       var maxmins = 1440;
       var minmins = 15;
+      var heartbeat=true;
 
       var debug = false;
       //		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
@@ -161,7 +162,7 @@
         //			displaytable( json );
         chosenpriority = priBox.options[priBox.selectedIndex].value;
         filterpriority = chosenpriority == 99 ? "!~null~" : chosenpriority;
-        reload();
+        refresh();
       }
 
       deptBox.onchange = function() {
@@ -471,14 +472,14 @@
         var ass = curr.ASSETNUM;
         var lifetodate = 0.0;
         if (displaylevel > 1) {
-          ass += chosenpriority > 1 ? " (" + curr.PRIORITY + ")[" : "[";
+          ass += chosenpriority > 1 ? " (" + curr.PRIORITY + ") [" : " [";
         } else {
           ass += chosenpriority > 1 ? " (" + curr.PRIORITY + ")<br/>[" : "<br/>[";
         }
         //            var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
         var locald = curr.ASSETSTATUS ? new Date(curr.ASSETSTATUS[0].CHANGEDATE) : new Date(curr.CHANGEDATE);
         ass += daysBetween(locald, d) + "]";
-        if (curr.ASSETNUM == "264")
+        if (curr.ASSETNUM == "330")
           stop = 0;
         if (displaylevel > 1) {
           if (pmpservice) {
@@ -523,13 +524,16 @@
           }
         }
 
+        if (curr.ASSETNUM == "330")
+          stop = 0;
+
         if (curr.WORKORDER) {
           for (w = 0; w < curr.WORKORDER.length; w++) {
             var reportdate = new Date(curr.WORKORDER[w].REPORTDATE);
             asstitle += "<a href='http://maximoprod.boliden.internal/maximo/ui/maximo.jsp?event=loadapp&amp;value=WOTRACK&amp;uniqueid=";
             asstitle += curr.WORKORDER[w].WORKORDERID + "' target='_blank'>";
             asstitle += curr.WORKORDER[w].WONUM + "</a>";
-            asstitle += "<b>[" + reportdate.toLocaleDateString() + "]</b>";
+            asstitle += " [" + reportdate.toLocaleDateString() + "] ";
             asstitle += curr.WORKORDER[w].AMCREW === undefined ? "" : curr.WORKORDER[w].AMCREW[0].DESCRIPTION;
             asstitle += "<br/>" + curr.WORKORDER[w].DESCRIPTION;
             asstitle += curr.WORKORDER[w].DESCRIPTION_LONGDESCRIPTION === undefined ? "" : ". <br/>" + curr.WORKORDER[w].DESCRIPTION_LONGDESCRIPTION.replace(/<\/?[^>]+(>|$)/g, " ").replace(/&#039;/g, "'");
@@ -899,40 +903,47 @@
         if (chosenpriority == 99) {
           //          filter = {maxrows: 600,offset: 0,fields: [{SITEID:"=TAR"},{ASSETTYPE:"=FLEET"},{STATUS:"=OPERATING"},{LOCATION:"!~null~"},{CLASSSTRUCTUREID:"!~null~"}]};
           filter = {
-            maxrows: 600,
+            maxrows: 3000,
             offset: 0,
             fields: [{
               SITEID: "=TAR"
             }, {
               ASSETTYPE: "=FLEET"
+            }, {
+              CLASSSTRUCTUREID: "!~null~"
             }, {
               CHANGEDATE: text
             }, {
               STATUS: "=OPERATING"
             }, {
               LOCATION: "!~null~"
+            }, {
+              PRIORITY: "!~null~"
             }]
           };
         } else {
           //          filter = {maxrows: 600,offset: 0,fields: [{SITEID:"=TAR"},{ASSETTYPE:"=FLEET"},{STATUS:"=OPERATING,=ACTIVE"},{LOCATION:"!~null~"},{CLASSSTRUCTUREID:"!~null~"},{PRIORITY:filterpriority}]};
           filter = {
-            maxrows: 600,
+            maxrows: 3000,
             offset: 0,
             fields: [{
               SITEID: "=TAR"
             }, {
               ASSETTYPE: "=FLEET"
             }, {
+              CLASSSTRUCTUREID: "!~null~"
+            }, {
               CHANGEDATE: text
               //            }, {               LOCATION: "=102A"
             }, {
               STATUS: "OPERATING"
             }, {
-              PRIORITY: chosenpriority
+              LOCATION: "!~null~"
+            }, {
+              PRIORITY: "!~null~"
             }]
           };
         }
-        startdate = new Date();
         return filter;
       }
 
@@ -956,16 +967,17 @@
         if (!waiting) {
           set("lastrun", "Waiting on network....." + startdate.toLocaleTimeString());
         }
-
         waiting = true;
         newjson = null;
         targetdate = new Date(startdate);
         targetdate.setMinutes(targetdate.getMinutes() - lookback);
         newjson = SOA004Client.get(setfilter(targetdate));
-        mergejson(json, newjson);
         if (newjson.error) {
           set("lastupdated", json.error + "<br/>" + startdate.toLocaleString());
+        } else {
+          startdate = new Date();
         }
+        mergejson(json, newjson);
         outputconsole("update() startdate ::" + startdate);
         set("lastrun", "Last Run: " + startdate.toLocaleString());
         waiting = false;
