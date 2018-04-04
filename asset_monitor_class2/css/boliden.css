@@ -219,7 +219,7 @@ asssrv {
   width: 60%;
   visibility: hidden;
   opacity: 0;
-  transition: visibility 2.0s linear 0.5s, opacity 0.4s 0.2s;
+  transition: visibility 1.0s linear 0.5s, opacity 1.0s 0.2s;
   background-color: #464D57;
   color: ghostwhite;
   text-align: left;

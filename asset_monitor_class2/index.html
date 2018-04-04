@@ -514,13 +514,14 @@
       function buildassettitle(curr, pmpfound, pmpservice, pmploc) {
         var asstitle = "";
 
+        asstitle = curr.ASSETNUM+"<br/>"
         if (pmpfound && !pmpservice) {
           if (curr.WORKORDER[pmploc].SCHEDSTART) {
             schdate = new Date(curr.WORKORDER[pmploc].SCHEDSTART);
-            asstitle = "Service Scheduled:" + schdate.toLocaleDateString() + "<br/><br/>";
+            asstitle += "Service Scheduled:" + schdate.toLocaleDateString() + "<br/><br/>";
           } else {
             schdate = new Date(curr.WORKORDER[pmploc].STATUSDATE);
-            asstitle = "Target Service:" + schdate.toLocaleDateString() + "<br/><br/>";
+            asstitle += "Target Service:" + schdate.toLocaleDateString() + "<br/><br/>";
           }
         }
 
