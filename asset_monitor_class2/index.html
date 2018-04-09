@@ -10,8 +10,10 @@
 
 <body>
   <header>
-    <a href="http://bolsrv0406.boliden.internal/asset_monitor" id="logo"> </a>
     <table id="control">
+      <td class="logo">
+        <a href="http://bolsrv0406.boliden.internal/asset_monitor" id="logo"> </a>
+      </td>
       <td>Department<select id='department'>
           <option value="All">All</option>
                     <option value="Development">Development</option>
@@ -31,16 +33,24 @@
           <option value="Down">Down</option>
         </select>
       </td>
-      <td><span id="lastrun"></span><br/>
-        <button class="buttonl" id="dndisplay" onclick="DownDisplaylevel()">    <<    </button>
-        <button class="button" id="debuglabel" onclick="debuglevel()"> Display </button>
-        <button class="buttonr" id="updisplay" onclick="UpDisplaylevel()">    >>    </button>
-        <br/>
-        <button class="buttonl" onclick="Downlookback()">    <<    </button>
-        <span id="lookback"></span>
-        <button class="buttonr" onclick="Uplookback()">    >>    </button>
+      <td >
+        <select id='displaylist' onChange="update();">
+          <option value=1>Simple</option>
+          <option value=2>Include Service</option>
+          <option value=3>First Service Availibility</option>
+          <option value=4>All Services</option>
+          </select>
+        <select id='lookbacklist' onChange="update();">
+          <option value=15>15 Minutes</option>
+          <option value=30>30 Minutes</option>
+          <option value=60>Hour</option>
+          <option value=240>4 Hours</option>
+          <option value=720>12 Hours</option>
+          <option value=1440>Day</option>
+          </select>
       </td>
       <tr>
+        <td class="logo" rowspan="3" id="lastrun">xxxx</td>
         <td class="assetup">Up</td>
         <td class="assetdown">Down</td>
         <td class="assetdown2">Down in Progress</td>
@@ -62,7 +72,6 @@
   <tr>
     <tr/>
     <table id="output">
-      <td>Updates at <span id="lastupdated">???</td>
       <td class="assetuplist"><span id="messup"></span></td>
       <td class="assetdownlist"><span id="messdown"></span></td>
     </table>
@@ -79,7 +88,7 @@
       var maxdisplay = 4;
       var maxmins = 1440;
       var minmins = 15;
-      var heartbeat=true;
+      var heartbeat = true;
 
       var debug = false;
       //		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
@@ -105,6 +114,8 @@
       var deptBox = document.getElementById('department');
       var priBox = document.getElementById('priority');
       var runningBox = document.getElementById('running');
+      var displayBox = document.getElementById('displaylist');
+      var lookbackBox = document.getElementById('lookbacklist');
 
       function set(id, val) {
         var el = document.getElementById(id);
@@ -150,6 +161,17 @@
         update();
         refresh();
         outputconsole("Downlookback ::" + lookback);
+      }
+
+      lookbackBox.onchange = function() {
+        lookback = lookbackBox.options[lookbackBox.selectedIndex].value;
+        update();
+        refresh();
+      }
+
+      displayBox.onchange = function() {
+        displaylevel = displayBox.options[displayBox.selectedIndex].value;
+        refresh();
       }
 
       runningBox.onchange = function() {
@@ -324,12 +346,12 @@
 
 
       function setlastrun() {
-//        set("lastupdated", "Updates at " + startdate.toLocaleTimeString() + " for last " + HoursBetween(lookback, true));
-       set("lookback", HoursBetween(lookback, true));
+        //        set("lastupdated", "Updates at " + startdate.toLocaleTimeString() + " for last " + HoursBetween(lookback, true));
+        set("lookback", HoursBetween(lookback, true));
       }
 
       function trimlocationdesc(locationdescription) {
-        return (locationdescri  ption.replace('Mine ', '').replace(' Fleet', ''));
+        return (locationdescription.replace('Mine ', '').replace(' Fleet', ''));
       }
 
       function sortbydept(json, dept) {
@@ -514,7 +536,7 @@
       function buildassettitle(curr, pmpfound, pmpservice, pmploc) {
         var asstitle = "";
 
-        asstitle = curr.ASSETNUM+"<br/>"
+        asstitle = curr.ASSETNUM + "<br/>"
         if (pmpfound && !pmpservice) {
           if (curr.WORKORDER[pmploc].SCHEDSTART) {
             schdate = new Date(curr.WORKORDER[pmploc].SCHEDSTART);
@@ -917,7 +939,7 @@
             }, {
               STATUS: "=OPERATING"
             }, {
-              LOCATION: "!~null~"
+              LOCATION: "=102A"
             }, {
               PRIORITY: "!~null~"
             }]
@@ -939,7 +961,7 @@
             }, {
               STATUS: "OPERATING"
             }, {
-              LOCATION: "!~null~"
+              LOCATION: "=102A"
             }, {
               PRIORITY: "!~null~"
             }]
@@ -980,7 +1002,7 @@
         }
         mergejson(json, newjson);
         outputconsole("update() startdate ::" + startdate);
-        set("lastrun", "Last Run: " + startdate.toLocaleString());
+        set("lastrun", "Last Run:<br/>" + startdate.toLocaleString());
         waiting = false;
       }
 
@@ -990,6 +1012,8 @@
       deptBox.value = "All";
       priBox.value = "1";
       runningBox.value = "All";
+      displayBox.value="1";
+
       document.getElementById("output").style.display = '';
       set("messup", "@@@@@@@@@@@@@@@@");
       set("messdown", "^^^^^^^^^^^^^^^^^");

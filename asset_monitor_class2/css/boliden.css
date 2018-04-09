@@ -31,10 +31,10 @@ control {
 }
 
 select, option {
+  width: 90%;
   font: 12px arial;
-  padding-left: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding: 2px;
+  margin: 4px 0px 4px 0px;
 }
 
 section {
@@ -51,7 +51,7 @@ table {
 table#control {
   text-align: center;
   vertical-align: text-top;
-  width: 75%;
+  width: 95%;
   border: 0px;
   color: white;
   background-color: #7D9BC1;
@@ -135,6 +135,13 @@ asssrv {
 
 #logo {
   padding: 1px;
+  border: 0px;
+  margin: 3px;
+}
+
+.logo {
+  padding: 1px;
+  padding-right: 20px;
   border: 0px;
   margin: 3px;
 }
