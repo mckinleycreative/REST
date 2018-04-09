@@ -1,0 +1,12 @@
+{
+  "name": "xmltojson",
+  "version": "1.3.4",
+  "main": "./lib/xmlToJSON.js",
+  "dependencies": {},
+  "ignore": [
+    "*",
+    "!lib/*",
+    "!LICENSE",
+    "!README.md"
+  ]
+}
