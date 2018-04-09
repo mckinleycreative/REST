@@ -5,7 +5,7 @@
 */
 
 header {
-  height: 120px;
+  height: 140px;
 }
 
 h1 {
@@ -33,8 +33,10 @@ control {
 select, option {
   font: 12px arial;
   padding-left: 10px;
+  padding-right: 5px;
   padding-top: 2px;
   padding-bottom: 2px;
+  margin: 1px;
 }
 
 section {
@@ -51,7 +53,7 @@ table {
 table#control {
   text-align: center;
   vertical-align: text-top;
-  width: 75%;
+  width: 90%;
   border: 0px;
   color: white;
   background-color: #7D9BC1;
@@ -98,6 +100,8 @@ td {
   text-align: center;
   vertical-align: middle;
   padding: 1px;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .output {
@@ -134,9 +138,12 @@ asssrv {
 }
 
 #logo {
-  padding: 1px;
+  margin: 0px;
+}
+
+.logo {
+  padding-right: 30px;
   border: 0px;
-  margin: 3px;
 }
 
 /* table#tgt tr:nth-child(even) {background-color: #eee;} */
