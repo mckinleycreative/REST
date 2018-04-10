@@ -33,7 +33,7 @@
           <option value="Down">Down</option>
         </select>
       </td>
-      <td >
+      <td>
         <select id='displaylist' onChange="update();">
           <option value=1>Simple</option>
           <option value=2>Include Service</option>
@@ -41,6 +41,7 @@
           <option value=4>All Services</option>
           </select>
         <select id='lookbacklist' onChange="update();">
+          <option value=5>5 Minutes</option>
           <option value=15>15 Minutes</option>
           <option value=30>30 Minutes</option>
           <option value=60>Hour</option>
@@ -72,8 +73,8 @@
   <tr>
     <tr/>
     <table id="output">
-      <td class="assetuplist"><span id="messup"></span></td>
-      <td class="assetdownlist"><span id="messdown"></span></td>
+      <td id="messup" class="assetuplist"></td>
+      <td id="messdown" class="assetdownlist"></td>
     </table>
 
     <table id="tgt">
@@ -320,23 +321,37 @@
               set("messdown", null);
               for (i; i < newrecords; ++i) {
                 newcurr = newjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-                var locald = new Date(newcurr.CHANGEDATE);
-                message = maximo.leftpad(daysBetween(locald, d), 5, " ") + " : " + newcurr.ASSETNUM + " " + newcurr.DESCRIPTION;
-                if (newcurr.ISRUNNING == 0) {
-                  dmessage += dexists ? "<br/>" : "";
-                  dmessage += message
-                  dexists = true;
-                } else {
-                  umessage += uexists ? "<br/>" : "";
-                  umessage += message
-                  uexists = true;
+                if ((newcurr.PRIORITY <= chosenpriority) &&
+                  (chosendept == department || chosendept == "All") &&
+                  ((!newcurr.ISRUNNING && running == 'Down') ||
+                    running == "All" ||
+                    (newcurr.ISRUNNING && running == 'Available'))) {
+                  var locald = new Date(newcurr.CHANGEDATE);
+                  message = maximo.leftpad(daysBetween(locald, d), 5, " ") + " : " + newcurr.ASSETNUM + (chosenpriority > 1 ? " (" + newcurr.PRIORITY + ") " : " ") + newcurr.DESCRIPTION;
+                  if (newcurr.ISRUNNING == 0) {
+                    dmessage += dexists ? "<br/>" : "";
+                    dmessage += message
+                    dexists = true;
+                  } else {
+                    umessage += uexists ? "<br/>" : "";
+                    umessage += message
+                    uexists = true;
+                  }
                 }
               };
               if (uexists) set("messup", umessage);
               if (dexists) set("messdown", dmessage);
-              document.getElementById("output").style.display = '';
+              if (!(uexists && dexists)){
+                document.getElementById("output").style.display = 'none';
+              }
+              else if ( !uexists ) {
+                document.getElementById("messup").style.display = 'none';
+              }
+              else if ( !dexists ) {
+                document.getElementById("messdown").style.display = 'none';
+              }
             } else {
-              document.getElementById("output").style.display = 'none';
+              document.getElementById("output").style.display = '';
             }
           }
         } else {
@@ -412,13 +427,9 @@
               json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i] = nextcurr;
             }
           }
-          //                start++;
           outputconsole("end:" + start + ":" + endstop, json);
         }
-
         outputconsole("final", json);
-
-
       };
 
       function calcassetdays(curr, first) {
@@ -817,14 +828,11 @@
         for (i = 0; i < assetcolums; i++) {
           var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
           department = curr.LOCATIONS[0].DESCRIPTION;
-          isrun = curr.ISRUNNING;
-          curprior = curr.PRIORITY;
-
-          if ((curr.PRIORITY <= chosenpriority) &&
+          if (
+            (curr.PRIORITY <= chosenpriority) &&
             (chosendept == department || chosendept == "All") &&
-            ((!curr.ISRUNNING && running == 'Down') ||
-              running == "All" ||
-              (curr.ISRUNNING && running == 'Available'))) {
+            ((!curr.ISRUNNING && (running == 'Down' || running == "Available")) || running == "All")
+          ) {
             sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
             found = false;
             // find the next available slot
@@ -847,21 +855,14 @@
             if (!found) {
               if (curr.ASSETNUM == "337") stop = 0;
               tr = tbl.insertRow(-1);
-              //              tr.className = "development";
               td = tr.insertCell(-1);
               td.innerHTML = department;
-              if (currdept == department) {
-                td.className = "productionh";
-              } else {
-                toggle = !toggle;
-                td.className = "production";
-              };
-              ldept = department.toLowerCase();
+              td.className = "production" + (currdept == department ? "h" : "");
+              toggle = !toggle;
               currdept = department;
               for (var j = 1; j < cellLength; j++) {
                 currsection = HeaderCells.item(j).innerHTML;
                 td = tr.insertCell(-1);
-
                 if (sectionname === currsection) {
                   setassetclass(td, HeaderCells, curr)
                 }
@@ -869,7 +870,6 @@
             }
           }
         }
-
 
         for (var j = 1; j < pct.length; j++) {
           pct.item(j).innerHTML = Math.round(1000.0 * Number(pctupobj.item(j).innerHTML) / Number(pcttotalobj.item(j).innerHTML)) / 10 + "%";
@@ -884,8 +884,6 @@
         set("downpct", (Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%");
         set("servicepct", (Math.round(1000.0 * assetservice / assettotal) / 10.0) + "%");
         set("breakpct", (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%");
-
-
       }
 
       function daysDiff(date1, date2) {
@@ -939,7 +937,7 @@
             }, {
               STATUS: "=OPERATING"
             }, {
-              LOCATION: "=102A"
+              LOCATION: "=101A,=102A"
             }, {
               PRIORITY: "!~null~"
             }]
@@ -961,7 +959,7 @@
             }, {
               STATUS: "OPERATING"
             }, {
-              LOCATION: "=102A"
+              LOCATION: "=101A,=102A"
             }, {
               PRIORITY: "!~null~"
             }]
@@ -996,7 +994,7 @@
         targetdate.setMinutes(targetdate.getMinutes() - lookback);
         newjson = SOA004Client.get(setfilter(targetdate));
         if (newjson.error) {
-          set("lastupdated", json.error + "<br/>" + startdate.toLocaleString());
+          set("lastrun", json.error + "<br/>" + startdate.toLocaleString());
         } else {
           startdate = new Date();
         }
@@ -1012,7 +1010,7 @@
       deptBox.value = "All";
       priBox.value = "1";
       runningBox.value = "All";
-      displayBox.value="1";
+      displayBox.value = "1";
 
       document.getElementById("output").style.display = '';
       set("messup", "@@@@@@@@@@@@@@@@");
