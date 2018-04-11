@@ -14,7 +14,7 @@
       <td class="logo">
         <a href="http://bolsrv0406.boliden.internal/asset_monitor" id="logo"> </a>
       </td>
-      <td>Department<select id='department'>
+      <td>Department<br/><select id='department'>
           <option value="All">All</option>
                     <option value="Development">Development</option>
                     <option value="Production">Production</option>
@@ -51,7 +51,7 @@
           </select>
       </td>
       <tr>
-        <td class="logo" rowspan="3" id="lastrun">xxxx</td>
+        <td class="logo" rowspan="3" id="lastrun">Waiting on network.....</td>
         <td class="assetup">Up</td>
         <td class="assetdown">Down</td>
         <td class="assetdown2">Down in Progress</td>
@@ -84,7 +84,7 @@
 
     <script>
       var interval = 600000;
-      var lookback = 15;
+      var lookback = 5;
       var mindisplay = 1;
       var maxdisplay = 4;
       var maxmins = 1440;
@@ -119,6 +119,10 @@
       var lookbackBox = document.getElementById('lookbacklist');
 
       function set(id, val) {
+        debug = true;
+        outputconsole("set() ::" + id + ":" + val);
+        debug = false;
+
         var el = document.getElementById(id);
         if (!el) return;
         el.innerHTML = val;
@@ -304,61 +308,63 @@
         outputconsole(" xxxxxxxxxxx ");
       };
 
-
       function displaynew() {
-        if (lookback >= minmins) {
-          if (newjson) {
-            var newrecords = newjson.QueryREST_ASSETWResponse.rsTotal;
-            if (newrecords > 0) {
-              swapnew();
-              var i = 0;
-              var uexists = false;
-              var dexists = false;
-              var umessage = "";
-              var dmessage = "";
-              d = new Date();
-              set("messup", null);
-              set("messdown", null);
-              for (i; i < newrecords; ++i) {
-                newcurr = newjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-                if ((newcurr.PRIORITY <= chosenpriority) &&
-                  (chosendept == department || chosendept == "All") &&
-                  ((!newcurr.ISRUNNING && running == 'Down') ||
-                    running == "All" ||
-                    (newcurr.ISRUNNING && running == 'Available'))) {
-                  var locald = new Date(newcurr.CHANGEDATE);
-                  message = maximo.leftpad(daysBetween(locald, d), 5, " ") + " : " + newcurr.ASSETNUM + (chosenpriority > 1 ? " (" + newcurr.PRIORITY + ") " : " ") + newcurr.DESCRIPTION;
-                  if (newcurr.ISRUNNING == 0) {
-                    dmessage += dexists ? "<br/>" : "";
-                    dmessage += message
-                    dexists = true;
-                  } else {
-                    umessage += uexists ? "<br/>" : "";
-                    umessage += message
-                    uexists = true;
-                  }
+        if (newjson) {
+          var newrecords = newjson.QueryREST_ASSETWResponse.rsTotal;
+          if (newrecords > 0) {
+            swapnew();
+            var i = 0;
+            var uexists = false;
+            var dexists = false;
+            var umessage = "";
+            var dmessage = "";
+            d = new Date();
+            set("messup", null);
+            set("messdown", null);
+            document.getElementById("output").style.display = '';
+            document.getElementById("messup").style.display = '';
+            document.getElementById("messdown").style.display = '';
+            for (i; i < newrecords; ++i) {
+              newcurr = newjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
+              department = newcurr.LOCATIONS[0].DESCRIPTION;
+              if ((newcurr.PRIORITY <= chosenpriority) &&
+                (chosendept == department || chosendept == "All") &&
+                ((!newcurr.ISRUNNING && running == 'Down') ||
+                  running == "All" ||
+                  (newcurr.ISRUNNING && running == 'Available'))) {
+                var locald = new Date(newcurr.CHANGEDATE);
+                message = maximo.leftpad(daysBetween(locald, d), 5, " ") + " : " + newcurr.ASSETNUM + (chosenpriority > 1 ? " (" + newcurr.PRIORITY + ") " : " ") + newcurr.DESCRIPTION;
+                if (newcurr.ISRUNNING == 0) {
+                  dmessage += dexists ? "<br/>" : "";
+                  dmessage += message
+                  dexists = true;
+                } else {
+                  umessage += uexists ? "<br/>" : "";
+                  umessage += message
+                  uexists = true;
                 }
-              };
-              if (uexists) set("messup", umessage);
-              if (dexists) set("messdown", dmessage);
-              if (!(uexists && dexists)){
-                document.getElementById("output").style.display = 'none';
               }
-              else if ( !uexists ) {
-                document.getElementById("messup").style.display = 'none';
-              }
-              else if ( !dexists ) {
-                document.getElementById("messdown").style.display = 'none';
-              }
-            } else {
+            };
+            if (uexists) set("messup", umessage);
+            if (dexists) set("messdown", dmessage);
+            if (!uexists && !dexists) {
+              document.getElementById("output").style.display = 'none';
+            }else {
               document.getElementById("output").style.display = '';
             }
+            if (!uexists) {
+              document.getElementById("messup").style.display = 'none';
+            }
+            if (!dexists) {
+              document.getElementById("messdown").style.display = 'none';
+            }
+          } else {
+            document.getElementById("output").style.display = 'none';
           }
         } else {
           document.getElementById("output").style.display = 'none';
         }
       }
-
 
       function setlastrun() {
         //        set("lastupdated", "Updates at " + startdate.toLocaleTimeString() + " for last " + HoursBetween(lookback, true));
@@ -937,7 +943,7 @@
             }, {
               STATUS: "=OPERATING"
             }, {
-              LOCATION: "=101A,=102A"
+              LOCATION: "!~null~"
             }, {
               PRIORITY: "!~null~"
             }]
@@ -959,7 +965,7 @@
             }, {
               STATUS: "OPERATING"
             }, {
-              LOCATION: "=101A,=102A"
+              LOCATION: "!~null~"
             }, {
               PRIORITY: "!~null~"
             }]
@@ -969,6 +975,7 @@
       }
 
       function reload() {
+        set("lastrun", "Waiting on network....." + startdate.toLocaleTimeString());
         tempYear = new Date(startdate);
         tempYear.setFullYear(1900);
         json = SOA004Client.get(setfilter(tempYear));
@@ -1010,7 +1017,8 @@
       deptBox.value = "All";
       priBox.value = "1";
       runningBox.value = "All";
-      displayBox.value = "1";
+      displayBox.value = displaylevel;
+      lookbackBox.value = lookback;
 
       document.getElementById("output").style.display = '';
       set("messup", "@@@@@@@@@@@@@@@@");

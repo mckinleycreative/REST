@@ -234,10 +234,18 @@ asssrv {
   padding: 5px;
   /* Position the tooltip */
   position: absolute;
+  -webkit-transition: background-color 2s ease-out;
+  -moz-transition: background-color 2s ease-out;
+  -o-transition: background-color 2s ease-out;
+  transition: background-color 2s ease-out;
   z-index: 1;
 }
 
-a:-webkit-any-link {
+a:-webkit-any-link, link {
+    color: yellow;
+}
+
+a:link {
     color: yellow;
 }
 
@@ -314,6 +322,7 @@ a:-webkit-any-link {
   padding: 2px;
   padding-left: 6px;
   vertical-align: text-top;
+  width: 50%;
 }
 
 .assetdownlist {

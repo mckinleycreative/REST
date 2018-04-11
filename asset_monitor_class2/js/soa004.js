@@ -44,7 +44,7 @@ SOA004Client = {
       url += "/" + id;
     }
     url += "?filter=" + JSON.stringify(filter);
-    this.AJAX.open("GET", url, false);
+    this.AJAX.open("GET", url, true);
     this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
     this.AJAX.send();
     //		var newText = xmlToJSON.parseString(this.AJAX.responseText);
