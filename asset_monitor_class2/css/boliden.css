@@ -222,8 +222,8 @@ asssrv {
 
 .tooltiptext {
   font: 16px arial;
-  left: 20%;
-  width: 60%;
+  left: 5%;
+  width:90%;
   visibility: hidden;
   opacity: 0;
   transition: visibility 1.0s linear 0.5s, opacity 1.0s 0.2s;

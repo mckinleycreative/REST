@@ -28,8 +28,10 @@
 
 SOA004Client = {
 	//_RESTURI: "http://bolsrv0138.boliden.internal:7802/SOA004/rest/BI/",
-	_RESTURI: "http://bolsrv0138.boliden.internal:7801/SOA004/rest/BI/",
-	_AUTHSTR: "test",
+//	_RESTURI: "http://bolsrv0138.boliden.internal:7801/SOA004/rest/BI/",
+//	_AUTHSTR: "test",
+	_RESTURI: "http://bolsrv0461.boliden.internal:8081/", // PROD
+  _AUTHSTR: "mxIntBi", //PROD
 	AJAX: null,
 	get: function( filter, id, fields ) {
 		if( this.AJAX === null ) return null;
@@ -61,7 +63,7 @@ SOA004Client = {
 	init: function() {
 		this.AJAX = (window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject( "Microsoft.XMLHTTP" ) );
 	},
-	
+
 	post: function( id, data ) {
 		if( this.AJAX === null ) return null;
 		if( this.system=="" || this.dataobject=="" || !data ) return null;
@@ -109,7 +111,7 @@ SOA004Client = {
 				data[data.length] = o;
 			}
 		}
-		this.postasync( id, data, callback );		
+		this.postasync( id, data, callback );
 	},
 	system: "",
 	dataobject:""

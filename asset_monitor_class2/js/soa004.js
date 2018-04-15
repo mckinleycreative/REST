@@ -33,24 +33,34 @@ SOA004Client = {
   //_AUTHSTR: "test", // TEST
   AJAX: null,
   get: function(filter, id, fields) {
-    if (this.AJAX === null) {
-      return null;
+    try {
+
+      if (this.AJAX === null) {
+        return null;
+      }
+      if (this.system === "" || this.dataobject === "") {
+        return null;
+      }
+      var url = this._RESTURI + this.system + "/" + this.dataobject;
+      if (id) {
+        url += "/" + id;
+      }
+      url += "?filter=" + JSON.stringify(filter);
+      this.AJAX.open("GET", url, false);
+      this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR );
+      this.AJAX.send();
+      //		var newText = xmlToJSON.parseString(this.AJAX.responseText);
+      //    newText = JSON.parse(this.AJAX.responseText);
+      //    return (newText);
+      return JSON.parse(this.AJAX.responseText);
+    } catch (error) {
+      console.error(error.code);
+      console.error(error.message);
+      console.error(error.name);
+      // expected output: SyntaxError: unterminated string literal
+      // Note - error messages will vary depending on browser
+      return error;
     }
-    if (this.system === "" || this.dataobject === "") {
-      return null;
-    }
-    var url = this._RESTURI + this.system + "/" + this.dataobject;
-    if (id) {
-      url += "/" + id;
-    }
-    url += "?filter=" + JSON.stringify(filter);
-    this.AJAX.open("GET", url, false);
-    this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
-    this.AJAX.send();
-    //		var newText = xmlToJSON.parseString(this.AJAX.responseText);
-//    newText = JSON.parse(this.AJAX.responseText);
-//    return (newText);
-    return JSON.parse(this.AJAX.responseText);
   },
   getasync: function(filter, id, fields, callback) {
     if (this.AJAX === null) {
@@ -64,7 +74,7 @@ SOA004Client = {
       url += "/" + id;
     }
     url += "?filter=" + JSON.stringify(filter);
-    this.AJAX.open("GETASYNC", url, callback);
+    this.AJAX.open("GET", url, true);
     this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
     this.AJAX.onreadystatechange = function() {
       if (this.readyState === 4) {
