@@ -1,8 +1,3 @@
-function getbyid(id) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  return (val);
-}
 
 function debuglevel() {
   outputconsole("debug ::" + !debug);

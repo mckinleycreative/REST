@@ -285,6 +285,12 @@ a:link {
   text-align: center;
 }
 
+.logo:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
 .assetdown:hover .tooltiptext {
   visibility: visible;
   opacity: 1;

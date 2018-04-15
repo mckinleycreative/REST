@@ -55,23 +55,23 @@
           </select>
       </td>
       <tr>
-        <td class="logo" rowspan="3" id="lastrun">Waiting on network.....</td>
+        <td id="lastrun" class="logo" rowspan="3" >Initialising data.....<span class="tooltiptext">hello</span></td>
         <td class="assetup">Up</td>
         <td class="assetdown">Down</td>
         <td class="assetdown2">Down in Progress</td>
         <td class="assetservice">Servicing</td>
       </tr>
       <tr>
-        <td class="assetup"><span id="assetupcount"></span></td>
-        <td class="assetdown"><span id="assetdowncount"></span></td>
-        <td class="assetdown2"><span id="assetbreakdowncount"></span></td>
-        <td class="assetservice"><span id="assetservice"></span></td>
+        <td id="assetupcount" class="assetup"></td>
+        <td id="assetdowncount" class="assetdown"></td>
+        <td id="assetbreakdowncount" class="assetdown2"></td>
+        <td id="assetservice" class="assetservice"></td>
       </tr>
       <tr>
-        <td class="assetup"><span id="uppct"></span></td>
-        <td class="assetdown"><span id="downpct"></span></td>
-        <td class="assetdown2"><span id="breakpct"></span></td>
-        <td class="assetservice"><span id="servicepct"></span></td>
+        <td id="uppct" class="assetup"></td>
+        <td id="downpct" class="assetdown"></td>
+        <td id="breakpct" class="assetdown2"></td>
+        <td id="servicepct" class="assetservice"></td>
     </table>
   </header>
   <tr>
@@ -89,16 +89,12 @@
     <script>
       var interval = 300000;
       var day = 86400000;
-      var lookback = 5;
+      var lookback = 30;
       var heartbeat = interval / 6;
       var lastreload = new Date();
-      var mindisplay = 1;
-      var maxdisplay = 4;
-      var maxmins = 1440;
-      var minmins = 15;
       //      var heartbeat = true;
 
-      var debug = true;
+      var debug = false;
       //		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
       var chosenpriority = 1;
       var chosendept = "All";
@@ -164,12 +160,6 @@
               //    console.log(errMsg+ "::" + errSrc);
             }, true);
       */
-
-      function setlastrun() {
-        //        set("lastupdated", "Updates at " + startdate.toLocaleTimeString() + " for last " + HoursBetween(lookback, true));
-        set("lookback", HoursBetween(lookback, true));
-      }
-
 
       deptBox.value = "All";
       runningBox.value = "All";
