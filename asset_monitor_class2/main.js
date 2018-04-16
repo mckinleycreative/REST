@@ -2,12 +2,8 @@ SOA004Client.init();
 SOA004Client.system = "MAXIMO";
 SOA004Client.dataobject = "REST_ASSETW";
 
-
 function set(id, val) {
-  tdebug = debug;
-  debug = true;
   outputconsole("set() ::" + id + ":" + val);
-  debug = tdebug;
   var el = document.getElementById(id);
   if (!el) return;
   el.innerHTML = val;
@@ -24,36 +20,38 @@ function setlastrun(id, message, sdate) {
   set(id, message + sdate + tip);
 }
 
-
 function getbyid(id) {
   var el = document.getElementById(id);
   if (!el) return;
   return (el.innerHTML);
 }
 
-function outputconsole(text, json) {
+function outputconsole(text, outjson) {
   if (debug) {
-    if (json === undefined) {
+    if (outjson === undefined) {
       console.log(text);
     } else {
       var j = 0;
       var i = 0;
-      var allrecords = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length;
-      for (i = j; i < allrecords; ++i) {
-        curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-        console.log(text + "::" + compile(curr));
+      if (outjson.QueryREST_ASSETWResponse === undefined) {
+        console.log(text + "::" + JSON.stringify(outjson));
+      } else {
+        var allrecords = outjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length;
+        for (i = j; i < allrecords; ++i) {
+          curr = outjson.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
+          console.log(text + "::" + compile(curr));
+        }
       }
       console.log("===================");
     }
   }
 }
 
-
 function refresh() {
   sortbydept(json, true);
   displaytable(json);
   displaynew();
-  setlastrun("lastrun", "Last Run:<br/>", startdate.toLocaleString());
+  console.log("refresh");
 }
 
 function reload() {
@@ -70,7 +68,6 @@ function reload() {
   });
 }
 
-
 function update() {
   if (!waiting) {
     setlastrun("lastrun", "Waiting on network.....", startdate.toLocaleTimeString());
@@ -80,14 +77,16 @@ function update() {
   targetdate = new Date(startdate);
   targetdate.setMinutes(targetdate.getMinutes() - lookback);
   SOA004Client.getasync(setfilter(targetdate), null, null, function(tempjson) {
-    newjson = tempjson;
-    console.log("update back");
-    if (newjson.name) {
-      console.log(newjson);
-      setlastrun("lastrun", newjson.name + " at ", targetdate.toLocaleString());
-    } else {
-      startdate = new Date();
+    if (!tempjson == null) {
+      newjson = tempjson;
+      if (newjson.name) {
+        console.log(newjson);
+        setlastrun("lastrun", newjson.name + " at ", targetdate.toLocaleString());
+      } else {
+        startdate = new Date();
+      }
     }
+    console.log("update back");
     mergejson(json, newjson);
     refresh();
     setlastrun("lastrun", "Last Run:<br/>", startdate.toLocaleString());
@@ -364,13 +363,11 @@ function buildassetcell(curr, pmpfound, pmpservice, pmploc) {
     avail = Math.round(10000 * (1 - (curr.TOTDOWNTIME / rate))) / 100;
     ass += "<br/>Avail " + avail + "%";
   }
-
   return ass;
 }
 
 function buildassettitle(curr, pmpfound, pmpservice, pmploc) {
   var asstitle = "";
-
   if (pmpfound && !pmpservice) {
     if (curr.WORKORDER[pmploc].SCHEDSTART) {
       schdate = new Date(curr.WORKORDER[pmploc].SCHEDSTART);
@@ -380,10 +377,8 @@ function buildassettitle(curr, pmpfound, pmpservice, pmploc) {
       asstitle += "Target Service:" + schdate.toLocaleDateString() + "<br/><br/>";
     }
   }
-
   if (curr.ASSETNUM == "330")
     stop = 0;
-
   if (curr.WORKORDER) {
     for (w = 0; w < curr.WORKORDER.length; w++) {
       var reportdate = new Date(curr.WORKORDER[w].REPORTDATE);
@@ -429,6 +424,7 @@ function setassetclass(deptlabel, Hcell, curr) {
     assup = 1;
   } else {
     assdown = 1;
+    outputconsole("asset down::", curr);
     if (curr.WORKORDER) {
       for (w = 0; w < curr.WORKORDER.length; w++) {
         if (curr.WORKORDER[w].WORKTYPE == "PMP" && !pmpservice) {
@@ -515,7 +511,7 @@ function setfilter(targetdate) {
   // temp to cause delta data set
   var text = ">" + targetdate.toISOString();
   filter = {
-    maxrows: 3000,
+    maxrows: 600,
     offset: 0,
     fields: [{
       SITEID: "=TAR"

@@ -170,7 +170,6 @@ function displaytable(json) {
   }
   tr.id = "pct";
   for (l = 1; l < HeaderCells.length + 1; l++) {
-    // add columns for the machine types currently using CLASSSTRUCTURE
     td = tr.insertCell(-1);
     td.className = "assetup";
     if (l == 1) td.className = "productionh";
@@ -183,7 +182,6 @@ function displaytable(json) {
   }
   tr.id = "pct1";
   for (l = 1; l < HeaderCells.length + 1; l++) {
-    // add columns for the machine types currently using CLASSSTRUCTURE
     td = tr.insertCell(-1);
     td.className = "assetdown";
     if (l == 1) td.className = "productionh";
@@ -194,7 +192,6 @@ function displaytable(json) {
   tr.style.display = 'none';
   tr.id = "pctup";
   for (l = 1; l < HeaderCells.length + 1; l++) {
-    // add columns for the machine types currently using CLASSSTRUCTURE
     td = tr.insertCell(-1);
     if (l == 1) td.className = "productionh";
     td.innerHTML = 0;
@@ -205,7 +202,6 @@ function displaytable(json) {
   tr.style.display = 'none';
   tr.id = "pctdown";
   for (l = 1; l < HeaderCells.length + 1; l++) {
-    // add columns for the machine types currently using CLASSSTRUCTURE
     td = tr.insertCell(-1);
     td.innerHTML = 0;
     if (l == 1) td.className = "productionh";
@@ -214,13 +210,10 @@ function displaytable(json) {
   tr.style.display = 'none';
   tr.id = "pcttotal";
   for (l = 1; l < HeaderCells.length + 1; l++) {
-    // add columns for the machine types currently using CLASSSTRUCTURE
     td = tr.insertCell(-1);
     td.innerHTML = 0;
     if (l == 1) td.className = "productionh";
   }
-
-  //        document.getElementById("pct").style.display = 'none';
 
   pcttotalobj = document.getElementById("pcttotal").cells;
   pctupobj = document.getElementById("pctup").cells;

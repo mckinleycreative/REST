@@ -47,7 +47,7 @@ SOA004Client = {
       }
       url += "?filter=" + JSON.stringify(filter);
       this.AJAX.open("GET", url, false);
-      this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR );
+      this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
       this.AJAX.send();
       //		var newText = xmlToJSON.parseString(this.AJAX.responseText);
       //    newText = JSON.parse(this.AJAX.responseText);
@@ -74,14 +74,23 @@ SOA004Client = {
       url += "/" + id;
     }
     url += "?filter=" + JSON.stringify(filter);
+
     this.AJAX.open("GET", url, true);
     this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
     this.AJAX.onreadystatechange = function() {
       if (this.readyState === 4) {
-        callback(JSON.parse(this.responseText));
+        if (this.status == 200) {
+          callback(JSON.parse(this.responseText));
+        } else {
+          callback(null);
+        }
       }
     };
-    this.AJAX.send();
+    try {
+      this.AJAX.send();
+    } catch (e) {
+      console.log("+++++++  " + e.code + " " + e.message);
+    }
   },
   init: function() {
     this.AJAX = (window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"));
@@ -115,14 +124,19 @@ SOA004Client = {
       url += "/" + id;
     }
     url += "?data=" + JSON.stringify(data);
-    this.AJAX.open("POST", url, true);
-    this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
-    this.AJAX.onreadystatechange = function() {
-      if (this.readyState === 4) {
-        callback(JSON.parse(this.responseText));
-      }
-    };
-    this.AJAX.send();
+
+    try {
+      this.AJAX.open("POST", url, true);
+      this.AJAX.setRequestHeader("Authorization", "Basic " + this._AUTHSTR);
+      this.AJAX.onreadystatechange = function() {
+        if (this.readyState === 4) {
+          callback(JSON.parse(this.responseText));
+        }
+      };
+      this.AJAX.send();
+    } catch (e) {
+      console.log(e.code);
+    }
   },
 
   system: "",

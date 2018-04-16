@@ -89,8 +89,7 @@
     <script>
       var interval = 300000;
       var day = 86400000;
-      var lookback = 30;
-      var heartbeat = interval / 6;
+      var lookback = 5;
       var lastreload = new Date();
       //      var heartbeat = true;
 
@@ -120,6 +119,7 @@
       var runningBox = document.getElementById('running');
       var displayBox = document.getElementById('displaylist');
       var lookbackBox = document.getElementById('lookbacklist');
+      var lastrun = document.getElementById('lastrun');
 
       var mailme = function() {
         console.log('Caught!');
@@ -149,6 +149,10 @@
       deptBox.onchange = function() {
         chosendept = deptBox.options[deptBox.selectedIndex].value;
         refresh();
+      }
+
+      lastrun.onclick = function() {
+        debug = !debug;
       }
 
       /*
