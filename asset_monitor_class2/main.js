@@ -53,8 +53,8 @@ function refresh() {
   displaynew();
   console.log("refresh");
 }
-
-function reload() {
+/*
+function reload_async() {
   tempjson = null;
   setlastrun("lastrun", "Initialising data .....", startdate.toLocaleTimeString());
   tempYear = new Date(startdate);
@@ -67,8 +67,22 @@ function reload() {
     refresh();
   });
 }
+*/
 
-function update() {
+function reload() {
+  tempjson = null;
+  setlastrun("lastrun", "Initialising data .....", startdate.toLocaleTimeString());
+  tempYear = new Date(startdate);
+  tempYear.setFullYear(1900);
+  json = null;
+  json  = SOA004Client.get(setfilter(tempYear), null, null);
+  console.log("loaded");
+  update();
+  refresh();
+};
+
+/*
+function update_async() {
   if (!waiting) {
     setlastrun("lastrun", "Waiting on network.....", startdate.toLocaleTimeString());
   }
@@ -94,6 +108,32 @@ function update() {
   });
   setlastrun("lastrun", "Waiting on Data.....", startdate.toLocaleTimeString());
 };
+*/
+function update() {
+  if (!waiting) {
+    setlastrun("lastrun", "Waiting on network.....", startdate.toLocaleTimeString());
+  }
+  waiting = true;
+  tempjson = null;
+  targetdate = new Date(startdate);
+  targetdate.setMinutes(targetdate.getMinutes() - lookback);
+  tempjson = SOA004Client.get(setfilter(targetdate), null, null);
+  if (!(tempjson == null)) {
+    newjson = tempjson;
+    if (newjson.name) {
+    console.log(newjson);
+    setlastrun("lastrun", newjson.name + " at ", targetdate.toLocaleString());
+    } else {
+    startdate = new Date();
+    }
+  }
+  console.log("update back");
+  mergejson(json, newjson);
+  refresh();
+  setlastrun("lastrun", "Last Run:<br/>", startdate.toLocaleString());
+  waiting = false;
+};
+
 
 function compile(curr, downtime) {
   var d = new Date();
