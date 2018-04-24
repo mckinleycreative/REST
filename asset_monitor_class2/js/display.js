@@ -215,14 +215,15 @@ function displaytable(json) {
     pct1.item(j).innerHTML = Math.round(1000.0 * Number(pctdownobj.item(j).innerHTML) / Number(pcttotalobj.item(j).innerHTML)) / 10 + "%";
   }
 
-  set("assetupcount", assetupcount);
-  set("assetdowncount", assetdowncount);
-  set("assetservice", assetservice);
-  set("assetbreakdowncount", assetbreakdowncount);
-  set("uppct", (Math.round(1000.0 * assetupcount / assettotal) / 10.0) + "%");
-  set("downpct", (Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%");
-  set("servicepct", (Math.round(1000.0 * assetservice / assettotal) / 10.0) + "%");
-  set("breakpct", (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%");
+  set("assetcount", "Total Visible :  " + (assetupcount+assetdowncount) );
+  set("assetupcount", "Up:  " + assetupcount+ " (" + (Math.round(1000.0 * assetupcount / assettotal) / 10.0) + "%)");
+  set("assetdowncount", "Total Down:  " + assetdowncount + " (" +(Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%)");
+  set("assetbreakdowncount", "Down in Progress:  " + assetbreakdowncount + " (" + (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%)");
+  set("assetservice", "Servicing:  "+ assetservice + " (" + (Math.round(1000.0 * assetservice / assettotal) / 10.0) + "%)");
+//  set("uppct", (Math.round(1000.0 * assetupcount / assettotal) / 10.0) + "%");
+//  set("downpct", (Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%");
+//  set("servicepct", (Math.round(1000.0 * assetservice / assettotal) / 10.0) + "%");
+//  set("breakpct", (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%");
 }
 
 

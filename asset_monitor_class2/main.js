@@ -2,6 +2,42 @@ SOA004Client.init();
 SOA004Client.system = "MAXIMO";
 SOA004Client.dataobject = "REST_ASSETW";
 
+var interval = 300000;
+var day = 86400000;
+var lookback = 5;
+var lastreload = new Date();
+//      var heartbeat = true;
+
+var debug = false;
+//		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
+var chosenpriority = 1;
+var chosendept = "All";
+var running = "All";
+var json = null;
+var newjson = null;
+var HeaderCells;
+var startdate = new Date();
+var displaylevel = 1;
+
+var assetupcount = 0;
+var assetdowncount = 0;
+var assetservice = 0;
+var assetbreakdowncount = 0;
+var assettotal = 0;
+var refreshpid = null;
+var updatepid = null;
+var waiting = false;
+
+
+var deptBox = document.getElementById('department');
+var priBox = document.getElementById('priority');
+var runningBox = document.getElementById('running');
+var displayBox = document.getElementById('displaylist');
+var lookbackBox = document.getElementById('lookbacklist');
+var lastrun = document.getElementById('lastrun');
+
+
+
 function set(id, val) {
   outputconsole("set() ::" + id + ":" + val);
   var el = document.getElementById(id);
@@ -129,7 +165,7 @@ function update() {
   mergejson(json, newjson);
   sortbydept(json, true);
   refresh();
-  setlastrun("lastrun", "Last Run:<br/>", startdate.toLocaleString());
+  setlastrun("lastrun", "Last Run: ", startdate.toLocaleString());
   waiting = false;
 };
 
@@ -563,7 +599,7 @@ function setfilter(targetdate) {
     }, {
       STATUS: "=OPERATING"
     }, {
-      LOCATION: "!~null~"
+      LOCATION: "=102A"
     }, {
       PRIORITY: "!~null~"
     }]

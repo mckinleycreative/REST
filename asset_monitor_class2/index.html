@@ -55,24 +55,16 @@
           <option value=1440>Day</option>
           </select>
       </td>
-      <tr>
-        <td id="lastrun" class="logo" rowspan="3" >Initialising data.....<span class="tooltiptext">hello</span></td>
-        <td class="assetup">Up</td>
-        <td class="assetdown">Down</td>
-        <td class="assetdown2">Down in Progress</td>
-        <td class="assetservice">Servicing</td>
-      </tr>
-      <tr>
-        <td id="assetupcount" class="assetup"></td>
-        <td id="assetdowncount" class="assetdown"></td>
-        <td id="assetbreakdowncount" class="assetdown2"></td>
-        <td id="assetservice" class="assetservice"></td>
-      </tr>
-      <tr>
-        <td id="uppct" class="assetup"></td>
-        <td id="downpct" class="assetdown"></td>
-        <td id="breakpct" class="assetdown2"></td>
-        <td id="servicepct" class="assetservice"></td>
+      <table id="info">
+        <tr>
+          <td id="lastrun" class="logo">Initialising data.....<span class="tooltiptext">hello</span></td>
+          <td id="assetcount" class="logo"></td>
+          <td id="assetupcount" class="assetup"></td>
+          <td id="assetdowncount" class="assetdown"></td>
+          <td id="assetbreakdowncount" class="assetdown2"></td>
+          <td id="assetservice" class="assetservice"></td>
+        </tr>
+      </table>
     </table>
   </header>
   <tr>
@@ -88,39 +80,18 @@
     </table>
 
     <script>
-      var interval = 300000;
-      var day = 86400000;
-      var lookback = 5;
-      var lastreload = new Date();
-      //      var heartbeat = true;
 
-      var debug = false;
-      //		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
-      var chosenpriority = 1;
-      var chosendept = "All";
-      var running = "All";
-      var json = null;
-      var newjson = null;
-      var HeaderCells;
-      var startdate = new Date();
-      var displaylevel = 1;
-
-      var assetupcount = 0;
-      var assetdowncount = 0;
-      var assetservice = 0;
-      var assetbreakdowncount = 0;
-      var assettotal = 0;
-      var refreshpid = null;
-      var updatepid = null;
-      var waiting = false;
-
-
-      var deptBox = document.getElementById('department');
-      var priBox = document.getElementById('priority');
-      var runningBox = document.getElementById('running');
-      var displayBox = document.getElementById('displaylist');
-      var lookbackBox = document.getElementById('lookbacklist');
-      var lastrun = document.getElementById('lastrun');
+    var deptBox = document.getElementById('department');
+    var priBox = document.getElementById('priority');
+    var runningBox = document.getElementById('running');
+    var displayBox = document.getElementById('displaylist');
+    var lookbackBox = document.getElementById('lookbacklist');
+    var lastrun = document.getElementById('lastrun');
+    deptBox.value = "All";
+    runningBox.value = "All";
+    priBox.value = "1";
+    displayBox.value = displaylevel;
+    lookbackBox.value = lookback;
 
       var mailme = function() {
         console.log('Caught!');
@@ -156,6 +127,7 @@
         debug = !debug;
       }
 
+
       /*
             window.addEventListener('error', function(e) {
               var ie = window.event || {};
@@ -166,11 +138,6 @@
             }, true);
       */
 
-      deptBox.value = "All";
-      runningBox.value = "All";
-      priBox.value = "1";
-      displayBox.value = displaylevel;
-      lookbackBox.value = lookback;
 
       //      document.getElementById("output").style.display = 'none';
 
