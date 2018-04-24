@@ -48,7 +48,6 @@ function outputconsole(text, outjson) {
 }
 
 function refresh() {
-  sortbydept(json, true);
   displaytable(json);
   displaynew();
   console.log("refresh");
@@ -78,7 +77,6 @@ function reload() {
   json  = SOA004Client.get(setfilter(tempYear), null, null);
   console.log("loaded");
   update();
-  refresh();
 };
 
 /*
@@ -129,6 +127,7 @@ function update() {
   }
   console.log("update back");
   mergejson(json, newjson);
+  sortbydept(json, true);
   refresh();
   setlastrun("lastrun", "Last Run:<br/>", startdate.toLocaleString());
   waiting = false;
