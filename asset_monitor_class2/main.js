@@ -29,15 +29,6 @@ var updatepid = null;
 var waiting = false;
 
 
-var deptBox = document.getElementById('department');
-var priBox = document.getElementById('priority');
-var runningBox = document.getElementById('running');
-var displayBox = document.getElementById('displaylist');
-var lookbackBox = document.getElementById('lookbacklist');
-var lastrun = document.getElementById('lastrun');
-
-
-
 function set(id, val) {
   outputconsole("set() ::" + id + ":" + val);
   var el = document.getElementById(id);
@@ -430,7 +421,7 @@ function buildassetcell(curr, pmpfound, pmpservice, pmploc) {
       }
     }
     if (!pmexists)
-      ass += "<late style='color:#0000ff'></br>No Active PM";
+      ass += "<late style='color: yellow'></br>No Active PM";
   }
   if (displaylevel > 2) {
     reportdate = curr.INSTALLDATE === undefined ? new Date(curr.STATUSDATE) : new Date(curr.INSTALLDATE);
@@ -599,7 +590,7 @@ function setfilter(targetdate) {
     }, {
       STATUS: "=OPERATING"
     }, {
-      LOCATION: "=102A"
+      LOCATION: "!~null~"
     }, {
       PRIORITY: "!~null~"
     }]
