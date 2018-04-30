@@ -6,10 +6,7 @@ var interval = 300000;
 var day = 86400000;
 var lookback = 5;
 var lastreload = new Date();
-//      var heartbeat = true;
-
 var debug = false;
-//		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
 var chosenpriority = 1;
 var chosendept = "All";
 var running = "All";
@@ -18,7 +15,6 @@ var newjson = null;
 var HeaderCells;
 var startdate = new Date();
 var displaylevel = 1;
-
 var assetupcount = 0;
 var assetdowncount = 0;
 var assetservice = 0;
@@ -27,7 +23,6 @@ var assettotal = 0;
 var refreshpid = null;
 var updatepid = null;
 var waiting = false;
-
 
 function set(id, val) {
   outputconsole("set() ::" + id + ":" + val);
@@ -41,8 +36,8 @@ function setlastrun(id, message, sdate) {
   tip += "<b><span style='text-decoration: underline;'>Debug information</span></b><br/>";
   tip += "Data Interval " + interval / 1000 / 60 + " minutes";
   tip += "<br/>Screen Refresh Interval " + interval / 5 / 1000 / 60 + " minutes";
-  tip += "<br/>Total Asset Count:" + (json == null ? "" : this.json.QueryREST_ASSETWResponse.rsTotal);
-  tip += "<br/>Delta Asset Count:" + (newjson == null ? "" : this.newjson.QueryREST_ASSETWResponse.rsTotal);
+  tip += "<br/>Total Asset Count:" + (json == null ? "" : (this.json.name === undefined ? this.json.QueryREST_ASSETWResponse.rsTotal : this.json.name));
+  tip += "<br/>Delta Asset Count:" + (newjson == null ? "" : (this.json.name === undefined ? this.json.QueryREST_ASSETWResponse.rsTotal : this.json.name));
   tip += "<br/><br/></span>";
   set(id, message + sdate + tip);
 }
@@ -101,7 +96,7 @@ function reload() {
   tempYear = new Date(startdate);
   tempYear.setFullYear(1900);
   json = null;
-  json  = SOA004Client.get(setfilter(tempYear), null, null);
+  json = SOA004Client.get(setfilter(tempYear), null, null);
   console.log("loaded");
   update();
 };
@@ -146,10 +141,10 @@ function update() {
   if (!(tempjson == null)) {
     newjson = tempjson;
     if (newjson.name) {
-    console.log(newjson);
-    setlastrun("lastrun", newjson.name + " at ", targetdate.toLocaleString());
+      console.log(newjson);
+      setlastrun("lastrun", newjson.name + " at ", targetdate.toLocaleString());
     } else {
-    startdate = new Date();
+      startdate = new Date();
     }
   }
   console.log("update back");
@@ -159,7 +154,6 @@ function update() {
   setlastrun("lastrun", "Last Run: ", startdate.toLocaleString());
   waiting = false;
 };
-
 
 function compile(curr, downtime) {
   var d = new Date();
@@ -201,6 +195,8 @@ function builddeptbox(json) {
 
 function mergejson(json, newjson) {
   if (!json || !newjson)
+    return;
+  if (!(newjson.name === undefined))
     return;
 
   var allrecords = json.QueryREST_ASSETWResponse.rsTotal;
@@ -256,7 +252,7 @@ function swapnew() {
 };
 
 function trimlocationdesc(locationdescription) {
-  return (locationdescription.replace('Mine ', '').replace(' Fleet', ''));
+  return (locationdescription.replace('Mine ', '').replace(' Fleet', '').trim().replace(' ','<br>'));
 }
 
 function sortbydept(json, dept) {
@@ -299,7 +295,6 @@ function sortbydept(json, dept) {
 
     outputconsole("mid:" + start + ":" + endstop, json);
     records--;
-    //                records--;
     endstart = endstop - 1;
     if (!swap) break;
 
@@ -533,7 +528,7 @@ function setassetclass(deptlabel, Hcell, curr) {
   }
   ass += asstitle.length > 10 ? "<span class=tooltiptext>" + asstitle + "</span>" : "";
   deptlabel.innerHTML = ass;
-  position = findclasspos(HeaderCells, curr.CLASSSTRUCTURE[0].DESCRIPTION);
+  position = findclasspos(HeaderCells, curr.CLASSSTRUCTURE[0].DESCRIPTION.replace(' ','<br>'));
 
   pcttotalobj.item(position).innerHTML = Number(pcttotalobj.item(position).innerHTML) + 1;
   pctupobj.item(position).innerHTML = Number(pctupobj.item(position).innerHTML) + assup;
@@ -590,7 +585,7 @@ function setfilter(targetdate) {
     }, {
       STATUS: "=OPERATING"
     }, {
-      LOCATION: "!~null~"
+      LOCATION: "=102A"
     }, {
       PRIORITY: "!~null~"
     }]

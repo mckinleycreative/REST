@@ -47,8 +47,8 @@ function displaytable(json) {
   HeaderCells = toptbl.rows.item(0).cells;
   for (i = 0; i < assetcolums; i++) {
     var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-    sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
-    department = curr.LOCATIONS[0].DESCRIPTION;
+    sectionname = trimlocationdesc(curr.CLASSSTRUCTURE[0].DESCRIPTION);
+    department = trimlocationdesc(curr.LOCATIONS[0].DESCRIPTION);
     ass = curr.ASSETNUM;
     if ((curr.PRIORITY <= chosenpriority) &&
       (chosendept == department || chosendept == "All") &&
@@ -64,7 +64,7 @@ function displaytable(json) {
         cellLength = HeaderCells.length;
         for (var j = 0; j < cellLength; j++) {
           var cellVal = HeaderCells.item(j).innerHTML;
-          if (sectionname === cellVal) {
+          if (sectionname.localeCompare(cellVal) == 0 ) {
             found = true;
           }
         }
@@ -172,7 +172,7 @@ function displaytable(json) {
         (curr.ISRUNNING && running == "Available")
       )
     ) {
-      sectionname = curr.CLASSSTRUCTURE[0].DESCRIPTION;
+      sectionname = trimlocationdesc(curr.CLASSSTRUCTURE[0].DESCRIPTION);
       found = false;
       // find the next available slot
       var locald;
@@ -215,7 +215,7 @@ function displaytable(json) {
     pct1.item(j).innerHTML = Math.round(1000.0 * Number(pctdownobj.item(j).innerHTML) / Number(pcttotalobj.item(j).innerHTML)) / 10 + "%";
   }
 
-  set("assetcount", "Total Visible :  " + (assetupcount+assetdowncount+assetservice) );
+  set("assetcount", "Total Visible:  " + (assetupcount+assetdowncount+assetservice) );
   set("assetupcount", "Up:  " + assetupcount+ " (" + (Math.round(1000.0 * assetupcount / assettotal) / 10.0) + "%)");
   set("assetdowncount", "Total Down:  " + assetdowncount + " (" +(Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%)");
   set("assetbreakdowncount", "Down in Progress:  " + assetbreakdowncount + " (" + (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%)");

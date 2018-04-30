@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+<meta charset="utf-8" />
+<link rel="shortcut icon" href="img/boliden.png" />
+<link rel="stylesheet" href="css/boliden.css" />
+<title>Workorder Schedule</title>
+<script src="js/soa004.js"></script>
+<script src="js/maximo.js"></script>
+
+<body>
+  <header>
+    <a href="http://bolsrv0406.boliden.internal/workorder_monitor" id="logo"></a>
+    <h1 id="datetime">Crew Workorder List</h1>
+  </header>
+  <table id="control">
+    <tr>
+      <td>Crew<select id='department'>
+					<option value="All">750 Workshop</option>
+                    <option value="Development">Development</option>
+                    <option value="Production">Production</option>
+ 					</select>
+      </td>
+      <td>
+        </select>Priority <select id='priority' onChange="update();">
+					<option value=1>Priority 1 only</option>
+					<option value=2>Priority 1 & 2 </option>
+					<option value=3>Priority 1, 2 & 3</option>
+					<option value=99>Any Priority</option>
+				</select>
+      </td>
+      <td>
+        </select>Running<select id='running' onChange="update();">
+					<option value="All">All</option>
+					<option value="Down">Down Only</option>
+				</select>
+      </td>
+      <td>Last Update<br/><span id="lastupdated"></span></td>
+      <tr>
+        <td class="assetup">Total</td>
+        <td class="assetdown">Approved</td>
+        <td class="assetdown2">In Progress</td>
+        <td class="assetservice">Scheduled</td>
+      </tr>
+      <tr>
+        <td class="assetup"><span id="assetupcount"></span></td>
+        <td class="assetdown"><span id="assetdowncount"></span></td>
+        <td class="assetdown2"><span id="assetbreakdowncount"></span></td>
+        <td class="assetservice"><span id="assetservice"></span></td>
+      </tr>
+      <tr>
+        <td class="assetup"><span id="uppct"></span></td>
+        <td class="assetdown"><span id="downpct"></span></td>
+        <td class="assetdown2"><span id="breakpct"></span></td>
+        <td class="assetservice"><span id="servicepct"></span></td>
+      </tr>
+  </table>
+  <table id="tgt">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="output"></div>
+  <script>
+  deptBox.value ="";
+  priBox.value ="3";
+  runningBox.value ="All";
+    buildcrewbox();
+    //		update();
+    setInterval(function() {
+      update();
+    }, interval);
+  </script>
+
+</body>
+
+</html>
