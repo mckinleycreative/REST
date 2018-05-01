@@ -80,6 +80,7 @@ table#tgt {
   color: white;
   background-color: lightblue;
   margin-top: 10px;
+  width: 95%;
 }
 
 table#tgtxx tr:first-child {

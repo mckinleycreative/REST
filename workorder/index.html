@@ -384,10 +384,11 @@
           td.innerHTML = curr.CALCPRIORITY;
           if (curr.STATUS =="INPRG") {
             td = tr.insertCell(-1);
-            td.innerHTML = curr.CHANGEDATE;
+            td.innerHTML = new Date(curr.CHANGEDATE);
           } else {
             td = tr.insertCell(-1);
-            td.innerHTML = curr.SCHEDSTART === undefined ? curr.TARGSTARTDATE : curr.SCHEDSTART;
+            td.innerHTML = new Date(curr.SCHEDSTART);
+//            td.innerHTML = curr.SCHEDSTART === undefined ? new Date(curr.TARGSTARTDATE) : new Date(curr.SCHEDSTART);
           }
           td = tr.insertCell(-1);
           td.innerHTML = curr.WORKTYPE;

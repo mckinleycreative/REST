@@ -181,7 +181,7 @@ function builddeptbox(json) {
   deptBox.add(opt);
   for (i = 0; i < json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length; i++) {
     var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-    department = curr.LOCATIONS[0].DESCRIPTION;
+    department = curr.LOCATIONS[0].DESCRIPTION.replace("<br>"," ");
     if (currdept != department) {
       var opt = document.createElement("OPTION");
       opt.value = department;
@@ -585,7 +585,7 @@ function setfilter(targetdate) {
     }, {
       STATUS: "=OPERATING"
     }, {
-      LOCATION: "=102A"
+      LOCATION: "!~null~"
     }, {
       PRIORITY: "!~null~"
     }]

@@ -1,3 +1,7 @@
+SOA004Client.init();
+SOA004Client.system ="MAXIMO";
+SOA004Client.dataobject ="REST_WO";
+
 var interval = 60000;
 var debug = false;
 //		var searchfilter = {maxrows: 600,offset: 0,fields: [{SITEID:"TAR"},{ASSETTYPE:"FLEET"},{STATUS:"OPERATING"},{PRIORITY:1}]};
@@ -11,6 +15,8 @@ var searchfilter = {
     HISTORYFLAG:"N"
   }, {
     ISTASK:"N"
+  }, {
+    PMNUM:"!=~null~"
   }, {
     STATUS:"=APPR,=INPRG"
   }, {
@@ -28,14 +34,11 @@ var updatefilter = {
 var filter = searchfilter;
 //.fields[4].replace('XXXXXX','TMO750');
 //('XXXXXX','TMO750');
-var chosenpriority = 1;
-var chosendept ="All";
-var running ="All";
 var json = null;
 var HeaderCells;
-var deptBox = document.getElementById('department');
-var priBox = document.getElementById('priority');
-var runningBox = document.getElementById('running');
+//var deptBox = document.getElementById('department');
+//var priBox = document.getElementById('priority');
+//var runningBox = document.getElementById('running');
 
 function set(id, val) {
   var el = document.getElementById(id);
@@ -43,21 +46,6 @@ function set(id, val) {
   el.innerHTML = val;
 }
 
-runningBox.onchange = function() {
-  running = runningBox.options[runningBox.selectedIndex].value;
-  displaytable(json);
-}
-
-priBox.onchange = function() {
-  chosenpriority = priBox.options[priBox.selectedIndex].value;
-  displaytable(json);
-}
-
-deptBox.onchange = function() {
-  //			chosendept = deptBox.options[deptBox.selectedIndex].value;
-  //			displaytable( json );
-  update();
-}
 
 function compile(curr, dept) {
   var d = new Date();
@@ -313,17 +301,18 @@ function displaytable(json) {
       td.innerHTML = curr.DESCRIPTION;
       td = tr.insertCell(-1);
       td.innerHTML = curr.ASSETNUM === undefined ?"" : curr.ASSETNUM;
-      td = tr.insertCell(-1);
-      td.innerHTML = curr.STATUS;
-      td = tr.insertCell(-1);
-      td.innerHTML = curr.CALCPRIORITY;
+//      td = tr.insertCell(-1);
+//      td.innerHTML = curr.STATUS;
+//      td = tr.insertCell(-1);
+//      td.innerHTML = curr.CALCPRIORITY;
       if (curr.STATUS =="INPRG") {
-        td = tr.insertCell(-1);
-        td.innerHTML = curr.CHANGEDATE;
+        displaydate = new Date(curr.CHANGEDATE);
       } else {
-        td = tr.insertCell(-1);
-        td.innerHTML = curr.SCHEDSTART === undefined ? curr.TARGSTARTDATE : curr.SCHEDSTART;
+        displaydate = curr.SCHEDSTART === undefined ? new Date(curr.TARGSTARTDATE) : new Date(curr.SCHEDSTART);
       }
+      td = tr.insertCell(-1);
+      td.innerHTML = displaydate;
+
       td = tr.insertCell(-1);
       td.innerHTML = curr.WORKTYPE;
       td = tr.insertCell(-1);
@@ -421,9 +410,6 @@ function update() {
   }
 }
 
-SOA004Client.init();
-SOA004Client.system ="MAXIMO";
-SOA004Client.dataobject ="REST_WO";
 buildcrewbox();
 deptBox.value ="";
 priBox.value ="3";

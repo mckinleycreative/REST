@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="css/boliden.css" />
 <title>Workorder Schedule</title>
 <script src="js/soa004.js"></script>
+<script src="main.js"></script>
 <script src="js/maximo.js"></script>
 
 <body>
@@ -16,7 +17,7 @@
   <table id="control">
     <tr>
       <td>Crew<select id='department'>
-					<option value="All">750 Workshop</option>
+					<option value="All">Loading Crew List please wait</option>
                     <option value="Development">Development</option>
                     <option value="Production">Production</option>
  					</select>
@@ -60,13 +61,33 @@
     <tbody></tbody>
   </table>
 
-  <div id="output"></div>
   <script>
-  deptBox.value ="";
-  priBox.value ="3";
-  runningBox.value ="All";
-    buildcrewbox();
-    //		update();
+    var deptBox = document.getElementById('department');
+    var priBox = document.getElementById('priority');
+    var runningBox = document.getElementById('running');
+
+    runningBox.onchange = function() {
+      running = runningBox.options[runningBox.selectedIndex].value;
+      refresh(json);
+    }
+
+    priBox.onchange = function() {
+      chosenpriority = priBox.options[priBox.selectedIndex].value;
+      refresh(json);
+    }
+
+    deptBox.onchange = function() {
+      //			chosendept = deptBox.options[deptBox.selectedIndex].value;
+      //			displaytable( json );
+      update();
+    }
+
+
+    chosendept = "";
+    deptBox.value = "";
+    priBox.value = "3";
+    runningBox.value = "All";
+    buildcrewbox(); // update();
     setInterval(function() {
       update();
     }, interval);
