@@ -4,352 +4,457 @@
 }
 */
 
-h1 {
-	font: 36px Helvetica;
-	font-weight: bold;
-	}
-
-
-body {
-    font: 12px arial;
-    text-align: center;
+header {
+  height: 90px;
 }
 
-controls {
-    padding-left: 20px;
-    padding-right: 20px;
-    font: 14px arial;
+h1 {
+  font: 36px Helvetica;
+  font-weight: bold;
+  line-height: 10px;
+  background-color: #7D9BC1;
+}
+
+
+h2 {
+  font: 14px Helvetica;
+  color: Tomato;
+  font-weight: bold;
+}
+
+body {
+  font: 10px Arial;
+  text-align: center;
+}
+
+control {
+  padding-left: 20px;
+  padding-right: 20px;
+  font: 14px;
 }
 
 select, option {
-    font: 14px arial;
-    padding-left: 10px;
+  width: 90%;
+  font: 12px arial;
+  padding: 2px;
+  margin: 4px 0px 4px 0px;
 }
 
 section {
-    font: 12px arial;
-    font-weight: bold
+  font: 12px arial;
+  font-weight: bold
+}
+
+table {
+  font: 12px Arial;
+  margin-top: 1px;
+  border-collapse: collapse;
+  background-color: #7D9BC1;
 }
 
 table#control {
-    font: 12px arial;
-    font-weight: bold;
-    text-align: center;
-    width: 90%;
-    border: 0px;
-    color: white;
-    background-color: #7D9BC1;
-	margin-top: 10px;
+  text-align: center;
+  vertical-align: text-top;
+  width: 95%;
+  border: 0px solid lime;
+  color: white;
+}
+
+table#info {
+  text-align: center;
+  vertical-align: text-top;
+  width: 95%;
+  border: 0px solid lime;
+  color: white;
+}
+
+table#output {
+  text-align: left;
+  vertical-align: middle;
+  width: 80%;
+  border: 10px;
+  padding: 5px;
 }
 
 table#tgt {
-    font: 12px arial;
-    border-collapse: collapse;
-    text-align: center;
-    border: 1px solid black;
-    background-color: #7D9BC1;
-    color: white;
-		width: 100%;
+  text-align: left;
+  border: 1px solid black;
+  color: white;
+  margin-top: 10px;
+  width: 95%;
 }
 
-table#tgt tr:first-child th {
-    font: large arial;
-    border-bottom: 4px solid gray;
-	background-color: grey;
+table#tgtxx tr:first-child {
+  font: 14px Arial;
+  border-bottom: 1px solid black;
+  background-color: grey;
+}
+
+thead tr:first-child {
+  font: 12px Arial;
+  border-bottom: 1px solid black;
+  background-color: grey;
+  vertical-align: top;
 }
 
 thead {
-	color: white;
-	font-weight: bold;
-	background-color: grey;
-	text-align: center;
-	}
-
-
-/*td { padding-left: 5px; padding-right: 5px; text-align: center; border-style: solid}*/
-
-th, td {
-    border: 1px solid black;
-    width: 5%;
-	border-bottom: 0px;
-	text-align: center;
+  font: 12px Arial;
+  color: white;
+  font-weight: bold;
+  background-color: grey;
+  text-align: center;
 }
 
-tr {
-	text-align: left;
-	vertical-align: top;
+td , tr {
+  text-align: left;
+  vertical-align: top;
+  padding: 1px;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.output {
+  font: 14px Arial;
+  text-align: left;
+  width: 80%;
+  border: 10px;
+  color: white;
+  background-color: #7D9BC1;
+  margin-top: 5px;
+  margin-bottom: 0px;
+  padding: 5px;
 }
 
 lupdate {
-    color: black;
-    float: left;
-    margin-left: 20%;
-    padding: 10px 10px 10px 10px;
-    background-color: ghostwhite;
+  color: black;
+  float: left;
+  margin-left: 20%;
+  padding: 10px 10px 10px 10px;
+  background-color: ghostwhite;
 }
 
 assup {
-    color: black;
+  color: black;
 }
 
 assdn {
-    color: aqua;
-	width: 140px;
+  color: aqua;
+  width: 140px;
 }
 
 asssrv {
-    color: black;
+  color: black;
+}
+
+#logo {
+  padding: 1px;
+  border: 0px;
+  margin: 3px;
 }
 
 
-/* table#tgt tr:nth-child(even) {background-color: #eee;} */
+.lastupdate {
+  text-align: center;
+  vertical-align: middle;
+}
+.logo {
+  padding: 1px;
+  padding-right: 20px;
+  border: 0px;
+  margin: 3px;
+}
+
+.wonum{
+  border: 1px solid black;
+}
 
 .areacol {
-	width: 50px;
+	width: 10%;
 	text-align: left;
+  border: 1px solid black;
 }
 
 .datetoday {
+  width: 5%;
+  text-align: center;
 	background-color: sandybrown;
+  border: 1px solid black;
 }
 
 .datecol {
 	width: 5%;
 	text-align: center;
+  border: 1px solid black;
 }
 
 .desc {
-	width: 120px;
+	width: 20%;
 	text-align: left;
+  border: 1px solid black;
 }
 
 .status {
-	display: none;
+	width: 2.5%;
+  border: 1px solid black;
+}
+
+
+
+/* table#tgt tr:nth-child(even) {background-color: #eee;} */
+
+.buttonl {
+  color: ghostwhite;
+  background-color: #7D9BC1;
+  padding-right: 15px;
+}
+
+.buttonr {
+  color: ghostwhite;
+  background-color: #7D9BC1;
+  padding-left: 15px;
+}
+
+.button {
+  color: ghostwhite;
+  background-color: #7D9BC1;
+  padding: 5px;
+  font-size: 12px;
+}
+
+.buttonh {
+  color: #7D9BC1;
+  background-color: #7D9BC1;
+  font-size: 8px;
+  border: 0px;
 }
 
 .production {
-    background-color: LightBlue;
-	font-weight: bold;
+  background-color: grey;
+  font-weight: normal;
+  border-bottom: 0px;
 }
 
 .productionh {
-	color: LightBlue;
-    background-color: LightBlue;
-	border: 0px;
-	display: none;
+  color: grey;
+  background-color: grey;
+  border: 0px;
 }
 
 .development {
-    background-color: #7bd1ed;
-	font-weight: bold;
+  background-color: lightblue;
+  #font-weight: bold;
 }
 
 .developmenth {
-	color: #7bd1ed;
-    background-color: #7bd1ed;
-	border: 0px;
+  color: lightgrey;
+  background-color: lightgrey;
+  border: 0px;
 }
 
 .other {
-    background-color: #7D9BC1;
-	font-weight: bold;
+  background-color: #7D9BC1;
+  font-weight: bold;
 }
 
 .otherh {
-	color: #7D9BC1;
-    background-color: #7D9BC1;
-	border: 0px;
+  color: #7D9BC1;
+  background-color: #7D9BC1;
+  border: 0px;
 }
 
 .odd {
-    background-color: white
+  background-color: white
 }
 
 .even {
-    background-color: lightgray
+  background-color: lightgray
 }
 
 .picked {
-    background-color: lightgoldenrodyellow
+  background-color: lightgoldenrodyellow
+}
+
+.tooltiptext {
+  font: 16px arial;
+  left: 5%;
+  width:90%;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 1.0s linear 0.5s, opacity 1.0s 0.2s;
+  background-color: #464D57;
+  color: ghostwhite;
+  text-align: left;
+  border-radius: 5px;
+  padding: 5px;
+  /* Position the tooltip */
+  position: absolute;
+  -webkit-transition: background-color 2s ease-out;
+  -moz-transition: background-color 2s ease-out;
+  -o-transition: background-color 2s ease-out;
+  transition: background-color 2s ease-out;
+  z-index: 1;
+}
+
+a:-webkit-any-link, link {
+    color: yellow;
+}
+
+a:link {
+    color: yellow;
+}
+
+.hover {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
 }
 
 .assetup {
-    color: black;
-    background-color: lightgreen;
-	border-collapse: separate!important;
-    text-align: center;
-    padding-left: 1%;
-}
-
-.assetup .tooltiptext {
-    
-	font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 6px;
-    padding: 20px;
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-}
-
-.assetup:hover .tooltiptext {
-    visibility: visible;
+  color: black;
+  background-color: blue;
+  text-align: center;
 }
 
 .assetup2 {
-    color: black;
-    background-color: #56bf56;
-	border-collapse: separate!important;
-    text-align: center;
-    padding-left: 1%;
-}
-
-.assetup2 .tooltiptext {
-    left: 20%;
-	font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 6px;
-    padding: 20px;
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-}
-
-.assetup2:hover .tooltiptext {
-    visibility: visible;
-}
-
-.assetdown .tooltiptext {
-    left: 20%;
-	font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 6px;
-    padding: 20px;
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-}
-
-.assetdown:hover .tooltiptext {
-    visibility: visible;
-}
-
-.assetdown2 {
-    color: #a6f5ed;
-    background-color: #993737;
-    text-align: center;
-}
-
-.assetdown2 .tooltiptext {
-    left: 20%;
-	font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 6px;
-    padding: 20px;
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-}
-
-.assetdown2:hover .tooltiptext {
-    visibility: visible;
-}
-
-.assetservice .tooltiptext {
-    left: 20%;
-	font: 22px arial;
-    visibility: hidden;
-    width: 40%;
-    background-color: black;
-    color: white;
-    text-align: left;
-    border-radius: 10px;
-    padding: 10px;
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-}
-
-.assetservice:hover .tooltiptext {
-    visibility: visible;
+  color: black;
+  background-color: #56bf56;
+  text-align: center;
 }
 
 .assetdown {
-    color: #a6f5ed;
-    background-color: #d22121;
-    text-align: center;
-	padding-left: 1%;
+  color: #a6f5ed;
+  background-color: #d22121;
+  text-align: center;
 }
 
-.assetdown1 {
-    color: #a6f5ed;
-    background-color: #CD5C5C;
-    text-align: center;
-	padding-left: 1%;
-}
-
-
-.assetdown3 {
-    color: #a6f5ed;
-    background-color: #ffcccc;
-    text-align: center;
+.assetdown2 {
+  color: darkblue;
+  background-color: lightgreen;
+  text-align: center;
 }
 
 .assetservice {
-	color: black;
-    background-color: Cornsilk;
-    text-align: center;
-	padding-left: 1%;
+  color: black;
+  background-color: Cornsilk;
+  text-align: center;
+}
+
+.logo:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.assetdown:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.assetdown2:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.assetup:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.assetup2:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.assetservice:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.assetuplist {
+  color: black;
+  background-color: lightgreen;
+  text-align: left;
+  padding: 2px;
+  padding-left: 6px;
+  vertical-align: text-top;
+  width: 50%;
+}
+
+.assetdownlist {
+  color: #a6f5ed;
+  background-color: #d22121;
+  text-align: left;
+  padding: 2px;
+  padding-left: 6px;
+  vertical-align: text-top;
+}
+
+.assetdown1 {
+  color: #a6f5ed;
+  background-color: #CD5C5C;
+  text-align: center;
+}
+
+.assetdown3 {
+  color: #a6f5ed;
+  background-color: #ffcccc;
+  text-align: center;
+}
+
+
+.serviceduepmp {
+  color: #a6f5ed;
+  background-color: #56bf56;
+  ## background-color: #993737;
+  text-align: center;
+}
+
+.servicedue {
+  color: black;
+  background-color: orange;
+  text-align: center;
+}
+
+.servicedueup {
+  color: black;
+  background-color: #56bf56;
+  text-align: center;
+}
+
+.serviceduedn {
+  color: #a6f5ed;
+  background-color: #993737;
+  text-align: center;
 }
 
 .decimal {
-    text-align: right;
-    padding-right: 45px
+  text-align: right;
+  padding-right: 45px
 }
 
 key {
-    float: right;
-    text-align: left;
-    font-weight: bold;
-    font-size: large;
-    text-indent: 2px;
-    margin: 30px;
-    padding: 1px;
+  float: right;
+  text-align: left;
+  font-weight: bold;
+  font-size: large;
+  text-indent: 2px;
+  margin: 30px;
+  padding: 1px;
 }
 
 colourdue {
-    background-color: lightblue
+  background-color: lightblue
 }
 
 colourprinted {
-    background-color: lightgreen
+  background-color: lightgreen
 }
 
 colourpicked {
-    background-color: lightgoldenrodyellow
-}
-
-table.sortable th:not(.sorttable_sorted_reverse):not(.sorttable_sorted):not(.sorttable_nosort):after {
-    content: " \25B4\25BE"
+  background-color: lightgoldenrodyellow
 }

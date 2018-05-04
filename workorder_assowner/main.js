@@ -3,7 +3,7 @@ SOA004Client.system = "MAXIMO";
 SOA004Client.dataobject = "REST_WO";
 
 var interval = 600000;
-var days = 7;
+var days = 15;
 var daysback = -7;
 var daysforward = 7;
 var debug = false;
@@ -64,15 +64,15 @@ function setfilter(sdate, edate) {
     }, {
       ISTASK: "N"
     }, {
-      PMNUM: "!~null~"
-    }, {
+      //      PMNUM: "!~null~"
+      //    }, {
       PARENT: "~null~"
     }, {
       STATUS: "=APPR,=INPRG,=SCH,=SCHE"
     }, {
       AMCREW: chosendept
-    }, {
-      SCHEDSTART: stext
+      //    }, {
+      //      SCHEDSTART: stext
       //    }, {
       //      CHANGEDATE: etext
     }]
@@ -175,6 +175,7 @@ function finddisplaydate(curr) {
 
   if (curr.STATUS == 'INPRG') {
     displaydate = new Date(curr.STATUSDATE);
+//    displaydate = new Date(curr.ACTSTART);
   } else {
     if (curr.SCHEDSTART) {
       displaydate = new Date(curr.SCHEDSTART);
@@ -213,7 +214,6 @@ function displaytable(json) {
   var options = {
     day: 'numeric',
     month: 'short',
-    year: '2-digit'
   };
 
 
@@ -229,6 +229,7 @@ function displaytable(json) {
   // add columns for the machine types currently using FAILURECODE
   td = tr.insertCell(-1);
   td.innerHTML = "Wo."
+  td.className = "wonum";
   td = tr.insertCell(-1);
   td.className = "desc";
   td.innerHTML = "Description"
@@ -247,7 +248,7 @@ function displaytable(json) {
   td.innerHTML = "Date"
   td = tr.insertCell(-1);
   td.className = "areacol";
-  td.innerHTML = "Area"
+  td.innerHTML = "Asset"
   for (i = daysback; i <= daysforward; i++) {
     td = tr.insertCell(-1);
     td.className = (i == 0 ? "datetoday" : "datecol");
@@ -282,6 +283,7 @@ function displaytable(json) {
           daysbetween <= daysforward) {
           tr = tbl.insertRow(-1);
           td = tr.insertCell(-1);
+          td.className = "wonum";
           td.innerHTML = curr.WONUM;
           td = tr.insertCell(-1);
           td.className = "desc";
@@ -299,11 +301,12 @@ function displaytable(json) {
           td = tr.insertCell(-1);
           td.className = "datecol";
           //        displaydate = finddisplaydate(curr);
-          displaydate = new Date(curr.SCHEDSTART);
+          //          displaydate = new Date(curr.SCHEDSTART);
           td.innerHTML = displaydate.toLocaleDateString('en-GB', options);
           td = tr.insertCell(-1);
           td.className = "areacol";
-          td.innerHTML = curr.LOCATIONS === undefined ? "unknown" : curr.LOCATIONS[0].DESCRIPTION;
+          td.innerHTML = curr.ASSET === undefined ? (curr.LOCATIONS === undefined ? "" : curr.LOCATIONS[0].DESCRIPTION) : curr.ASSET[0].DESCRIPTION;
+          //          td.innerHTML = curr.LOCATIONS === undefined ? "unknown" : curr.LOCATIONS[0].DESCRIPTION;
 
           for (k = daysback; k <= daysforward; k++) {
             if (curr.WONUM == stopwonum)
@@ -315,7 +318,14 @@ function displaytable(json) {
 
             if (diffDays == k) {
               found = true;
-              td.innerHTML = curr.WONUM;
+              if ( curr.STATUS == 'INPRG') {
+                statusdate = new Date(curr.STATUSDATE);
+                diffDays = daysDiff(statusdate, displaydate);
+                td.innerHTML =  curr.WONUM ;
+                tr.className = "assetdown2"
+              } else {
+                td.innerHTML =  curr.WONUM;
+              }
             }
             if (!found) {
 
@@ -330,37 +340,34 @@ function displaytable(json) {
       }
     }
   }
-  set("assetupcount", assetupcount);
-  set("assetdowncount", assetdowncount);
-  set("assetservice", assetservice);
-  set("assetbreakdowncount", assetbreakdowncount);
-  set("uppct", (Math.round(1000.0 * assetupcount / assettotal) / 10.0) + "%");
-  set("downpct", (Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%");
-  set("servicepct", (Math.round(1000.0 * assetservice / assettotal) / 10.0) + "%");
-  set("breakpct", (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%");
+  set("uppct","Total " + assetupcount + "  (" + (Math.round(1000.0 * assetupcount / assettotal) / 10.0) + "%)");
+  set("approvedsummary", "Approved   " +assetdowncount+"  ("+(Math.round(1000.0 * assetdowncount / assettotal) / 10.0) + "%)");
+  set("servicepct","Scheduled " + assetservice + "  (" + (Math.round(1000.0 * assetservice / assettotal) / 10.0) + "%)");
+  set("breakpct", "In Progress " +  assetbreakdowncount + "  (" + (Math.round(1000.0 * assetbreakdowncount / assettotal) / 10.0) + "%)");
 
 }
 
 function sortrecords(json) {
-  j = json.QueryREST_WOResponse.rsCount;
-  var swap = true;
-  while (swap) {
-    swap = false;
-    for (i = 0; i < j - 1; ++i) {
-      var curr = json.QueryREST_WOResponse.REST_WOSet.WORKORDER[i];
-      var nextcurr = json.QueryREST_WOResponse.REST_WOSet.WORKORDER[i + 1];
-      var displaydate = finddisplaydate(curr);
-      var nextdisplaydate = finddisplaydate(nextcurr);
-      if (minsDiff(nextdisplaydate, displaydate) > 0) {
-        swap = true;
-        endstop = i;
-        //        console.log("loop:" + i, curr.WONUM, displaydate, nextdisplaydate);
-        json.QueryREST_WOResponse.REST_WOSet.WORKORDER[i + 1] = curr;
-        json.QueryREST_WOResponse.REST_WOSet.WORKORDER[i] = nextcurr;
+  if (json) {
+    j = json.QueryREST_WOResponse.rsCount;
+    var swap = true;
+    while (swap) {
+      swap = false;
+      for (i = 0; i < j - 1; ++i) {
+        var curr = json.QueryREST_WOResponse.REST_WOSet.WORKORDER[i];
+        var nextcurr = json.QueryREST_WOResponse.REST_WOSet.WORKORDER[i + 1];
+        var displaydate = finddisplaydate(curr);
+        var nextdisplaydate = finddisplaydate(nextcurr);
+        if (minsDiff(nextdisplaydate, displaydate) > 0) {
+          swap = true;
+          endstop = i;
+          //        console.log("loop:" + i, curr.WONUM, displaydate, nextdisplaydate);
+          json.QueryREST_WOResponse.REST_WOSet.WORKORDER[i + 1] = curr;
+          json.QueryREST_WOResponse.REST_WOSet.WORKORDER[i] = nextcurr;
+        }
       }
     }
   }
-
 }
 
 

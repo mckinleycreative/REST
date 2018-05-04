@@ -96,9 +96,15 @@ function reload() {
   tempYear = new Date(startdate);
   tempYear.setFullYear(1900);
   json = null;
-  json = SOA004Client.get(setfilter(tempYear), null, null);
-  console.log("loaded");
-  update();
+  tempjson = SOA004Client.get(setfilter(tempYear), null, null);
+  if ( tempjson && !tempjson.name ) {
+    json = tempjson;
+    console.log("loaded");
+    update();
+  } else {
+    console.log("error loaded");
+  }
+
 };
 
 /*

@@ -11,6 +11,8 @@ header {
 h1 {
   font: 36px Helvetica;
   font-weight: bold;
+  line-height: 10px;
+  background-color: #7D9BC1;
 }
 
 h2 {
@@ -52,6 +54,7 @@ table#control {
   text-align: center;
   vertical-align: text-top;
   width: 95%;
+  border: 0px solid lime;
   border: 0px;
   color: white;
   background-color: #7D9BC1;

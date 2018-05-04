@@ -67,20 +67,18 @@
       </table>
     </table>
   </header>
-  <tr>
-    <tr/>
-    <table id="output" style="display: none;">
-      <td id="messup" class="assetuplist"></td>
-      <td id="messdown" class="assetdownlist"></td>
-    </table>
 
-    <table id="tgt">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
+  <table id="output" style="display: none;">
+    <td id="messup" class="assetuplist"></td>
+    <td id="messdown" class="assetdownlist"></td>
+  </table>
 
-    <script>
+  <table id="tgt">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
 
+  <script>
     var deptBox = document.getElementById('department');
     var priBox = document.getElementById('priority');
     var runningBox = document.getElementById('running');
@@ -93,74 +91,74 @@
     displayBox.value = displaylevel;
     lookbackBox.value = lookback;
 
-      var mailme = function() {
-        console.log('Caught!');
-      }
+    var mailme = function() {
+      console.log('Caught!');
+    }
 
-      lookbackBox.onchange = function() {
-        lookback = lookbackBox.options[lookbackBox.selectedIndex].value;
-        update();
-      }
+    lookbackBox.onchange = function() {
+      lookback = lookbackBox.options[lookbackBox.selectedIndex].value;
+      update();
+    }
 
-      displayBox.onchange = function() {
-        displaylevel = displayBox.options[displayBox.selectedIndex].value;
-        refresh();
-      }
+    displayBox.onchange = function() {
+      displaylevel = displayBox.options[displayBox.selectedIndex].value;
+      refresh();
+    }
 
-      runningBox.onchange = function() {
-        running = runningBox.options[runningBox.selectedIndex].value;
-        refresh();
-      }
+    runningBox.onchange = function() {
+      running = runningBox.options[runningBox.selectedIndex].value;
+      refresh();
+    }
 
-      priBox.onchange = function() {
-        chosenpriority = priBox.options[priBox.selectedIndex].value;
-        filterpriority = chosenpriority == 99 ? "!~null~" : chosenpriority;
-        refresh();
-      }
+    priBox.onchange = function() {
+      chosenpriority = priBox.options[priBox.selectedIndex].value;
+      filterpriority = chosenpriority == 99 ? "!~null~" : chosenpriority;
+      refresh();
+    }
 
-      deptBox.onchange = function() {
-        chosendept = deptBox.options[deptBox.selectedIndex].value;
-        refresh();
-      }
+    deptBox.onchange = function() {
+      chosendept = deptBox.options[deptBox.selectedIndex].value;
+      refresh();
+    }
 
-      lastrun.onclick = function() {
-        debug = !debug;
-      }
-
-
-      /*
-            window.addEventListener('error', function(e) {
-              var ie = window.event || {};
-              var errMsg = e.message || ie.errorMessage || "404 error on " + window.location;
-              var errSrc = (e.filename || ie.errorUrl) + ': ' + (e.lineno || ie.errorLine);
-              mailme([errMsg, errSrc]);
-              //    console.log(errMsg+ "::" + errSrc);
-            }, true);
-      */
+    lastrun.onclick = function() {
+      debug = !debug;
+    }
 
 
-      //      document.getElementById("output").style.display = 'none';
+    /*
+          window.addEventListener('error', function(e) {
+            var ie = window.event || {};
+            var errMsg = e.message || ie.errorMessage || "404 error on " + window.location;
+            var errSrc = (e.filename || ie.errorUrl) + ': ' + (e.lineno || ie.errorLine);
+            mailme([errMsg, errSrc]);
+            //    console.log(errMsg+ "::" + errSrc);
+          }, true);
+    */
 
-      refreshpid = setInterval(function() {
-        refresh();
-      }, interval / 5);
 
-      updatepid = setInterval(function() {
-        update();
-      }, interval - 200);
+    //      document.getElementById("output").style.display = 'none';
 
-      reloadpid = setInterval(function() {
-        reload(json);
-      }, day);
+    refreshpid = setInterval(function() {
+      refresh();
+    }, interval / 5);
 
-      /*
-            heartbeatid = setInterval(function() {
-              clock();
-            }, heartbeat);
-      */
+    updatepid = setInterval(function() {
+      update();
+    }, interval - 200);
 
+    reloadpid = setInterval(function() {
       reload(json);
-    </script>
+    }, day);
+
+    /*
+          heartbeatid = setInterval(function() {
+            clock();
+          }, heartbeat);
+    */
+
+    reload(json);
+  </script>
 
 </body>
 
