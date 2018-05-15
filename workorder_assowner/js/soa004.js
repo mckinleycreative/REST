@@ -48,7 +48,7 @@ SOA004Client = {
 		this.AJAX.send();
 		return JSON.parse(this.AJAX.responseText);
 	} catch (e) {
-	 return null;
+	 return e;
 	}
 	},
 	getasync: function (filter, id, fields, callback) {

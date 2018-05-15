@@ -20,17 +20,16 @@
         <td>
           <h1>Crew Workorder List</h1>
         </td>
+        <td id="lastupdated">Initialising Data</td>
       </tr>
     </table>
     <table id="control">
       <tr>
-        <td class="lastupdate">Last Update</td>
         <td>Crew</td>
         <td>Priority</td>
         <td>?????</td>
       </tr>
       <tr>
-        <td id="lastupdated" class="lastupdate">Last Update</td>
         <td>
           <select id='department' class="slw">
 					<option value="All">Loading Crew List please wait</option>
@@ -51,12 +50,16 @@
 				</select>
         </td>
       </tr>
-      <tr>
-        <td class="assetup" id="uppct"></td>
-        <td class="assetdown" id="approvedsummary"></td>
-        <td class="assetdown2" id="breakpct"></td>
-        <td class="assetservice" id="servicepct" </td>
-      </tr>
+      <table id="stats">
+        <tr>
+          <td id="uppct"></td>
+          <td id="approvedsummary"></td>
+          <td id="breakpct"></td>
+          <td id="servicepct"></td>
+        </tr>
+      </table>
+    </table>
+    <table id="title">
     </table>
     <table id="tgt">
       <thead></thead>
@@ -71,12 +74,12 @@
 
     runningBox.onchange = function() {
       running = runningBox.options[runningBox.selectedIndex].value;
-      refresh(json);
+      refresh();
     }
 
     priBox.onchange = function() {
       chosenpriority = priBox.options[priBox.selectedIndex].value;
-      refresh(json);
+      refresh();
     }
 
     deptBox.onchange = function() {
@@ -91,9 +94,9 @@
     priBox.value = "3";
     runningBox.value = "All";
     buildcrewbox(); // update();
-    setInterval(function() {
-      update();
-    }, interval);
+    setInterval(function() { update(); }, interval);
+    setInterval(function() { refresh(); }, clock);
+
   </script>
 
 </body>
