@@ -37,7 +37,7 @@ function setlastrun(id, message, sdate) {
   tip += "Data Interval " + interval / 1000 / 60 + " minutes";
   tip += "<br/>Screen Refresh Interval " + interval / 5 / 1000 / 60 + " minutes";
   tip += "<br/>Total Asset Count:" + (json == null ? "" : (this.json.name === undefined ? this.json.QueryREST_ASSETWResponse.rsTotal : this.json.name));
-  tip += "<br/>Delta Asset Count:" + (newjson == null ? "" : (this.json.name === undefined ? this.json.QueryREST_ASSETWResponse.rsTotal : this.json.name));
+  tip += "<br/>Delta Asset Count:" + (newjson == null ? "" : (this.newjson.name === undefined ? this.newjson.QueryREST_ASSETWResponse.rsTotal : this.newjson.name));
   tip += "<br/><br/></span>";
   set(id, message + sdate + tip);
 }
@@ -187,7 +187,7 @@ function builddeptbox(json) {
   deptBox.add(opt);
   for (i = 0; i < json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET.length; i++) {
     var curr = json.QueryREST_ASSETWResponse.REST_ASSETWSet.ASSET[i];
-    department = curr.LOCATIONS[0].DESCRIPTION.replace("<br>"," ");
+    department = curr.LOCATIONS[0].DESCRIPTION.replace(/<br>/g," ");
     if (currdept != department) {
       var opt = document.createElement("OPTION");
       opt.value = department;
@@ -601,5 +601,5 @@ function setfilter(targetdate) {
 
 function clock() {
   temp = new Date();
-  set("lastrun", "Clock Run:<br/>" + temp.toLocaleString());
+  set("lastrun", "Clock Run: " + temp.toLocaleString());
 };
